@@ -42,6 +42,10 @@
 #undef MOUSE_MOVED
 #elif defined(__DJGPP__)
 #include <process.h>
+#elif defined(__OpenBSD__)
+#include <pwd.h>
+#include <sys/utsname.h>
+#include <unistd.h>
 #else
 #include <pwd.h>
 #include <sys/utsname.h>
@@ -559,6 +563,8 @@ md_ucount()
 #ifdef __DJGPP__
     return(1);
 #elif defined(_WIN32)
+    return(1);
+#elif defined(__OpenBSD__)
     return(1);
 #else
     struct utmpx *up=NULL;
