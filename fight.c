@@ -440,7 +440,7 @@ prname(who, upper)
 register char *who;
 bool upper;
 {
-    static char tbuf[80];
+    static char tbuf[ROGUE_CHARBUF_MAX];
 
     *tbuf = '\0';
     if (who == 0)

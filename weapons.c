@@ -232,7 +232,7 @@ char *
 num(n1, n2)
 register int n1, n2;
 {
-    static char numbuf[80];
+    static char numbuf[ROGUE_CHARBUF_MAX];
 
     if (n1 == 0 && n2 == 0)
 	return "+0";

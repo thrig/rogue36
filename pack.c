@@ -197,7 +197,7 @@ int type;
     register struct object *obj;
     register char ch;
     register int n_objs;
-    char inv_temp[80];
+    char inv_temp[ROGUE_CHARBUF_MAX];
 
     n_objs = 0;
     for (ch = 'a'; list != NULL; ch++, list = next(list))

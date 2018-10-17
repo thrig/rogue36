@@ -21,7 +21,7 @@ ring_on()
     register struct linked_list *item;
     register int ring;
     str_t save_max;
-    char buf[80];
+    char buf[ROGUE_CHARBUF_MAX];
 
     item = get_item("put on", RING);
     /*

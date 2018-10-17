@@ -19,7 +19,7 @@ quaff()
     register struct object *obj;
     register struct linked_list *item, *titem;
     register struct thing *th;
-    char buf[80];
+    char buf[ROGUE_CHARBUF_MAX];
 
     item = get_item("quaff", POTION);
     /*

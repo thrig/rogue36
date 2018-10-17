@@ -178,7 +178,7 @@ teleport()
 passwd()
 {
     register char *sp, c;
-    char buf[80], *xcrypt();
+    char buf[ROGUE_CHARBUF_MAX], *xcrypt();
 
     msg("Wizard's Password:");
     mpos = 0;

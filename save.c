@@ -31,7 +31,7 @@ save_game()
 {
     register FILE *savef;
     register int c;
-    char buf[80];
+    char buf[ROGUE_CHARBUF_MAX];
 
     /*
      * get file name
@@ -104,7 +104,7 @@ auto_save(int p)
 save_file(savef)
 register FILE *savef;
 {
-    char buf[80];
+    char buf[ROGUE_CHARBUF_MAX];
     int ret;
 
     wmove(cw, LINES-1, 0);
@@ -134,7 +134,7 @@ char **envp;
 {
     register int inf;
     extern char **environ;
-    char buf[80];
+    char buf[ROGUE_CHARBUF_MAX];
     int slines, scols;
     int rogue_version = 0, savefile_version = 0;
 

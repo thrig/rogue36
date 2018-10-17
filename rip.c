@@ -51,7 +51,7 @@ register char monst;
     register char **dp = rip, *killer;
     register struct tm *lt;
     time_t date;
-    char buf[80];
+    char buf[ROGUE_CHARBUF_MAX];
 
     time(&date);
     lt = localtime(&date);
@@ -84,7 +84,7 @@ char monst;
 {
     static struct sc_ent {
 	int sc_score;
-	char sc_name[80];
+	char sc_name[ROGUE_CHARBUF_MAX];
 	int sc_flags;
 	int sc_level;
 	char sc_login[8];

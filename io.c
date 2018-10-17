@@ -138,7 +138,7 @@ status()
 {
     register int oy, ox, temp;
     register char *pb;
-    static char buf[80];
+    static char buf[ROGUE_CHARBUF_MAX];
     static int hpwidth = 0, s_hungry = -1;
     static int s_lvl = -1, s_pur, s_hp = -1, s_str, s_add, s_ac = 0;
     static long s_exp = 0;

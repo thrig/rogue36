@@ -180,7 +180,7 @@ WINDOW *win;
 {
     register char *sp;
     register int c, oy, ox;
-    char buf[80];
+    char buf[ROGUE_CHARBUF_MAX];
 
     draw(win);
     getyx(win, oy, ox);

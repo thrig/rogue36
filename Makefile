@@ -38,9 +38,9 @@ MISC  =	Makefile $(MISC_C) LICENSE.TXT $(PROGRAM).sln $(PROGRAM).vcproj $(DOCS)\
 
 CC    = gcc
 ROPTS =
-COPTS = -O3
+COPTS = -g
 CFLAGS= $(COPTS) $(ROPTS)
-LIBS  = -lcurses
+LIBS  = -lcurses -lc
 RM    = rm -f
 LD    = $(CC)
 LDOUT = -o 
@@ -50,8 +50,8 @@ LDOUT = -o
 .c.obj:
 	$(CC) $(CFLAGS) /c $*.c
 
-$(PROGRAM)$(EXE): $(HDRS) $(OBJS)
-	$(LD) $(LDFLAGS) $(OBJS) $(LIBS) $(LDOUT)$@
+$(PROGRAM)$(EXE): $(HDRS) $(OBJS) Makefile
+	$(LD) -g $(LDFLAGS) $(OBJS) $(LIBS) $(LDOUT)$@
 
 clean:
 	$(RM) $(OBJS1)

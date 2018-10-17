@@ -58,7 +58,7 @@ char **envp;
     /*
      * get home and options from environment
      */
-    strncpy(home, md_gethomedir(), PATH_MAX);
+    strncpy(home, md_gethomedir(), ROGUE_CHARBUF_MAX);
 
     strcpy(file_name, home);
     strcat(file_name, "rogue36.sav");

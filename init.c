@@ -45,9 +45,9 @@ bool ws_know[MAXSTICKS];         /* Does he know what a stick does */
 
 char take;                               /* Thing the rogue is taking */
 char runch;                              /* Direction player is running */
-char whoami[80];                 /* Name of player */
-char fruit[80];                          /* Favorite fruit */
-char huh[80];                            /* The last message printed */
+char whoami[ROGUE_CHARBUF_MAX];          /* Name of player */
+char fruit[ROGUE_CHARBUF_MAX];           /* Favorite fruit */
+char huh[ROGUE_CHARBUF_MAX];             /* The last message printed */
 int dnum;                                /* Dungeon number */
 char *s_names[MAXSCROLLS];               /* Names of the scrolls */
 char *p_colors[MAXPOTIONS];              /* Colors of the potions */
@@ -56,12 +56,12 @@ char *a_names[MAXARMORS];                /* Names of armor types */
 char *ws_made[MAXSTICKS];                /* What sticks are made of */
 char *s_guess[MAXSCROLLS];               /* Players guess at what scroll is */
 char *p_guess[MAXPOTIONS];               /* Players guess at what potion is */
-char *r_guess[MAXRINGS];         /* Players guess at what ring is */
+char *r_guess[MAXRINGS];                 /* Players guess at what ring is */
 char *ws_guess[MAXSTICKS];               /* Players guess at what wand is */
 char *ws_type[MAXSTICKS];                /* Is it a wand or a staff */
-char file_name[80];                      /* Save file name */
-char home[80];                           /* User's home directory */
-char prbuf[80];                          /* Buffer for sprintfs */
+char file_name[ROGUE_CHARBUF_MAX];       /* Save file name */
+char home[ROGUE_CHARBUF_MAX];            /* User's home directory */
+char prbuf[ROGUE_CHARBUF_MAX];           /* Buffer for sprintfs */
 int max_hp;                              /* Player's max hit points */
 int ntraps;                              /* Number of traps on this level */
 int max_level;                           /* Deepest player has gone */

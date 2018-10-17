@@ -25,7 +25,7 @@ read_scroll()
     register int i,j;
     register char ch, nch;
     register struct linked_list *titem;
-    char buf[80];
+    char buf[ROGUE_CHARBUF_MAX];
 
     item = get_item("read", SCROLL);
     if (item == NULL)

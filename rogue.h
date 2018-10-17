@@ -10,6 +10,8 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#define ROGUE_CHARBUF_MAX 80
+
 /*
  * Maximum number of different things
  */
@@ -444,7 +446,7 @@ extern int group;				/* Current group number */
 extern int hungry_state;			/* How hungry is he */
 
 extern char take;				/* Thing the rogue is taking */
-extern char prbuf[80];				/* Buffer for sprintfs */
+extern char prbuf[ROGUE_CHARBUF_MAX];	        /* Buffer for sprintfs */
 extern char runch;				/* Direction player is running */
 extern char *s_names[MAXSCROLLS];		/* Names of the scrolls */
 extern char *p_colors[MAXPOTIONS];		/* Colors of the potions */
@@ -453,16 +455,16 @@ extern char *w_names[MAXWEAPONS];		/* Names of the various weapons */
 extern char *a_names[MAXARMORS];		/* Names of armor types */
 extern char *ws_made[MAXSTICKS];		/* What sticks are made of */
 extern char *release;				/* Release number of rogue */
-extern char whoami[80];			/* Name of player */
-extern char fruit[80];				/* Favorite fruit */
-extern char huh[80];				/* The last message printed */
+extern char whoami[ROGUE_CHARBUF_MAX];		/* Name of player */
+extern char fruit[ROGUE_CHARBUF_MAX];		/* Favorite fruit */
+extern char huh[ROGUE_CHARBUF_MAX];		/* The last message printed */
 extern char *s_guess[MAXSCROLLS];		/* Players guess at what scroll is */
 extern char *p_guess[MAXPOTIONS];		/* Players guess at what potion is */
 extern char *r_guess[MAXRINGS];		/* Players guess at what ring is */
 extern char *ws_guess[MAXSTICKS];		/* Players guess at what wand is */
 extern char *ws_type[MAXSTICKS];		/* Is it a wand or a staff */
-extern char file_name[80];			/* Save file name */
-extern char home[80];				/* User's home directory */
+extern char file_name[ROGUE_CHARBUF_MAX];	/* Save file name */
+extern char home[ROGUE_CHARBUF_MAX];		/* User's home directory */
 
 extern WINDOW *cw;				/* Window that the player sees */
 extern WINDOW *hw;				/* Used for the help command */

@@ -29,6 +29,8 @@
     SUCH DAMAGE.
 */
 
+#define ROGUE_CHARBUF_MAX 80
+
 #if defined(_WIN32)
 #include <Windows.h>
 #include <Lmcons.h>
@@ -218,7 +220,7 @@ md_getuid()
 char *
 md_getusername(int uid)
 {
-    static char login[80];
+    static char login[ROGUE_CHARBUF_MAX];
     char *l = NULL;
 #ifdef _WIN32
     LPSTR mybuffer;
@@ -655,7 +657,7 @@ md_memused()
 char *
 md_gethostname()
 {
-    static char nodename[80];
+    static char nodename[ROGUE_CHARBUF_MAX];
     char *n = NULL;
 #if !defined(_WIN32) && !defined(__DJGPP__)
     struct utsname ourname;
