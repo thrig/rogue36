@@ -17,7 +17,7 @@
  *	The player wants to wear something, so let him/her put it on.
  */
 
-wear()
+void wear()
 {
     register struct linked_list *item;
     register struct object *obj;
@@ -54,7 +54,7 @@ wear()
  *	Get the armor off of the players back
  */
 
-take_off()
+void take_off()
 {
     register struct object *obj;
 

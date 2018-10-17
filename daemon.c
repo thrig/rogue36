@@ -86,7 +86,7 @@ int (*func)(), arg, type;
  *	Remove a daemon from the list
  */
 
-kill_daemon(func)
+void kill_daemon(func)
 int (*func)();
 {
     register struct delayed_action *dev;
@@ -147,7 +147,7 @@ int (*func)(), arg, time, type;
  *	Increase the time until a fuse goes off
  */
 
-lengthen(func, xtime)
+void lengthen(func, xtime)
 int (*func)();
 int xtime;
 {
@@ -163,7 +163,7 @@ int xtime;
  *	Put out a fuse
  */
 
-extinguish(func)
+void extinguish(func)
 int (*func)();
 {
     register struct delayed_action *wire;

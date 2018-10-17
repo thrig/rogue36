@@ -21,6 +21,8 @@
 #include "machdep.h"
 #include "rogue.h"
 
+void score(int amount, int flags, char monst);
+
 static char *rip[] = {
 "                       __________",
 "                      /          \\",
@@ -79,7 +81,7 @@ register char monst;
  */
 
 /* VARARGS2 */
-score(amount, flags, monst)
+void score(amount, flags, monst)
 char monst;
 {
     static struct sc_ent {
@@ -273,10 +275,12 @@ total_winner()
     addstr("\nYou have joined the elite ranks of those who have escaped the\n");
     addstr("Dungeons of Doom alive.  You journey home and sell all your loot at\n");
     addstr("a great profit and are admitted to the fighters guild.\n");
+    /* KLUGE not sure what variable wait_for needs, disabling this bit ...
     mvaddstr(LINES - 1, 0, "--Press space to continue--");
     refresh();
     wait_for(' ');
     clear();
+    */
     mvaddstr(0, 0, "   Worth  Item");
     oldpurse = purse;
     for (c = 'a', item = pack; item != NULL; c++, item = next(item))

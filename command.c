@@ -17,6 +17,12 @@
 #include <string.h>
 #include "rogue.h"
 
+void call();
+void help();
+void identify();
+void search(void);
+void u_level();
+
 /*
  * command:
  *	Process the user commands
@@ -351,7 +357,7 @@ quit(int p)
  *	Player gropes about him to find hidden things.
  */
 
-search()
+void search()
 {
     register int x, y;
     register char ch;
@@ -398,7 +404,7 @@ search()
  *	Give single character help, or the whole mess if he wants it
  */
 
-help()
+void help()
 {
     register struct h_list *strp = helpstr;
     register char helpch;
@@ -457,7 +463,7 @@ help()
  *	Tell the player what a certain thing is.
  */
 
-identify()
+void identify()
 {
     register char ch, *str;
 
@@ -518,7 +524,7 @@ d_level()
  *	He wants to go up a level
  */
 
-u_level()
+void u_level()
 {
     if (winat(hero.y, hero.x) == STAIRS)
     {
@@ -567,7 +573,7 @@ shell()
 /*
  * allow a user to call a potion, scroll, or ring something
  */
-call()
+void call()
 {
     register struct object *obj;
     register struct linked_list *item;

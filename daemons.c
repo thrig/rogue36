@@ -128,7 +128,7 @@ nohaste()
 /*
  * digest the hero's food
  */
-stomach()
+int stomach()
 {
     register int oldfood;
 
@@ -138,7 +138,7 @@ stomach()
 	 * the hero is fainting
 	 */
 	if (no_command || rnd(100) > 20)
-	    return;
+	    return 0;
 	no_command = rnd(8)+4;
 	if (!terse)
 	    addmsg("You feel too weak from lack of food.  ");

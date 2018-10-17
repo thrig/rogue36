@@ -125,7 +125,7 @@ register struct thing *th;
  *	or stop it from running (for when it dies)
  */
 
-runto(runner, spot)
+void runto(runner, spot)
 register coord *runner;
 coord *spot;
 {

@@ -19,7 +19,7 @@
  *	Pick up an object and add it to the pack.  If the argument is non-null
  * use it as the linked_list pointer instead of gettting it off the ground.
  */
-add_pack(item, silent)
+void add_pack(item, silent)
 register struct linked_list *item;
 bool silent;
 {
@@ -296,7 +296,7 @@ char ch;
  * picky_inven:
  *	Allow player to inventory a single item
  */
-picky_inven()
+void picky_inven()
 {
     register struct linked_list *item;
     register char ch, mch;

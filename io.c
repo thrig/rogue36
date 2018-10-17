@@ -25,7 +25,7 @@ static char msgbuf[BUFSIZ];
 static int newpos = 0;
 
 /*VARARGS1*/
-msg(char *fmt, ...)
+void msg(char *fmt, ...)
 {
     va_list ap;
     /*
@@ -134,7 +134,7 @@ WINDOW *win;
  *	Display the important stats line.  Keep the cursor where it was.
  */
 
-status()
+void status()
 {
     register int oy, ox, temp;
     register char *pb;
@@ -203,7 +203,7 @@ status()
  *	Sit around until the guy types the right key
  */
 
-wait_for(win, ch)
+void wait_for(win, ch)
 WINDOW *win;
 register char ch;
 {

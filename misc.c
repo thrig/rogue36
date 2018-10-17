@@ -223,7 +223,7 @@ int x;
  *	She wants to eat something, so let her try
  */
 
-eat()
+void eat()
 {
     register struct linked_list *item;
     register struct object *obj;
@@ -268,7 +268,7 @@ eat()
  * it keeps track of the highest it has been, just in case
  */
 
-chg_str(amt)
+void chg_str(amt)
 register int amt;
 {
     if (amt == 0)

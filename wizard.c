@@ -22,7 +22,7 @@
  *	What a certin object is
  */
 
-whatis()
+void whatis()
 {
     register struct object *obj;
     register struct linked_list *item;

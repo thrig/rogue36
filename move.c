@@ -39,7 +39,7 @@ char ch;
  * consequences (fighting, picking up, etc.)
  */
 
-do_move(dy, dx)
+void do_move(dy, dx)
 int dy, dx;
 {
     register char ch;

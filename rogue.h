@@ -516,6 +516,8 @@ void auto_save(int p), endit(int p), quit(int p), tstp(), checkout();
 int nohaste(), doctor(), runners(), swander();
 int unconfuse(), unsee(), rollwand(), stomach(), sight();
 
+void wait_for(WINDOW *win, register char ch);
+
 struct trap *trap_at();
 
 extern char *rainbow[];

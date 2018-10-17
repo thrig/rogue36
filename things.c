@@ -141,7 +141,7 @@ register bool drop;
  * money:
  *	Add to characters purse
  */
-money()
+void money()
 {
     register struct room *rp;
 
@@ -167,7 +167,7 @@ money()
  * drop:
  *	put something down
  */
-drop()
+void drop()
 {
     register char ch;
     register struct linked_list *obj, *nobj;
@@ -348,7 +348,9 @@ new_thing()
 	    fix_stick(cur);
 	otherwise:
 	    debug("Picked a bad kind of object");
+            /* KLUGE dunno how to fix this yet
 	    wait_for(' ');
+            */
     }
     return item;
 }

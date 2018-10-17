@@ -15,6 +15,8 @@
 #include <string.h>
 #include "rogue.h"
 
+void badcheck(char *name, register struct magic_item *magic, register int bound);
+
 bool playing = TRUE, running = FALSE, wizard = FALSE;
 bool notify = TRUE, fight_flush = FALSE, terse = FALSE, door_stop = FALSE;
 bool jump = FALSE, slow_invent = FALSE, firstmove = FALSE, askme = FALSE;
@@ -521,7 +523,7 @@ init_materials()
     badcheck("sticks", ws_magic, MAXSTICKS);
 }
 
-badcheck(name, magic, bound)
+void badcheck(name, magic, bound)
 char *name;
 register struct magic_item *magic;
 register int bound;

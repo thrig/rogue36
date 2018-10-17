@@ -16,6 +16,8 @@
 
 #include <string.h>
 
+void put_things();
+
 new_level()
 {
     register int rm, i;
@@ -106,7 +108,7 @@ rnd_room()
  *	put potions and scrolls on this level
  */
 
-put_things()
+void put_things()
 {
     register int i;
     register struct linked_list *item;

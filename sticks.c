@@ -16,6 +16,8 @@
 #include <string.h>
 #include "rogue.h"
 
+void drain(int ymin, int ymax, int xmin, int xmax);
+
 fix_stick(cur)
 register struct object *cur;
 {
@@ -37,7 +39,7 @@ register struct object *cur;
     }
 }
 
-do_zap(gotdir)
+void do_zap(gotdir)
 bool gotdir;
 {
     register struct linked_list *item;
@@ -343,7 +345,7 @@ bool gotdir;
  *	Do drain hit points from player shtick
  */
 
-drain(ymin, ymax, xmin, xmax)
+void drain(ymin, ymax, xmin, xmax)
 int ymin, ymax, xmin, xmax;
 {
     register int i, j, count;

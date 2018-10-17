@@ -17,6 +17,8 @@
 
 #define NONE 100
 
+void fall(register struct linked_list *item, bool pr);
+
 char *w_names[MAXWEAPONS] = {
     "mace",
     "long sword",
@@ -57,7 +59,7 @@ static struct init_weps {
  *	Fire a missile in a given direction
  */
 
-missile(ydelta, xdelta)
+void missile(ydelta, xdelta)
 int ydelta, xdelta;
 {
     register struct object *obj;
@@ -154,7 +156,7 @@ register int ydelta, xdelta;
  *	Drop an item someplace around here.
  */
 
-fall(item, pr)
+void fall(item, pr)
 register struct linked_list *item;
 bool pr;
 {
@@ -249,7 +251,7 @@ register int n1, n2;
  *	Pull out a certain weapon
  */
 
-wield()
+void wield()
 {
     register struct linked_list *item;
     register struct object *obj, *oweapon;

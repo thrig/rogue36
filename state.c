@@ -1822,7 +1822,7 @@ rs_fix_thing(struct thing *t)
     struct thing *tp;
 
     if (t->t_reserved < 0)
-        return;
+        return 0;
 
     item = get_list_item(mlist,t->t_reserved);
 

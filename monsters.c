@@ -104,7 +104,7 @@ register coord *cp;
  *	A wandering monster has awakened and is headed for the player
  */
 
-wanderer()
+void wanderer()
 {
     register int i, ch;
     register struct room *rp, *hr = roomin(&hero);
@@ -201,7 +201,7 @@ int y, x;
     return it;
 }
 
-genocide()
+void genocide()
 {
     register struct linked_list *ip;
     register struct thing *mp;
