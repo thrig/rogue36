@@ -611,6 +611,8 @@ md_srandom(unsigned x)
 {
 #ifdef _WIN32
     srand(x);
+#elif defined(__OpenBSD__)
+    srandom_deterministic(x);
 #else
     srandom(x);
 #endif
@@ -631,6 +633,8 @@ md_srand(int seed)
 {
 #ifdef _WIN32
     srand(seed);
+#elif defined(__OpenBSD__)
+    srand48_deterministic(seed);
 #else
     srand48(seed);
 #endif

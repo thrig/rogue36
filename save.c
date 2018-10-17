@@ -217,7 +217,13 @@ char **envp;
     setup();
     clearok(curscr, TRUE);
     touchwin(cw);
+/* would have to look up when this was added to OpenBSD; should be fine
+ * in OpenBSD 6.3+ */
+#ifdef __OpenBSD__
+    srand_deterministic(getpid());
+#else
     srand(getpid());
+#endif
     status();
     playit();
     /*NOTREACHED*/
