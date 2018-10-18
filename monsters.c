@@ -27,11 +27,11 @@ char wand_mons[27] = "KJBSH AOZG CRQ Y W IXU V  ";
  *	the meaner the monster.
  */
 
-randmonster(wander)
-bool wander;
+int
+randmonster(bool wander)
 {
-    register int d;
-    register char *mons;
+    int d;
+    char *mons;
 
     mons = wander ? wand_mons : lvl_mons;
     do
@@ -50,13 +50,11 @@ bool wander;
  *	Pick a new monster and add it to the list
  */
 
-new_monster(item, type, cp)
-struct linked_list *item;
-char type;
-register coord *cp;
+void
+new_monster(struct linked_list *item, char type, coord *cp)
 {
-    register struct thing *tp;
-    register struct monster *mp;
+    struct thing *tp;
+    struct monster *mp;
 
     attach(mlist, item);
     tp = (struct thing *) ldata(item);
@@ -104,12 +102,13 @@ register coord *cp;
  *	A wandering monster has awakened and is headed for the player
  */
 
-void wanderer()
+void
+wanderer(void)
 {
-    register int i, ch;
-    register struct room *rp, *hr = roomin(&hero);
-    register struct linked_list *item;
-    register struct thing *tp;
+    int i, ch;
+    struct room *rp, *hr = roomin(&hero);
+    struct linked_list *item;
+    struct thing *tp;
     coord cp;
 
     item = new_item(sizeof *tp);
@@ -143,10 +142,10 @@ struct linked_list *
 wake_monster(y, x)
 int y, x;
 {
-    register struct thing *tp;
-    register struct linked_list *it;
-    register struct room *rp;
-    register char ch;
+    struct thing *tp;
+    struct linked_list *it;
+    struct room *rp;
+    char ch;
 
     if ((it = find_mons(y, x)) == NULL)
 	fatal("Can't find monster in wake");
@@ -201,13 +200,14 @@ int y, x;
     return it;
 }
 
-void genocide()
+void
+genocide(void)
 {
-    register struct linked_list *ip;
-    register struct thing *mp;
-    register char c;
-    register int i;
-    register struct linked_list *nip;
+    struct linked_list *ip;
+    struct thing *mp;
+    char c;
+    int i;
+    struct linked_list *nip;
 
     addmsg("Which monster");
     if (!terse)

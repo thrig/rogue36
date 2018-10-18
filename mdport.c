@@ -57,6 +57,7 @@
 char *strdup(const char *s);
 #endif
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -116,7 +117,9 @@ md_putchar(int c)
     putchar(c);
 }
 
+#ifdef _WIN32
 static int md_standout_mode = 0;
+#endif
 
 void
 md_raw_standout()
@@ -170,9 +173,9 @@ md_unlink_open_file(char *file, int inf)
 #ifdef _WIN32
     _close(inf);
     _chmod(file, 0600);
-    return( _unlink(file) );
+    return _unlink(file);
 #else
-    return(unlink(file));
+    return unlink(file);
 #endif
 }
 
@@ -212,7 +215,7 @@ md_normaluser()
 }
 
 int
-md_getuid()
+md_getuid(void)
 {
 #ifndef _WIN32
     return( getuid() );
@@ -336,7 +339,7 @@ md_getshell()
 }
 
 int
-md_shellescape()
+md_shellescape(void)
 {
 #if (!defined(_WIN32) && !defined(__DJGPP__))
     int ret_status;
@@ -363,7 +366,7 @@ md_shellescape()
          */
         setuid(getuid());
         setgid(getgid());
-        execl(sh == NULL ? "/bin/sh" : sh, "shell", "-i", 0);
+        execl(sh == NULL ? "/bin/sh" : sh, "shell", "-i", (char *) 0);
         perror("No shelly");
         _exit(-1);
     }
@@ -558,7 +561,7 @@ md_htonl(unsigned long int x)
 }
 
 int
-md_ucount()
+md_ucount(void)
 {
 #ifdef __DJGPP__
     return(1);
@@ -650,20 +653,6 @@ md_strdup(const char *s)
 #endif
 }
 
-long
-md_memused()
-{
-#ifdef _WIN32
-    MEMORYSTATUS stat;
-
-    GlobalMemoryStatus(&stat);
-
-    return((long)stat.dwTotalPageFile);
-#else
-    return( (long)sbrk(0) );
-#endif
-}
-
 char *
 md_gethostname()
 {
@@ -687,7 +676,7 @@ md_gethostname()
 }
 
 int
-md_erasechar()
+md_erasechar(void)
 {
 #ifdef BSD
     return(_tty.sg_erase); /* process erase character */
@@ -699,7 +688,7 @@ md_erasechar()
 }
 
 int
-md_killchar()
+md_killchar(void)
 {
 #ifdef BSD
     return(_tty.sg_kill);
@@ -715,7 +704,7 @@ md_killchar()
  *	Print a readable version of a certain character
  */
 
-char *
+const char *
 md_unctrl(char ch)
 {
 #if USG5_0
@@ -723,7 +712,7 @@ md_unctrl(char ch)
 
     return _unctrl[ch&0177];
 #else
-    return( unctrl(ch) );
+    return unctrl(ch);
 #endif
 }
 

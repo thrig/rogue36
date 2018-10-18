@@ -12,17 +12,22 @@
 
 #include "curses.h"
 #include "rogue.h"
+#include <stdlib.h>
+
+void conn(int r1, int r2);
+void door(struct room *rm, coord *cp);
 
 /*
  * do_passages:
  *	Draw all the passages on a level.
  */
 
-do_passages()
+void
+do_passages(void)
 {
-    register struct rdes *r1, *r2;
-    register int i, j;
-    register int roomcount;
+    struct rdes *r1, *r2;
+    int i, j;
+    int roomcount;
     static struct rdes
     {
 	bool	conn[MAXROOMS];		/* possible to connect to room i? */
@@ -126,14 +131,15 @@ do_passages()
  *	Draw a corridor from a room in a certain direction.
  */
 
+void
 conn(r1, r2)
 int r1, r2;
 {
-    register struct room *rpf, *rpt;
-    register char rmt;
-    register int distance, turn_spot, turn_distance;
-    register int rm;
-    register char direc;
+    struct room *rpf, *rpt;
+    char rmt;
+    int distance, turn_spot, turn_distance;
+    int rm;
+    char direc;
     coord delta, curr, turn_delta, spos, epos;
 
     if (r1 < r2)
@@ -160,7 +166,7 @@ int r1, r2;
     if (direc == 'd')
     {
 	rmt = rm + 3;				/* room # of dest */
-	rpt = &rooms[rmt];			/* room pointer of dest */
+	rpt = &rooms[(int) rmt];		/* room pointer of dest */
 	delta.x = 0;				/* direction of move */
 	delta.y = 1;
 	spos.x = rpf->r_pos.x;			/* start of move */
@@ -183,7 +189,7 @@ int r1, r2;
     else if (direc == 'r')			/* setup for moving right */
     {
 	rmt = rm + 1;
-	rpt = &rooms[rmt];
+	rpt = &rooms[(int) rmt];
 	delta.x = 1;
 	delta.y = 0;
 	spos.x = rpf->r_pos.x;
@@ -262,9 +268,10 @@ int r1, r2;
  * also enters the door in the exits array of the room.
  */
 
+void
 door(rm, cp)
-register struct room *rm;
-register coord *cp;
+struct room *rm;
+coord *cp;
 {
     cmov(*cp);
     addch( (rnd(10) < level - 1 && rnd(100) < 20 ? SECRETDOOR : DOOR) );
@@ -276,9 +283,10 @@ register coord *cp;
  *	add the passages to the current window (wizard command)
  */
 
-add_pass()
+void
+add_pass(void)
 {
-    register int y, x, ch;
+    int y, x, ch;
 
     for (y = 1; y < LINES - 2; y++)
 	for (x = 0; x < COLS; x++)

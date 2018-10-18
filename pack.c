@@ -19,13 +19,13 @@
  *	Pick up an object and add it to the pack.  If the argument is non-null
  * use it as the linked_list pointer instead of gettting it off the ground.
  */
-void add_pack(item, silent)
-register struct linked_list *item;
-bool silent;
+
+void
+add_pack(struct linked_list *item, bool silent)
 {
-    register struct linked_list *ip, *lp;
-    register struct object *obj, *op;
-    register bool exact, from_floor;
+    struct linked_list *ip, *lp;
+    struct object *obj, *op;
+    bool exact, from_floor;
 
     if (item == NULL)
     {
@@ -79,7 +79,7 @@ bool silent;
     /*
      * Check for and deal with scare monster scrolls
      */
-    if (obj->o_type == SCROLL && obj->o_which == S_SCARE)
+    if (obj->o_type == SCROLL && obj->o_which == S_SCARE) {
 	if (obj->o_flags & ISFOUND)
 	{
 	    msg("The scroll turns to dust as you pick it up.");
@@ -89,7 +89,7 @@ bool silent;
 	}
 	else
 	    obj->o_flags |= ISFOUND;
-
+    }
     inpack++;
     if (from_floor)
     {
@@ -190,13 +190,14 @@ picked_up:
  * inventory:
  *	list what is in the pack
  */
+int
 inventory(list, type)
 struct linked_list *list;
 int type;
 {
-    register struct object *obj;
-    register char ch;
-    register int n_objs;
+    struct object *obj;
+    char ch;
+    int n_objs;
     char inv_temp[ROGUE_CHARBUF_MAX];
 
     n_objs = 0;
@@ -269,8 +270,9 @@ int type;
  * pick_up:
  *	Add something to characters pack.
  */
-pick_up(ch)
-char ch;
+
+void
+pick_up(char ch)
 {
     switch(ch)
     {
@@ -296,10 +298,11 @@ char ch;
  * picky_inven:
  *	Allow player to inventory a single item
  */
-void picky_inven()
+void
+picky_inven(void)
 {
-    register struct linked_list *item;
-    register char ch, mch;
+    struct linked_list *item;
+    char ch, mch;
 
     if (pack == NULL)
 	msg("You aren't carrying anything");
@@ -335,8 +338,8 @@ get_item(purpose, type)
 char *purpose;
 int type;
 {
-    register struct linked_list *obj;
-    register char ch, och;
+    struct linked_list *obj;
+    char ch, och;
 
     if (pack == NULL)
 	msg("You aren't carrying anything.");
@@ -386,11 +389,12 @@ int type;
     return NULL;
 }
 
+char
 pack_char(obj)
-register struct object *obj;
+struct object *obj;
 {
-    register struct linked_list *item;
-    register char c;
+    struct linked_list *item;
+    char c;
 
     c = 'a';
     for (item = pack; item != NULL; item = next(item))

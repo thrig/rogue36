@@ -18,8 +18,9 @@
 
 void drain(int ymin, int ymax, int xmin, int xmax);
 
+void
 fix_stick(cur)
-register struct object *cur;
+struct object *cur;
 {
     if (strcmp(ws_type[cur->o_which], "staff") == 0)
 	strcpy(cur->o_damage,"2d3");
@@ -39,14 +40,14 @@ register struct object *cur;
     }
 }
 
-void do_zap(gotdir)
-bool gotdir;
+void
+do_zap(bool gotdir)
 {
-    register struct linked_list *item;
-    register struct object *obj;
-    register struct room *rp;
-    register struct thing *tp;
-    register int y, x;
+    struct linked_list *item;
+    struct object *obj;
+    struct room *rp;
+    struct thing *tp;
+    int y, x;
 
     if ((item = get_item("zap with", STICK)) == NULL)
 	return;
@@ -110,8 +111,8 @@ bool gotdir;
 	case WS_TELTO:
 	case WS_CANCEL:
 	{
-	    register char monster, oldch;
-	    register int rm;
+	    char monster, oldch;
+	    int rm;
 
 	    y = hero.y;
 	    x = hero.x;
@@ -122,7 +123,7 @@ bool gotdir;
 	    }
 	    if (isupper(monster = mvwinch(mw, y, x)))
 	    {
-		register char omonst = monster;
+		char omonst = monster;
 
 		if (monster == 'F')
 		    player.t_flags &= ~ISHELD;
@@ -182,7 +183,7 @@ bool gotdir;
 
 	    do_motion(&bolt, delta.y, delta.x);
 	    if (isupper(mvwinch(mw, bolt.o_pos.y, bolt.o_pos.x))
-		&& !save_throw(VS_MAGIC, ldata(find_mons(unc(bolt.o_pos)))))
+		&& !save_throw(VS_MAGIC, (struct thing *) ldata(find_mons(unc(bolt.o_pos)))))
 		    hit_monster(unc(bolt.o_pos), &bolt);
 	    else if (terse)
 		msg("Missile vanishes");
@@ -192,7 +193,7 @@ bool gotdir;
 	}
 	when WS_HIT:
 	{
-	    register char ch;
+	    char ch;
 
 	    delta.y += hero.y;
 	    delta.x += hero.x;
@@ -248,8 +249,8 @@ bool gotdir;
 	case WS_FIRE:
 	case WS_COLD:
 	{
-	    register char dirch, ch, *name;
-	    register bool bounced, used;
+	    char dirch, ch, *name;
+	    bool bounced, used;
 	    coord pos;
 	    coord spotpos[BOLT_LENGTH];
 	    static struct object bolt =
@@ -293,7 +294,7 @@ bool gotdir;
 		    default:
 			if (!bounced && isupper(ch))
 			{
-			    if (!save_throw(VS_MAGIC, ldata(find_mons(unc(pos)))))
+			    if (!save_throw(VS_MAGIC, (struct thing *) ldata(find_mons(unc(pos)))))
 			    {
 				bolt.o_pos = pos;
 				hit_monster(unc(pos), &bolt);
@@ -345,12 +346,13 @@ bool gotdir;
  *	Do drain hit points from player shtick
  */
 
-void drain(ymin, ymax, xmin, xmax)
+void
+drain(ymin, ymax, xmin, xmax)
 int ymin, ymax, xmin, xmax;
 {
-    register int i, j, count;
-    register struct thing *ick;
-    register struct linked_list *item;
+    int i, j, count;
+    struct thing *ick;
+    struct linked_list *item;
 
     /*
      * First count how many things we need to spread the hit points among
@@ -386,7 +388,7 @@ int ymin, ymax, xmin, xmax;
  */
 char *
 charge_str(obj)
-register struct object *obj;
+struct object *obj;
 {
     static char buf[20];
 

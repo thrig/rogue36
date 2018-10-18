@@ -10,6 +10,9 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+/*
+ * used in various buffers
+ */
 #define ROGUE_CHARBUF_MAX 80
 
 /*
@@ -28,6 +31,65 @@
 #define	NORM	0	/* normal exit */
 #define	QUIT	1	/* quit option setting */
 #define	MINUS	2	/* back up one option */
+
+/*
+ * Coordinate data type
+ */
+typedef struct {
+    int x;
+    int y;
+} coord;
+
+typedef struct {
+    short st_str;
+    short st_add;
+} str_t;
+
+/*
+ * Linked list data type
+ */
+struct linked_list {
+    struct linked_list *l_next;
+    struct linked_list *l_prev;
+    char *l_data;			/* Various structure pointers */
+};
+
+/*
+ * Structure for a thing that the rogue can carry
+ */
+
+struct object {
+    int o_type;				/* What kind of object it is */
+    coord o_pos;			/* Where it lives on the screen */
+    char o_launch;			/* What you need to launch it */
+    char o_damage[8];			/* Damage if used like sword */
+    char o_hurldmg[8];			/* Damage if thrown */
+    int o_count;			/* Count for plural objects */
+    int o_which;			/* Which object of a type it is */
+    int o_hplus;			/* Plusses to hit */
+    int o_dplus;			/* Plusses to damage */
+    int o_ac;				/* Armor class */
+    int o_flags;			/* Information about objects */
+    int o_group;			/* Group number for this object */
+};
+
+/*
+ * Structure describing a fighting being
+ */
+struct stats {
+    str_t s_str;			/* Strength */
+    long s_exp;				/* Experience */
+    int s_lvl;				/* Level of mastery */
+    int s_arm;				/* Armor class */
+    int s_hpt;				/* Hit points */
+    char s_dmg[30];			/* String describing damage done */
+};
+
+/* list.c */
+void _attach(struct linked_list **list, struct linked_list *item);
+void _detach(struct linked_list **list, struct linked_list *item);
+void _free_list(struct linked_list **ptr);
+void discard(struct linked_list *item);
 
 /*
  * All the fun defines
@@ -283,28 +345,6 @@ struct h_list {
 extern struct h_list helpstr[];
 
 /*
- * Coordinate data type
- */
-typedef struct {
-    int x;
-    int y;
-} coord;
-
-typedef struct {
-    short st_str;
-    short st_add;
-} str_t;
-
-/*
- * Linked list data type
- */
-struct linked_list {
-    struct linked_list *l_next;
-    struct linked_list *l_prev;
-    char *l_data;			/* Various structure pointers */
-};
-
-/*
  * Stuff about magic items
  */
 
@@ -339,18 +379,6 @@ struct trap {
 extern struct trap  traps[MAXTRAPS];
 
 /*
- * Structure describing a fighting being
- */
-struct stats {
-    str_t s_str;			/* Strength */
-    long s_exp;				/* Experience */
-    int s_lvl;				/* Level of mastery */
-    int s_arm;				/* Armor class */
-    int s_hpt;				/* Hit points */
-    char s_dmg[30];			/* String describing damage done */
-};
-
-/*
  * Structure for monsters and player
  */
 struct thing {
@@ -374,25 +402,6 @@ struct monster {
     short m_carry;			/* Probability of carrying something */
     short m_flags;			/* Things about the monster */
     struct stats m_stats;		/* Initial stats */
-};
-
-/*
- * Structure for a thing that the rogue can carry
- */
-
-struct object {
-    int o_type;				/* What kind of object it is */
-    coord o_pos;			/* Where it lives on the screen */
-    char o_launch;			/* What you need to launch it */
-    char o_damage[8];			/* Damage if used like sword */
-    char o_hurldmg[8];			/* Damage if thrown */
-    int o_count;			/* Count for plural objects */
-    int o_which;			/* Which object of a type it is */
-    int o_hplus;			/* Plusses to hit */
-    int o_dplus;			/* Plusses to damage */
-    int o_ac;				/* Armor class */
-    int o_flags;			/* Information about objects */
-    int o_group;			/* Group number for this object */
 };
 
 struct delayed_action {
@@ -512,11 +521,190 @@ struct room *roomin();
 
 coord *rndmove();
 
+// TODO group these by file
 void auto_save(int p), endit(int p), quit(int p), tstp(), checkout();
-int nohaste(), doctor(), runners(), swander();
-int unconfuse(), unsee(), rollwand(), stomach(), sight();
 
-void wait_for(WINDOW *win, register char ch);
+/* armor.c */
+void take_off(void);
+void waste_time(void);
+void wear(void);
+
+/* chase.c */
+int cansee(int y, int x);
+int diag_ok(coord *sp, coord *ep);
+int runners(void);
+void runto(coord *runner, coord *spot);
+
+/* command.c */
+void command(void);
+
+/* daemon.c */
+void do_daemons(int flag);
+void do_fuses(int flag);
+void extinguish(int (*func)());
+void fuse(int (*func)(), int arg, int time, int type);
+void kill_daemon(int (*func)());
+void lengthen(int (*func)(), int xtime);
+void start_daemon(int (*func)(), int arg, int type);
+
+/* daemons.c */
+int doctor(void);
+int nohaste(void);
+int rollwand(void);
+int sight(void);
+int stomach(void);
+int swander(void);
+int unconfuse(void);
+int unsee(void);
+
+/* fight.c */
+int attack(struct thing *mp);
+void check_level();
+bool fight(coord *mp, char mn, struct object *weap, bool thrown);
+int is_magic(struct object *obj);
+void killed(struct linked_list *item, bool pr);
+void raise_level(void);
+void remove_monster(coord *mp, struct linked_list *item);
+bool roll_em(struct stats *att, struct stats *def, struct object *weap, bool hurl);
+int save(int which);
+int save_throw(int which, struct thing *tp);
+int swing(int at_lvl, int op_arm, int wplus);
+void thunk(struct object *weap, char *mname);
+
+/* init.c */
+void init_colors(void);
+void init_materials(void);
+void init_names(void);
+void init_player(void);
+void init_stones(void);
+void init_things(void);
+
+/* io.c */
+void addmsg(char *fmt, ...);
+void doadd(char *fmt, va_list ap);
+void endmsg(void);
+void flush_type(void);
+void msg(char *fmt, ...);
+int readchar(WINDOW *win);
+void show_win(WINDOW *scr, char *message);
+int step_ok(char ch);
+void status(void);
+void wait_for(WINDOW *win, char ch);
+
+/* main.c */
+void fatal(char *s);
+void playit(void);
+int rnd(int range);
+int roll(int number, int sides);
+void setup(void);
+
+/* mdport.c */
+int md_erasechar(void);
+int md_getloadavg(double *avg);
+int md_getuid(void);
+int md_killchar(void);
+int md_readchar(WINDOW *win);
+int md_shellescape(void);
+int md_ucount(void);
+int md_unlink_open_file(char *file, int inf);
+
+/* misc.c */
+void add_haste(bool potion);
+void aggravate();
+void chg_str(int amt);
+void eat(void);
+int get_dir(void);
+int is_current(struct object *obj);
+void look(bool wakeup);
+
+/* monsters.c */
+void genocide(void);
+void new_monster(struct linked_list *item, char type, coord *cp);
+int randmonster(bool wander);
+
+/* move.c */
+void do_move(int dy, int dx);
+void do_run(char ch);
+void light(coord *cp);
+char show(int y, int x);
+
+/* monsters.c */
+void wanderer(void);
+
+/* newlevel.c */
+void new_level(void);
+int rnd_room(void);
+
+/* options.c */
+int get_str(char *opt, WINDOW *win);
+void option(void);
+void parse_opts(char *str);
+void strucpy(char *s1, char *s2, int len);
+
+/* pack.c */
+void add_pack(struct linked_list *item, bool silent);
+int inventory(struct linked_list *list, int type);
+char pack_char(struct object *obj);
+void picky_inven(void);
+void pick_up(char ch);
+
+/* passages.c */
+void add_pass(void);
+void do_passages(void);
+
+/* potions.c */
+void quaff(void);
+
+/* rings.c */
+int ring_eat(int hand);
+void ring_off(void);
+void ring_on(void);
+
+/* rip.c */
+void death(char monst);
+void score(int amount, int flags, char monst);
+void total_winner(void);
+
+/* rooms.c */
+void do_rooms(void);
+void rnd_pos(struct room *rp, coord *cp);
+
+/* scrolls.c */
+void read_scroll(void);
+
+/* save.c */
+int encread(void *starta, unsigned int size, int inf);
+unsigned int encwrite(void *starta, unsigned int size, FILE *outf);
+int restore(char *file, char **envp);
+int save_game(void);
+
+/* state.c */
+int rs_save_file(FILE *savef);
+int rs_restore_file(int inf);
+
+/* sticks.c */
+void do_zap(bool gotdir);
+void fix_stick(struct object *cur);
+
+/* things.c */
+void drop(void);
+int dropcheck(struct object *op);
+void money(void);
+
+/* weapons.c */
+void do_motion(struct object *obj, int ydelta, int xdelta);
+void fall(struct linked_list *item, bool pr);
+int fallpos(coord *pos, coord *newpos, bool passages);
+int hit_monster(int y, int x, struct object *obj);
+void init_weapon(struct object *weap, char type);
+void missile(int ydelta, int xdelta);
+void wield(void);
+
+/* wizard.c */
+void create_obj(void);
+int passwd(void);
+int teleport(void);
+void whatis(void);
 
 struct trap *trap_at();
 

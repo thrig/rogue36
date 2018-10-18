@@ -1,4 +1,3 @@
-
 /*
  * Special wizard commands (some of which are also non-wizard commands
  * under strange circumstances)
@@ -14,6 +13,7 @@
 
 #include "curses.h"
 #include <ctype.h>
+#include <stdlib.h>
 #include <string.h>
 #include "rogue.h"
 
@@ -22,10 +22,11 @@
  *	What a certin object is
  */
 
-void whatis()
+void
+whatis(void)
 {
-    register struct object *obj;
-    register struct linked_list *item;
+    struct object *obj;
+    struct linked_list *item;
 
     if ((item = get_item("identify", 0)) == NULL)
 	return;
@@ -74,11 +75,12 @@ void whatis()
  *	Wizard command for getting anything he wants
  */
 
-create_obj()
+void
+create_obj(void)
 {
-    register struct linked_list *item;
-    register struct object *obj;
-    register char ch, bless;
+    struct linked_list *item;
+    struct object *obj;
+    char ch, bless;
 
     item = new_item(sizeof *obj);
     obj = (struct object *) ldata(item);
@@ -140,9 +142,10 @@ create_obj()
  *	Bamf the hero someplace else
  */
 
-teleport()
+int
+teleport(void)
 {
-    register int rm;
+    int rm;
     coord c;
 
     c = hero;
@@ -175,9 +178,10 @@ teleport()
  *	see if user knows password
  */
 
-passwd()
+int
+passwd(void)
 {
-    register char *sp, c;
+    char *sp, c;
     char buf[ROGUE_CHARBUF_MAX], *xcrypt();
 
     msg("Wizard's Password:");

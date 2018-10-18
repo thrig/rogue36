@@ -18,10 +18,11 @@
 
 void put_things();
 
-new_level()
+void
+new_level(void)
 {
-    register int rm, i;
-    register char ch;
+    int rm, i;
+    char ch;
     coord stairs;
 
     if (level > max_level)
@@ -92,9 +93,10 @@ new_level()
  * Pick a room that is really there
  */
 
-rnd_room()
+int
+rnd_room(void)
 {
-    register int rm;
+    int rm;
 
     do
     {
@@ -108,12 +110,13 @@ rnd_room()
  *	put potions and scrolls on this level
  */
 
-void put_things()
+void
+put_things(void)
 {
-    register int i;
-    register struct linked_list *item;
-    register struct object *cur;
-    register int rm;
+    int i;
+    struct linked_list *item;
+    struct object *cur;
+    int rm;
     coord tp;
 
     /*

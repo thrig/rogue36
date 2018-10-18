@@ -14,11 +14,12 @@
 #include <string.h>
 #include "rogue.h"
 
-void quaff()
+void
+quaff(void)
 {
-    register struct object *obj;
-    register struct linked_list *item, *titem;
-    register struct thing *th;
+    struct object *obj;
+    struct linked_list *item, *titem;
+    struct thing *th;
     char buf[ROGUE_CHARBUF_MAX];
 
     item = get_item("quaff", POTION);
@@ -112,12 +113,12 @@ void quaff()
 		}
 		for (titem = mlist; titem != NULL; titem = next(titem))
 		{
-		    register struct linked_list *pitem;
+		    struct linked_list *pitem;
 
 		    th = (struct thing *) ldata(titem);
 		    for (pitem = th->t_pack; pitem != NULL; pitem = next(pitem))
 		    {
-			if (is_magic(ldata(pitem)))
+			if (is_magic((struct object *) ldata(pitem)))
 			{
 			    show = TRUE;
 			    mvwaddch(hw, th->t_pos.y, th->t_pos.x, MAGIC);

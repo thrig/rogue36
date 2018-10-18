@@ -32,7 +32,9 @@ struct optstruct {
 
 typedef struct optstruct	OPTION;
 
-int	put_bool(), get_bool(), put_str(), get_str();
+int put_bool(bool *b);
+int get_bool(bool *bp, WINDOW *win);
+int put_str(char *str);
 
 OPTION	optlist[] = {
     {"terse",	 "Terse output: ",
@@ -56,10 +58,11 @@ OPTION	optlist[] = {
 /*
  * print and then set options from the terminal
  */
-option()
+void
+option(void)
 {
-    register OPTION	*op;
-    register int	retval;
+    OPTION *op;
+    int	retval;
 
     wclear(hw);
     touchwin(hw);
@@ -79,7 +82,7 @@ option()
     for (op = optlist; op <= &optlist[NUM_OPTS-1]; op++)
     {
 	waddstr(hw, op->o_prompt);
-	if ((retval = (*op->o_getfunc)(op->o_opt, hw)))
+	if ((retval = (*op->o_getfunc)(op->o_opt, hw))) {
 	    if (retval == QUIT)
 		break;
 	    else if (op > optlist) {	/* MINUS */
@@ -92,6 +95,7 @@ option()
 		wmove(hw, 0, 0);
 		op--;
 	    }
+	}
     }
     /*
      * Switch back to original screen
@@ -107,31 +111,32 @@ option()
 /*
  * put out a boolean
  */
-put_bool(b)
-bool	*b;
+int
+put_bool(bool *b)
 {
     waddstr(hw, *b ? "True" : "False");
+    return 0;
 }
 
 /*
  * put out a string
  */
-put_str(str)
-char *str;
+int
+put_str(char *str)
 {
     waddstr(hw, str);
+    return 0;
 }
 
 /*
  * allow changing a boolean option and print it out
  */
 
-get_bool(bp, win)
-bool *bp;
-WINDOW *win;
+int
+get_bool(bool *bp, WINDOW *win)
 {
-    register int oy, ox;
-    register bool op_bad;
+    int oy, ox;
+    bool op_bad;
 
     op_bad = TRUE;
     getyx(win, oy, ox);
@@ -174,12 +179,13 @@ WINDOW *win;
 /*
  * set a string option
  */
+int
 get_str(opt, win)
-register char *opt;
+char *opt;
 WINDOW *win;
 {
-    register char *sp;
-    register int c, oy, ox;
+    char *sp;
+    int c, oy, ox;
     char buf[ROGUE_CHARBUF_MAX];
 
     draw(win);
@@ -197,7 +203,7 @@ WINDOW *win;
 	{
 	    if (sp > buf)
 	    {
-		register int i;
+		int i;
 		int myx, myy;
 
 		sp--;
@@ -223,7 +229,7 @@ WINDOW *win;
 	    wmove(win, oy, ox);
 	    continue;
 	}
-	else if (sp == buf)
+	else if (sp == buf) {
 	    if (c == '-')
 		break;
 	    else if (c == '~')
@@ -233,6 +239,7 @@ WINDOW *win;
 		sp += strlen(home);
 		continue;
 	    }
+	}
 
 	if ((sp - buf) < 78) /* Avoid overflow */
 	{
@@ -265,12 +272,13 @@ WINDOW *win;
  * or the end of the entire option string.
  */
 
+void
 parse_opts(str)
-register char *str;
+char *str;
 {
-    register char *sp;
-    register OPTION *op;
-    register int len;
+    char *sp;
+    OPTION *op;
+    int len;
 
     while (*str)
     {
@@ -290,7 +298,7 @@ register char *str;
 		    *(bool *)op->o_opt = TRUE;
 		else				/* string option */
 		{
-		    register char *start;
+		    char *start;
 		    /*
 		     * Skip to start of string value
 		     */
@@ -336,11 +344,12 @@ register char *str;
 /*
  * copy string using unctrl for things
  */
+void
 strucpy(s1, s2, len)
-register char *s1, *s2;
-register int len;
+char *s1, *s2;
+int len;
 {
-    register char *sp;
+    const char *sp;
 
     while (len--)
     {

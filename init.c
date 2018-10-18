@@ -15,7 +15,7 @@
 #include <string.h>
 #include "rogue.h"
 
-void badcheck(char *name, register struct magic_item *magic, register int bound);
+void badcheck(char *name, struct magic_item *magic, int bound);
 
 bool playing = TRUE, running = FALSE, wizard = FALSE;
 bool notify = TRUE, fight_flush = FALSE, terse = FALSE, door_stop = FALSE;
@@ -110,7 +110,8 @@ struct monster monsters[26] = {
  *	roll up the rogue
  */
 
-init_player()
+void
+init_player(void)
 {
     pstats.s_lvl = 1;
     pstats.s_exp = 0L;
@@ -376,9 +377,11 @@ static bool used[MAX3(NCOLORS, NSTONES, NWOOD)];
  * init_things
  *	Initialize the probabilities for types of things
  */
-init_things()
+
+void
+init_things(void)
 {
-    register struct magic_item *mp;
+    struct magic_item *mp;
 
     for (mp = &things[1]; mp <= &things[NUMTHINGS-1]; mp++)
 	mp->mi_prob += (mp-1)->mi_prob;
@@ -390,9 +393,10 @@ init_things()
  *	Initialize the potion color scheme for this time
  */
 
-init_colors()
+void
+init_colors(void)
 {
-    register int i, j;
+    int i, j;
 
     for (i = 0; i < NCOLORS; i++)
 	used[i] = 0;
@@ -416,11 +420,12 @@ init_colors()
  *	Generate the names of the various scrolls
  */
 
-init_names()
+void
+init_names(void)
 {
-    register int nsyl;
-    register char *cp, *sp;
-    register int i, nwords;
+    int nsyl;
+    char *cp, *sp;
+    int i, nwords;
 
     for (i = 0; i < MAXSCROLLS; i++)
     {
@@ -453,9 +458,10 @@ init_names()
  *	Initialize the ring stone setting scheme for this time
  */
 
-init_stones()
+void
+init_stones(void)
 {
-    register int i, j;
+    int i, j;
 
     for (i = 0; i < NSTONES; i++)
 	used[i] = FALSE;
@@ -479,9 +485,10 @@ init_stones()
  *	Initialize the construction materials for wands and staffs
  */
 
-init_materials()
+void
+init_materials(void)
 {
-    register int i, j;
+    int i, j;
     static bool metused[NMETAL];
 
     for (i = 0; i < NWOOD; i++)
@@ -523,12 +530,13 @@ init_materials()
     badcheck("sticks", ws_magic, MAXSTICKS);
 }
 
-void badcheck(name, magic, bound)
+void
+badcheck(name, magic, bound)
 char *name;
-register struct magic_item *magic;
-register int bound;
+struct magic_item *magic;
+int bound;
 {
-    register struct magic_item *end;
+    struct magic_item *end;
 
     if (magic[bound - 1].mi_prob == 100)
 	return;
@@ -542,50 +550,50 @@ register int bound;
 }
 
 struct h_list helpstr[] = {
-    '?',	"	prints help",
-    '/',	"	identify object",
-    'h',	"	left",
-    'j',	"	down",
-    'k',	"	up",
-    'l',	"	right",
-    'y',	"	up & left",
-    'u',	"	up & right",
-    'b',	"	down & left",
-    'n',	"	down & right",
-    'H',	"	run left",
-    'J',	"	run down",
-    'K',	"	run up",
-    'L',	"	run right",
-    'Y',	"	run up & left",
-    'U',	"	run up & right",
-    'B',	"	run down & left",
-    'N',	"	run down & right",
-    't',	"<dir>	throw something",
-    'f',	"<dir>	forward until find something",
-    'p',	"<dir>	zap a wand in a direction",
-    'z',	"	zap a wand or staff",
-    '>',	"	go down a staircase",
-    's',	"	search for trap/secret door",
-    ' ',	"	(space) rest for a while",
-    'i',	"	inventory",
-    'I',	"	inventory single item",
-    'q',	"	quaff potion",
-    'r',	"	read paper",
-    'e',	"	eat food",
-    'w',	"	wield a weapon",
-    'W',	"	wear armor",
-    'T',	"	take armor off",
-    'P',	"	put on ring",
-    'R',	"	remove ring",
-    'd',	"	drop object",
-    'c',	"	call object",
-    'o',	"	examine/set options",
-    CTRL('L'),	"	redraw screen",
-    CTRL('R'),	"	repeat last message",
-    ESCAPE,	"	cancel command",
-    'v',	"	print program version number",
-    '!',	"	shell escape",
-    'S',	"	save game",
-    'Q',	"	quit",
-    0, 0
+    { '?',	"	prints help" },
+    { '/',	"	identify object" },
+    { 'h',	"	left" },
+    { 'j',	"	down" },
+    { 'k',	"	up" },
+    { 'l',	"	right" },
+    { 'y',	"	up & left" },
+    { 'u',	"	up & right" },
+    { 'b',	"	down & left" },
+    { 'n',	"	down & right" },
+    { 'H',	"	run left" },
+    { 'J',	"	run down" },
+    { 'K',	"	run up" },
+    { 'L',	"	run right" },
+    { 'Y',	"	run up & left" },
+    { 'U',	"	run up & right" },
+    { 'B',	"	run down & left" },
+    { 'N',	"	run down & right" },
+    { 't',	"<dir>	throw something" },
+    { 'f',	"<dir>	forward until find something" },
+    { 'p',	"<dir>	zap a wand in a direction" },
+    { 'z',	"	zap a wand or staff" },
+    { '>',	"	go down a staircase" },
+    { 's',	"	search for trap/secret door" },
+    { ' ',	"	(space) rest for a while" },
+    { 'i',	"	inventory" },
+    { 'I',	"	inventory single item" },
+    { 'q',	"	quaff potion" },
+    { 'r',	"	read paper" },
+    { 'e',	"	eat food" },
+    { 'w',	"	wield a weapon" },
+    { 'W',	"	wear armor" },
+    { 'T',	"	take armor off" },
+    { 'P',	"	put on ring" },
+    { 'R',	"	remove ring" },
+    { 'd',	"	drop object" },
+    { 'c',	"	call object" },
+    { 'o',	"	examine/set options" },
+    { CTRL('L'),"	redraw screen" },
+    { CTRL('R'),"	repeat last message" },
+    { ESCAPE,	"	cancel command" },
+    { 'v',	"	print program version number" },
+    { '!',	"	shell escape" },
+    { 'S',	"	save game" },
+    { 'Q',	"	quit" },
+    { 0, 0 }
 };

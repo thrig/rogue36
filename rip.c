@@ -21,8 +21,6 @@
 #include "machdep.h"
 #include "rogue.h"
 
-void score(int amount, int flags, char monst);
-
 static char *rip[] = {
 "                       __________",
 "                      /          \\",
@@ -47,11 +45,11 @@ char	*killname();
  *	Do something really fun when he dies
  */
 
-death(monst)
-register char monst;
+void
+death(char monst)
 {
-    register char **dp = rip, *killer;
-    register struct tm *lt;
+    char **dp = rip, *killer;
+    struct tm *lt;
     time_t date;
     char buf[ROGUE_CHARBUF_MAX];
 
@@ -81,8 +79,8 @@ register char monst;
  */
 
 /* VARARGS2 */
-void score(amount, flags, monst)
-char monst;
+void
+score(int amount, int flags, char monst)
 {
     static struct sc_ent {
 	int sc_score;
@@ -90,15 +88,15 @@ char monst;
 	int sc_flags;
 	int sc_level;
 	char sc_login[8];
-	char sc_monster;
+	unsigned char sc_monster;
     } top_ten[10];
-    register struct sc_ent *scp;
-    register int i;
-    register struct sc_ent *sc2;
-    register FILE *outf;
-    register char *killer;
-    register int prflags = 0;
-    register int fd;
+    struct sc_ent *scp;
+    int i;
+    struct sc_ent *sc2;
+    FILE *outf;
+    char *killer;
+    int prflags = 0;
+    int fd;
     static char *reason[] = {
 	"killed",
 	"quit",
@@ -145,11 +143,12 @@ char monst;
 	get_str(prbuf, stdscr);
 	endwin();
     }
-    if (wizard)
+    if (wizard) {
 	if (strcmp(prbuf, "names") == 0)
 	    prflags = 1;
 	else if (strcmp(prbuf, "edit") == 0)
 	    prflags = 2;
+    }
 
     encread((char *) scoreline, 100, fd);
     sscanf(scoreline, "R%d %d\n", &rogue_ver, &scorefile_ver);
@@ -160,7 +159,7 @@ char monst;
 	    encread((char *) &top_ten[i].sc_name, 80, fd);
 	    encread((char *) &top_ten[i].sc_login, 8, fd);
 	    encread((char *) scoreline, 100, fd);
-	    sscanf(scoreline, " %d %d %d %d \n",
+	    sscanf(scoreline, " %d %d %d %hhu \n",
 		&top_ten[i].sc_score,  &top_ten[i].sc_flags,
 		&top_ten[i].sc_level,  &top_ten[i].sc_monster);
 	}
@@ -196,7 +195,7 @@ char monst;
     printf("Top Ten Adventurers:\nRank\tScore\tName\n");
     for (scp = top_ten; scp <= &top_ten[9]; scp++) {
 	if (scp->sc_score) {
-	    printf("%d\t%d\t%s: %s on level %d", scp - top_ten + 1,
+	    printf("%ld\t%d\t%s: %s on level %d", (long) (scp - top_ten + 1),
 		scp->sc_score, scp->sc_name, reason[scp->sc_flags],
 		scp->sc_level);
 	    if (scp->sc_flags == 0) {
@@ -251,13 +250,14 @@ char monst;
     fclose(outf);
 }
 
-total_winner()
+void
+total_winner(void)
 {
-    register struct linked_list *item;
-    register struct object *obj;
-    register int worth;
-    register char c;
-    register int oldpurse;
+    struct linked_list *item;
+    struct object *obj;
+    int worth;
+    char c;
+    int oldpurse;
 
     clear();
     standout();
@@ -338,11 +338,12 @@ total_winner()
 		r_know[obj->o_which] = TRUE;
 		worth = r_magic[obj->o_which].mi_worth;
 		if (obj->o_which == R_ADDSTR || obj->o_which == R_ADDDAM ||
-		    obj->o_which == R_PROTECT || obj->o_which == R_ADDHIT)
+		    obj->o_which == R_PROTECT || obj->o_which == R_ADDHIT) {
 			if (obj->o_ac > 0)
 			    worth += obj->o_ac * 20;
 			else
 			    worth = 50;
+		}
 	    when STICK:
 		obj->o_flags |= ISKNOW;
 		ws_know[obj->o_which] = TRUE;
@@ -362,7 +363,7 @@ total_winner()
 
 char *
 killname(monst)
-register char monst;
+char monst;
 {
     if (isupper(monst))
 	return monsters[monst-'A'].m_name;

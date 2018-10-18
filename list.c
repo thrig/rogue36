@@ -20,8 +20,9 @@
  *	Takes an item out of whatever linked list it might be in
  */
 
+void
 _detach(list, item)
-register struct linked_list **list, *item;
+struct linked_list **list, *item;
 {
     if (*list == item)
 	*list = next(item);
@@ -36,8 +37,8 @@ register struct linked_list **list, *item;
  *	add an item to the head of a list
  */
 
-_attach(list, item)
-register struct linked_list **list, *item;
+void
+_attach(struct linked_list **list, struct linked_list *item)
 {
     if (*list != NULL)
     {
@@ -59,10 +60,10 @@ register struct linked_list **list, *item;
  *	Throw the whole blamed thing away
  */
 
-_free_list(ptr)
-register struct linked_list **ptr;
+void
+_free_list(struct linked_list **ptr)
 {
-    register struct linked_list *item;
+    struct linked_list *item;
 
     while (*ptr != NULL)
     {
@@ -77,8 +78,9 @@ register struct linked_list **ptr;
  *	free up an item
  */
 
+void
 discard(item)
-register struct linked_list *item;
+struct linked_list *item;
 {
     total -= 2;
     FREE(item->l_data);
@@ -94,7 +96,7 @@ struct linked_list *
 new_item(size)
 int size;
 {
-    register struct linked_list *item;
+    struct linked_list *item;
 
     if ((item = (struct linked_list *) new(sizeof *item)) == NULL)
 	msg("Ran out of memory for header after %d items", total);
@@ -109,11 +111,11 @@ char *
 new(size)
 int size;
 {
-    register char *space = ALLOC(size);
+    char *space = ALLOC(size);
 
     if (space == NULL)
     {
-	sprintf(prbuf, "Rogue ran out of memory (%d).  Fatal error!", md_memused());
+	sprintf(prbuf, "Rogue ran out of memory.  Fatal error!");
         fatal(prbuf);
     }
     total++;

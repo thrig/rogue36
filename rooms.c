@@ -12,14 +12,20 @@
 
 #include "curses.h"
 #include "rogue.h"
+#include <stdlib.h>
 
-do_rooms()
+void draw_room(struct room *rp);
+void horiz(int cnt);
+void vert(int cnt);
+
+void
+do_rooms(void)
 {
-    register int i;
-    register struct room *rp;
-    register struct linked_list *item;
-    register struct thing *tp;
-    register int left_out;
+    int i;
+    struct room *rp;
+    struct linked_list *item;
+    struct thing *tp;
+    int left_out;
     coord top;
     coord bsze;
     coord mp;
@@ -84,8 +90,10 @@ do_rooms()
 	{
 	    rp->r_goldval = GOLDCALC;
 	    rnd_pos(rp, &rp->r_gold);
-	    if (roomin(&rp->r_gold) != rp)
-		endwin(), abort();
+	    if (roomin(&rp->r_gold) != rp) {
+		endwin();
+                abort();
+	    }
 	}
 	draw_room(rp);
 	/*
@@ -113,10 +121,11 @@ do_rooms()
  * Draw a box around a room
  */
 
+void
 draw_room(rp)
-register struct room *rp;
+struct room *rp;
 {
-    register int j, k;
+    int j, k;
 
     move(rp->r_pos.y, rp->r_pos.x+1);
     vert(rp->r_max.y-2);				/* Draw left side */
@@ -146,8 +155,9 @@ register struct room *rp;
  *	draw a horizontal line
  */
 
+void
 horiz(cnt)
-register int cnt;
+int cnt;
 {
     while (cnt--)
 	addch('-');
@@ -158,10 +168,11 @@ register int cnt;
  *	draw a vertical line
  */
 
+void
 vert(cnt)
-register int cnt;
+int cnt;
 {
-    register int x, y;
+    int x, y;
 
     getyx(stdscr, y, x);
     x--;
@@ -176,9 +187,10 @@ register int cnt;
  *	pick a random spot in a room
  */
 
+void
 rnd_pos(rp, cp)
-register struct room *rp;
-register coord *cp;
+struct room *rp;
+coord *cp;
 {
     cp->x = rp->r_pos.x + rnd(rp->r_max.x-2) + 1;
     cp->y = rp->r_pos.y + rnd(rp->r_max.y-2) + 1;

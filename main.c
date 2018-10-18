@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <unistd.h>
 #include "machdep.h"
 #include "rogue.h"
 
@@ -23,13 +24,19 @@ WINDOW *cw;                              /* Window that the player sees */
 WINDOW *hw;                              /* Used for the help command */
 WINDOW *mw;                              /* Used to store mosnters */
 
+int author(void);
+void chmsg(char *fmt, ...);
+int too_much(void);
+
+int
 main(argc, argv, envp)
+int argc;
 char **argv;
 char **envp;
 {
-    register char *env;
-    register struct linked_list *item;
-    register struct object *obj;
+    char *env;
+    struct linked_list *item;
+    struct object *obj;
     int lowtime;
     time_t now;
 
@@ -210,6 +217,7 @@ endit(int p)
  *	Exit the program, printing a message.
  */
 
+void
 fatal(s)
 char *s;
 {
@@ -226,8 +234,9 @@ char *s;
  *	Pick a very random number.
  */
 
+int
 rnd(range)
-register int range;
+int range;
 {
     return range == 0 ? 0 : abs(RN) % range;
 }
@@ -237,10 +246,11 @@ register int range;
  *	roll a number of dice
  */
 
+int
 roll(number, sides)
-register int number, sides;
+int number, sides;
 {
-    register int dtotal = 0;
+    int dtotal = 0;
 
     while(number--)
 	dtotal += rnd(sides)+1;
@@ -272,7 +282,8 @@ tstp(int p)
     flush_type();	/* flush input */
 }
 
-setup()
+void
+setup(void)
 {
 #ifdef SIGHUP
     signal(SIGHUP, auto_save);
@@ -326,9 +337,10 @@ setup()
  * refreshing things and looking at the proper times.
  */
 
-playit()
+void
+playit(void)
 {
-    register char *opts;
+    char *opts;
 
     /*
      * set up defaults for slow terminals
@@ -358,7 +370,8 @@ playit()
 /*
  * see if the system is being used too much for this game
  */
-too_much()
+int
+too_much(void)
 {
     double avec[3];
 
@@ -371,7 +384,8 @@ too_much()
 /*
  * see if a user is an author of the program
  */
-author()
+int
+author(void)
 {
     switch (md_getuid())
     {
@@ -381,8 +395,6 @@ author()
 	    return FALSE;
     }
 }
-
-int chmsg(char *fmt, ...);
 
 void
 checkout(int p)
@@ -423,6 +435,7 @@ checkout(int p)
  * checkout()'s version of msg.  If we are in the middle of a shell, do a
  * printf instead of a msg to avoid the refresh.
  */
+void
 chmsg(char *fmt, ...)
 {
     va_list args;

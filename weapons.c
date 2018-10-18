@@ -17,8 +17,6 @@
 
 #define NONE 100
 
-void fall(register struct linked_list *item, bool pr);
-
 char *w_names[MAXWEAPONS] = {
     "mace",
     "long sword",
@@ -40,18 +38,18 @@ static struct init_weps {
     char iw_launch;
     int iw_flags;
 } init_dam[MAXWEAPONS] = {
-    "2d4", "1d3", NONE, 0,		/* Mace */
-    "1d10", "1d2", NONE,0,		/* Long sword */
-    "1d1", "1d1", NONE,	0,		/* Bow */
-    "1d1", "1d6", BOW,	ISMANY|ISMISL,	/* Arrow */
-    "1d6", "1d4", NONE,	ISMISL,		/* Dagger */
-    "1d2", "1d4", SLING,ISMANY|ISMISL,	/* Rock */
-    "3d6", "1d2", NONE,	0,		/* 2h sword */
-    "0d0", "0d0", NONE, 0,		/* Sling */
-    "1d1", "1d3", NONE,	ISMANY|ISMISL,	/* Dart */
-    "1d1", "1d1", NONE, 0,		/* Crossbow */
-    "1d2", "1d10", CROSSBOW, ISMANY|ISMISL,/* Crossbow bolt */
-    "1d8", "1d6", NONE, ISMISL,		/* Spear */
+    { "2d4", "1d3", NONE, 0 },          		/* Mace */
+    { "1d10", "1d2", NONE,0 },	                	/* Long sword */
+    { "1d1", "1d1", NONE,	0 },    		/* Bow */
+    { "1d1", "1d6", BOW,	ISMANY|ISMISL },	/* Arrow */
+    { "1d6", "1d4", NONE,	ISMISL },		/* Dagger */
+    { "1d2", "1d4", SLING,ISMANY|ISMISL },      	/* Rock */
+    { "3d6", "1d2", NONE,	0 },    		/* 2h sword */
+    { "0d0", "0d0", NONE, 0 },          		/* Sling */
+    { "1d1", "1d3", NONE,	ISMANY|ISMISL },	/* Dart */
+    { "1d1", "1d1", NONE, 0 },          		/* Crossbow */
+    { "1d2", "1d10", CROSSBOW, ISMANY|ISMISL },         /* Crossbow bolt */
+    { "1d8", "1d6", NONE, ISMISL }	              	/* Spear */
 };
 
 /*
@@ -59,11 +57,12 @@ static struct init_weps {
  *	Fire a missile in a given direction
  */
 
-void missile(ydelta, xdelta)
+void
+missile(ydelta, xdelta)
 int ydelta, xdelta;
 {
-    register struct object *obj;
-    register struct linked_list *item, *nitem;
+    struct object *obj;
+    struct linked_list *item, *nitem;
 
     /*
      * Get which thing we are hurling
@@ -109,9 +108,10 @@ int ydelta, xdelta;
  * do the actual motion on the screen done by an object traveling
  * across the room
  */
+void
 do_motion(obj, ydelta, xdelta)
-register struct object *obj;
-register int ydelta, xdelta;
+struct object *obj;
+int ydelta, xdelta;
 {
     /*
      * Come fly with us ...
@@ -119,7 +119,7 @@ register int ydelta, xdelta;
     obj->o_pos = hero;
     for (;;)
     {
-	register int ch;
+	int ch;
 
 	/*
 	 * Erase the old one
@@ -156,12 +156,11 @@ register int ydelta, xdelta;
  *	Drop an item someplace around here.
  */
 
-void fall(item, pr)
-register struct linked_list *item;
-bool pr;
+void
+fall(struct linked_list *item, bool pr)
 {
-    register struct object *obj;
-    register struct room *rp;
+    struct object *obj;
+    struct room *rp;
     static coord fpos;
 
     obj = (struct object *) ldata(item);
@@ -177,11 +176,12 @@ bool pr;
 	attach(lvl_obj, item);
 	return;
     }
-    if (pr)
+    if (pr) {
         if (obj->o_type == WEAPON) /* BUGFUX: Identification trick */
             msg("Your %s vanishes as it hits the ground.", w_names[obj->o_which]);
         else
             msg("%s vanishes as it hits the ground.", inv_name(obj,TRUE));
+    }
     discard(item);
 }
 
@@ -190,13 +190,12 @@ bool pr;
  *	Set up the initial goodies for a weapon
  */
 
-init_weapon(weap, type)
-register struct object *weap;
-char type;
+void
+init_weapon(struct object *weap, char type)
 {
-    register struct init_weps *iwp;
+    struct init_weps *iwp;
 
-    iwp = &init_dam[type];
+    iwp = &init_dam[(int) type];
     strcpy(weap->o_damage,iwp->iw_dam);
     strcpy(weap->o_hurldmg,iwp->iw_hrl);
     weap->o_launch = iwp->iw_launch;
@@ -214,8 +213,9 @@ char type;
  * Does the missile hit the monster
  */
 
+int
 hit_monster(y, x, obj)
-register int y, x;
+int y, x;
 struct object *obj;
 {
     static coord mp;
@@ -232,7 +232,7 @@ struct object *obj;
 
 char *
 num(n1, n2)
-register int n1, n2;
+int n1, n2;
 {
     static char numbuf[ROGUE_CHARBUF_MAX];
 
@@ -251,10 +251,11 @@ register int n1, n2;
  *	Pull out a certain weapon
  */
 
-void wield()
+void
+wield(void)
 {
-    register struct linked_list *item;
-    register struct object *obj, *oweapon;
+    struct linked_list *item;
+    struct object *obj, *oweapon;
 
     oweapon = cur_weapon;
     if (!dropcheck(cur_weapon))
@@ -290,11 +291,10 @@ bad:
 /*
  * pick a random position around the give (y, x) coordinates
  */
-fallpos(pos, newpos, passages)
-register coord *pos, *newpos;
-register bool passages;
+int
+fallpos(coord *pos, coord *newpos, bool passages)
 {
-    register int y, x, cnt, ch;
+    int y, x, cnt, ch;
 
     cnt = 0;
     for (y = pos->y - 1; y <= pos->y + 1; y++)

@@ -17,21 +17,24 @@
 #include <string.h>
 #include "rogue.h"
 
-void call();
-void help();
-void identify();
+void call(void);
+void d_level(void);
+void help(void);
+void identify(void);
 void search(void);
-void u_level();
+void shell(void);
+void u_level(void);
 
 /*
  * command:
  *	Process the user commands
  */
 
-command()
+void
+command(void)
 {
-    register char ch;
-    register int ntimes = 1;			/* Number of player moves */
+    char ch;
+    int ntimes = 1;			/* Number of player moves */
     static char countch, direction, newcount = FALSE;
 
 
@@ -205,7 +208,7 @@ command()
 		    }
 		    else
 		    {
-			if (wizard = passwd())
+			if (passwd())
 			{
 			    msg("You are suddenly as smart as Ken Arnold in dungeon #%d", dnum);
  			    wizard = TRUE;
@@ -236,16 +239,16 @@ command()
 			when CTRL('C') : add_pass();
 			when CTRL('N') :
 			{
-			    register struct linked_list *item;
+			    struct linked_list *item;
 
 			    if ((item = get_item("charge", STICK)) != NULL)
 				((struct object *) ldata(item))->o_charges = 10000;
 			}
 			when CTRL('H') :
 			{
-			    register int i;
-			    register struct linked_list *item;
-			    register struct object *obj;
+			    int i;
+			    struct linked_list *item;
+			    struct object *obj;
 
 			    for (i = 0; i < 9; i++)
 				raise_level();
@@ -357,10 +360,11 @@ quit(int p)
  *	Player gropes about him to find hidden things.
  */
 
-void search()
+void
+search(void)
 {
-    register int x, y;
-    register char ch;
+    int x, y;
+    char ch;
 
     /*
      * Look all around the hero, if there is something hidden there,
@@ -382,7 +386,7 @@ void search()
 		    break;
 		case TRAP:
 		{
-		    register struct trap *tp;
+		    struct trap *tp;
 
 		    if (mvwinch(cw, y, x) == TRAP)
 			break;
@@ -404,11 +408,12 @@ void search()
  *	Give single character help, or the whole mess if he wants it
  */
 
-void help()
+void
+help(void)
 {
-    register struct h_list *strp = helpstr;
-    register char helpch;
-    register int cnt;
+    struct h_list *strp = helpstr;
+    char helpch;
+    int cnt;
 
     msg("Character you want help for (* for all): ");
     helpch = readchar(cw);
@@ -463,9 +468,10 @@ void help()
  *	Tell the player what a certain thing is.
  */
 
-void identify()
+void
+identify(void)
 {
-    register char ch, *str;
+    char ch, *str;
 
     msg("What do you want identified? ");
     ch = readchar(cw);
@@ -508,7 +514,8 @@ void identify()
  *	He wants to go down a level
  */
 
-d_level()
+void
+d_level(void)
 {
     if (winat(hero.y, hero.x) != STAIRS)
 	msg("I see no way down.");
@@ -524,7 +531,8 @@ d_level()
  *	He wants to go up a level
  */
 
-void u_level()
+void
+u_level(void)
 {
     if (winat(hero.y, hero.x) == STAIRS)
     {
@@ -545,7 +553,8 @@ void u_level()
  * Let him escape for a while
  */
 
-shell()
+void
+shell(void)
 {
     /*
      * Set the terminal back to original mode
@@ -573,12 +582,13 @@ shell()
 /*
  * allow a user to call a potion, scroll, or ring something
  */
-void call()
+void
+call(void)
 {
-    register struct object *obj;
-    register struct linked_list *item;
-    register char **guess, *elsewise;
-    register bool *know;
+    struct object *obj;
+    struct linked_list *item;
+    char **guess, *elsewise;
+    bool *know;
 
     item = get_item("call", CALLABLE);
     /*

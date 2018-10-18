@@ -73,6 +73,9 @@ static int format_error = FALSE;
 static int endian = 0x01020304;
 #define  big_endian ( *((char *)&endian) == 0x01 )
 
+int rs_read_int(int inf, int *i);
+int rs_write_int(FILE *savef, int c);
+
 int
 rs_write(FILE *savef, void *ptr, size_t size)
 {
@@ -1831,6 +1834,7 @@ rs_fix_thing(struct thing *t)
         tp = THINGPTR(item);
         t->t_dest = &tp->t_pos;
     }
+    return 0;
 }
 
 int
@@ -1903,6 +1907,7 @@ rs_fix_thing_list(struct linked_list *list)
 
     for(item = list; item != NULL; item = item->l_next)
         rs_fix_thing(THINGPTR(item));
+    return 0;
 }
 
 int
@@ -1913,12 +1918,14 @@ rs_fix_magic_items(struct magic_item *mi, int count)
     for (i = 0; i < count; i++)
 	if (i > 0)
 	    mi[i].mi_prob += mi[i-1].mi_prob;
+    return 0;
 }
 
 int
 rs_fix_monsters(struct monster monsters[26])
 {
     sprintf(monsters['F'-'A'].m_stats.s_dmg,"%dd1",fung_hit);
+    return 0;
 }
 
 int

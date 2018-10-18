@@ -25,7 +25,8 @@ static char msgbuf[BUFSIZ];
 static int newpos = 0;
 
 /*VARARGS1*/
-void msg(char *fmt, ...)
+void
+msg(char *fmt, ...)
 {
     va_list ap;
     /*
@@ -50,6 +51,7 @@ void msg(char *fmt, ...)
 /*
  * add things to the current message
  */
+void
 addmsg(char *fmt, ...)
 {
     va_list ap;
@@ -63,7 +65,8 @@ addmsg(char *fmt, ...)
  * Display a new msg (giving him a chance to see the previous one if it
  * is up there with the --More--)
  */
-endmsg()
+void
+endmsg(void)
 {
     strncpy(huh, msgbuf, 80);
     huh[79] = 0;
@@ -82,6 +85,7 @@ endmsg()
     draw(cw);
 }
 
+void
 doadd(char *fmt, va_list ap)
 {
     vsprintf(&msgbuf[newpos], fmt, ap);
@@ -93,7 +97,8 @@ doadd(char *fmt, va_list ap)
  *	returns true if it is ok to step on ch
  */
 
-step_ok(ch)
+int
+step_ok(char ch)
 {
     switch (ch)
     {
@@ -113,6 +118,7 @@ step_ok(ch)
  *	getchar.
  */
 
+int
 readchar(win)
 WINDOW *win;
 {
@@ -134,10 +140,11 @@ WINDOW *win;
  *	Display the important stats line.  Keep the cursor where it was.
  */
 
-void status()
+void
+status(void)
 {
-    register int oy, ox, temp;
-    register char *pb;
+    int oy, ox, temp;
+    char *pb;
     static char buf[ROGUE_CHARBUF_MAX];
     static int hpwidth = 0, s_hungry = -1;
     static int s_lvl = -1, s_pur, s_hp = -1, s_str, s_add, s_ac = 0;
@@ -203,11 +210,10 @@ void status()
  *	Sit around until the guy types the right key
  */
 
-void wait_for(win, ch)
-WINDOW *win;
-register char ch;
+void
+wait_for(WINDOW *win, char ch)
 {
-    register char c;
+    char c;
 
     if (ch == '\n')
         while ((c = readchar(win)) != '\n' && c != '\r')
@@ -222,8 +228,9 @@ register char ch;
  *	function used to display a window and wait before returning
  */
 
+void
 show_win(scr, message)
-register WINDOW *scr;
+WINDOW *scr;
 char *message;
 {
     mvwaddstr(scr, 0, 0, message);
@@ -235,7 +242,8 @@ char *message;
     touchwin(cw);
 }
 
-flush_type()
+void
+flush_type(void)
 {
 	flushinp();
 }

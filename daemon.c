@@ -32,8 +32,8 @@ struct delayed_action d_list[MAXDAEMONS] = {
 struct delayed_action *
 d_slot()
 {
-    register int i;
-    register struct delayed_action *dev;
+    int i;
+    struct delayed_action *dev;
 
     for (i = 0, dev = d_list; i < MAXDAEMONS; i++, dev++)
 	if (dev->d_type == EMPTY)
@@ -49,10 +49,10 @@ d_slot()
 
 struct delayed_action *
 find_slot(func)
-register int (*func)();
+int (*func)();
 {
-    register int i;
-    register struct delayed_action *dev;
+    int i;
+    struct delayed_action *dev;
 
     for (i = 0, dev = d_list; i < MAXDAEMONS; i++, dev++)
 	if (dev->d_type != EMPTY && func == dev->d_func)
@@ -65,10 +65,11 @@ register int (*func)();
  *	Start a daemon, takes a function.
  */
 
+void
 start_daemon(func, arg, type)
 int (*func)(), arg, type;
 {
-    register struct delayed_action *dev;
+    struct delayed_action *dev;
 
     dev = d_slot();
  
@@ -86,10 +87,11 @@ int (*func)(), arg, type;
  *	Remove a daemon from the list
  */
 
-void kill_daemon(func)
+void
+kill_daemon(func)
 int (*func)();
 {
-    register struct delayed_action *dev;
+    struct delayed_action *dev;
 
     if ((dev = find_slot(func)) == NULL)
 	return;
@@ -105,10 +107,11 @@ int (*func)();
  *	passing the argument to the function.
  */
 
+void
 do_daemons(flag)
-register int flag;
+int flag;
 {
-    register struct delayed_action *dev;
+    struct delayed_action *dev;
 
     /*
      * Loop through the devil list
@@ -126,10 +129,11 @@ register int flag;
  *	Start a fuse to go off in a certain number of turns
  */
 
+void
 fuse(func, arg, time, type)
 int (*func)(), arg, time, type;
 {
-    register struct delayed_action *wire;
+    struct delayed_action *wire;
 
     wire = d_slot();
 
@@ -147,11 +151,12 @@ int (*func)(), arg, time, type;
  *	Increase the time until a fuse goes off
  */
 
-void lengthen(func, xtime)
+void
+lengthen(func, xtime)
 int (*func)();
 int xtime;
 {
-    register struct delayed_action *wire;
+    struct delayed_action *wire;
 
     if ((wire = find_slot(func)) == NULL)
 	return;
@@ -163,10 +168,11 @@ int xtime;
  *	Put out a fuse
  */
 
-void extinguish(func)
+void
+extinguish(func)
 int (*func)();
 {
-    register struct delayed_action *wire;
+    struct delayed_action *wire;
 
     if ((wire = find_slot(func)) == NULL)
 	return;
@@ -178,10 +184,11 @@ int (*func)();
  *	Decrement counters and start needed fuses
  */
 
+void
 do_fuses(flag)
-register int flag;
+int flag;
 {
-    register struct delayed_action *wire;
+    struct delayed_action *wire;
 
     /*
      * Step though the list

@@ -16,8 +16,10 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "rogue.h"
 #include "machdep.h"
 
@@ -27,10 +29,13 @@ extern char version[], encstr[];
 
 STAT sbuf;
 
-save_game()
+int save_file(FILE *savef);
+
+int
+save_game(void)
 {
-    register FILE *savef;
-    register int c;
+    FILE *savef;
+    int c;
     char buf[ROGUE_CHARBUF_MAX];
 
     /*
@@ -87,8 +92,8 @@ gotfile:
 void
 auto_save(int p)
 {
-    register FILE *savef;
-    register int i;
+    FILE *savef;
+    int i;
 
     for (i = 0; i < NSIG; i++)
 	signal(i, SIG_IGN);
@@ -101,8 +106,9 @@ auto_save(int p)
 /*
  * write the saved game on the file
  */
+int
 save_file(savef)
-register FILE *savef;
+FILE *savef;
 {
     char buf[ROGUE_CHARBUF_MAX];
     int ret;
@@ -128,11 +134,12 @@ register FILE *savef;
     return(ret);
 }
 
+int
 restore(file, envp)
-register char *file;
+char *file;
 char **envp;
 {
-    register int inf;
+    int inf;
     extern char **environ;
     char buf[ROGUE_CHARBUF_MAX];
     int slines, scols;
@@ -233,13 +240,14 @@ char **envp;
 /*
  * perform an encrypted write
  */
+unsigned int
 encwrite(starta, size, outf)
-register void *starta;
+void *starta;
 unsigned int size;
-register FILE *outf;
+FILE *outf;
 {
-    register char *ep;
-    register char *start = starta;
+    char *ep;
+    char *start = starta;
     unsigned int o_size = size;
     ep = encstr;
 
@@ -258,14 +266,15 @@ register FILE *outf;
 /*
  * perform an encrypted read
  */
+int
 encread(starta, size, inf)
-register void *starta;
+void *starta;
 unsigned int size;
-register int inf;
+int inf;
 {
-    register char *ep;
-    register int read_size;
-    register char *start = starta;
+    char *ep;
+    int read_size;
+    char *start = starta;
 
     if ((read_size = read(inf, start, size)) == -1 || read_size == 0)
 	return read_size;

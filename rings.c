@@ -15,11 +15,14 @@
 #include <string.h>
 #include "rogue.h"
 
-void ring_on()
+int gethand(void);
+
+void
+ring_on(void)
 {
-    register struct object *obj;
-    register struct linked_list *item;
-    register int ring;
+    struct object *obj;
+    struct linked_list *item;
+    int ring;
     str_t save_max;
     char buf[ROGUE_CHARBUF_MAX];
 
@@ -103,10 +106,11 @@ void ring_on()
     }
 }
 
-void ring_off()
+void
+ring_off(void)
 {
-    register int ring;
-    register struct object *obj;
+    int ring;
+    struct object *obj;
 
     if (cur_ring[LEFT] == NULL && cur_ring[RIGHT] == NULL)
     {
@@ -134,9 +138,10 @@ void ring_off()
 	msg("Was wearing %s", inv_name(obj, TRUE));
 }
 
-gethand()
+int
+gethand(void)
 {
-    register int c;
+    int c;
 
     for (;;)
     {
@@ -161,8 +166,9 @@ gethand()
 /*
  * how much food does this ring use up?
  */
+int
 ring_eat(hand)
-register int hand;
+int hand;
 {
     if (cur_ring[hand] == NULL)
 	return 0;
@@ -186,7 +192,7 @@ register int hand;
  */
 char *
 ring_num(obj)
-register struct object *obj;
+struct object *obj;
 {
     static char buf[5];
 

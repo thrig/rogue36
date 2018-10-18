@@ -18,9 +18,10 @@
  *	A healing daemon that restors hit points after rest
  */
 
-doctor()
+int
+doctor(void)
 {
-    register int lv, ohp;
+    int lv, ohp;
 
     lv = pstats.s_lvl;
     ohp = pstats.s_hpt;
@@ -43,6 +44,7 @@ doctor()
 	    pstats.s_hpt = max_hp;
 	quiet = 0;
     }
+    return 0;
 }
 
 /*
@@ -50,9 +52,11 @@ doctor()
  *	Called when it is time to start rolling for wandering monsters
  */
 
-swander()
+int
+swander(void)
 {
     start_daemon(rollwand, 0, BEFORE);
+    return 0;
 }
 
 /*
@@ -62,7 +66,8 @@ swander()
 
 int between = 0;
 
-rollwand()
+int
+rollwand(void)
 {
     if (++between >= 4)
     {
@@ -74,6 +79,7 @@ rollwand()
 	}
 	between = 0;
     }
+    return 0;
 }
 
 /*
@@ -81,10 +87,12 @@ rollwand()
  *	Release the poor player from his confusion
  */
 
-unconfuse()
+int
+unconfuse(void)
 {
     player.t_flags &= ~ISHUH;
     msg("You feel less confused now");
+    return 0;
 }
 
 
@@ -93,9 +101,11 @@ unconfuse()
  *	He lost his see invisible power
  */
 
-unsee()
+int
+unsee(void)
 {
     player.t_flags &= ~CANSEE;
+    return 0;
 }
 
 /*
@@ -103,7 +113,8 @@ unsee()
  *	He gets his sight back
  */
 
-sight()
+int
+sight(void)
 {
     if (on(player, ISBLIND))
     {
@@ -112,6 +123,7 @@ sight()
 	light(&hero);
 	msg("The veil of darkness lifts");
     }
+    return 0;
 }
 
 /*
@@ -119,18 +131,21 @@ sight()
  *	End the hasting
  */
 
-nohaste()
+int
+nohaste(void)
 {
     player.t_flags &= ~ISHASTE;
     msg("You feel yourself slowing down.");
+    return 0;
 }
 
 /*
  * digest the hero's food
  */
-int stomach()
+int
+stomach()
 {
-    register int oldfood;
+    int oldfood;
 
     if (food_left <= 0)
     {
@@ -166,4 +181,5 @@ int stomach()
 	    hungry_state = 1;
 	}
     }
+    return 0;
 }
