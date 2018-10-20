@@ -1,4 +1,4 @@
-.Dd October 19 2018
+.Dd October 20 2018
 .Dt ROGUE 6
 .nh
 .Os
@@ -40,14 +40,17 @@ Level: 1  Gold: 0      Hp: 12(12)  Str: 16  Ac: 6  Exp: 1/0
 .Pp
 At the bottom of the screen are a few pieces of cryptic information that
 describe your current status.
-.Qq HP
+.Qq \&Hp
 or hit points are pretty important. A lower armor class is better
 (this was traditional in Dungeons \&& Dragons) and can be improved by
-wearing heavier armors or via enchantments.
+wearing heavier armors or via enchantments. As you kill things
+your
+.Qq \&Exp
+or experience points will go up.
 .Pp
 You are represented by the
 .Qq @
-symbol, and are presently within a lit room with a bat or
+symbol, presently within a lit room with a bat or
 .Qq B
 nearby (see
 .Sx Monsters )
@@ -64,16 +67,38 @@ move your character around the screen, among other such
 .Qq +
 are doors that lead to corridors that connect rooms;
 .Qq \&.
-is used for the floor of rooms and
+is used for the lit floor of rooms and
 .Qq #
 for the floor in corridors. Stairs, unlike in various modern roguelikes,
 are represented by
-.Qq % ,
-are called passages, and are one-way.
+.Qq %
+and are one-way.
 .Pp
 Messages will be printed at the top of the screen, sometimes with a
 .Qq --More--
 prompt that will need to be cleared by pressing the space bar.
+Messages can be made less verbose with the
+.Cm terse
+option, see
+.Sx Options .
+.Bd -literal -offset indent
+        ##                                              ---
+  -------+------            -------------            ###+   
+  |............|            |...........|            #  |  
+  |............|            |...........|            #  |%  
+  |............|            |...........|            #  |   
+  |............|            |...........+#############  |  
+  ------+-------            -------+-----               -+-
+        #                          #                     #
+        ####                       ###                   ##
+    -------+-----------           ---+---                -@-
+    |                  |          |)....|                ...
+    |                  +####      |.....|
+    |                  |   #######+.]...|
+    |                  |          -------
+     -------------------
+Level: 9  Gold: 1127   Hp: 47(47)  Str: 14  Ac: 6   Exp: 6/226
+.Ed
 .Ss Commands
 Some commands take time (such as removing armor) while others do not.
 Two commands can be used to learn about other commands and features of
@@ -85,9 +110,9 @@ Displays a list of available commands.
 Identifies the things you see on the screen.
 .El
 .Pp
-Motion commands move you about the dungeon. With the shift key they will
-run in the given direction. They can also be used as modifiers for other
-commands, such as
+Direction commands move you about the dungeon. With the shift key they
+will run in the given direction. They can also be used as modifiers for
+other commands, such as
 .Cm t
 for throw.
 .Bl -tag -width Ds
@@ -114,13 +139,18 @@ The remainder of the commands carry out various actions.
 .It Cm t Ar dir
 Throw something in the given motion direction.
 .It Cm f Ar dir
-Move until something is found in the given direction.
+Move until something is found in the given direction. This is more
+conservative than running with shift +
+.Ar dir .
 .It Cm p Ar dir
 Zap a wand in a direction.
 .It Cm z
 Zap a wand.
 .It Cm >
 Go down a staircase.
+.It Cm s
+Search for traps or secret doors. It may take multiple attempts to
+find these.
 .It Cm \&.
 Rest for a while (also via the more traditional space key).
 .It Cm i
@@ -195,7 +225,7 @@ Dragon.
 .It E
 Floating eye.
 .It F
-Violet Fungi.
+Violet fungi.
 .It G
 Gnome.
 .It H
@@ -273,8 +303,10 @@ battle. This is useful for those who type way ahead and watch to their
 dismay as a Kobold kills them.
 .It Cm fruit Ns = Ns Ar fruit-name
 This should hold the name of a fruit that you enjoy eating, such as a
-snozzcumber. It is basically a whimsy that the program uses in a couple
-of places.
+snozzcumber. Snozzcumbers are a critical part of the dungeon
+ecology and are not some
+.Qq whimsy
+as claimed by previous authors.
 .It Cm jump , Cm nojump
 If this option is set, running moves will not be displayed until you
 reach the end of the move. This saves considerable CPU time and display
@@ -297,6 +329,10 @@ on if your are on a slow (under 1200 baud) terminal.
 .El
 .Sh ENVIRONMENT
 .Bl -tag -width Ds
+.It Ev ROGUEHOME
+Directory that will be used for the score file,
+.Ev HOME
+by default otherwise if various other directories do not work out.
 .It Ev ROGUEOPTS
 A comma separated list of values for the various
 .Sx Options .
@@ -316,12 +352,12 @@ Default save file.
 .Cm Brogue ,
 .Cm crawl ,
 .Xr ncurses 3 ,
-.Xr vi 3
+.Xr vi 1
 .Sh HISTORY
 This version began from a
 .Pa rogue3.6.3-src.tar.gz
-file found somewhere on the Internet and has been updated to compile
-under modern compilers, plus a few other changes, hopefully without
+file found somewhere on the Internet and has been updated to compile on
+modern unix systems, plus a few other changes, hopefully without
 introducing too many new bugs.
 .Sh AUTHORS
 .An Ken Arnold ,

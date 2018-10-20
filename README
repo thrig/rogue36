@@ -10,7 +10,7 @@ been removed from the Makefile                                   +............|
     make                                                         --+-----------
     ./rogue
 
-the documentation has been consoidated into rogue.6; copy this file into
+the documentation has been consolidated into rogue.6; copy this file into
 a suitable MANPATH directory then run
 
     man 6 rogue

@@ -20,13 +20,16 @@
 #include "rogue.h"
 
 int num_checks;			/* times we've gone over in checkout() */
-WINDOW *cw;                              /* Window that the player sees */
-WINDOW *hw;                              /* Used for the help command */
-WINDOW *mw;                              /* Used to store mosnters */
+WINDOW *cw;                     /* Window that the player sees */
+WINDOW *hw;                     /* Used for the help command */
+WINDOW *mw;                     /* Used to store mosnters */
 
 int author(void);
+void checkout(int);
 void chmsg(char *fmt, ...);
+void endit(int p);
 int too_much(void);
+void tstp(int);
 
 int
 main(int argc, char **argv, char **envp)
@@ -120,7 +123,6 @@ main(int argc, char **argv, char **envp)
 	printf("Your terminal has %d lines, needs 22.\n",LINES);
 	exit(1);
     }
-    
 
     setup();
     /*
@@ -196,6 +198,8 @@ main(int argc, char **argv, char **envp)
     obj->o_count = 1;
     obj->o_which = 0;
     add_pack(item, TRUE);
+    /* modern systems are far too fast at the above steps */
+    sleep(1);
     playit();
 }
 
@@ -223,7 +227,7 @@ fatal(char *s)
     printw("%s", s);
     draw(stdscr);
     endwin();
-    exit(0);
+    exit(1);
 }
 
 /*
@@ -406,7 +410,7 @@ checkout(int p)
     if (too_much())
     {
 	if (num_checks == 3)
-	    fatal("Sorry.  You took to long.  You are dead\n");
+	    fatal("Sorry.  You took too long.  You are dead\n");
 	checktime = CHECKTIME / (num_checks + 1);
 	chmsg(msgs[num_checks++], checktime);
 #ifdef SIGALRM

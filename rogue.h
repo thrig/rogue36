@@ -11,7 +11,7 @@
  */
 
 /*
- * used in various buffers
+ * Used in various buffers
  */
 #define ROGUE_CHARBUF_MAX 80
 
@@ -26,7 +26,7 @@
 #define	NUMTHINGS 7	/* number of types of things (scrolls, rings, etc.) */
 
 /*
- * return values for get functions
+ * Return values for get functions
  */
 #define	NORM	0	/* normal exit */
 #define	QUIT	1	/* quit option setting */
@@ -90,6 +90,8 @@ void _attach(struct linked_list **list, struct linked_list *item);
 void _detach(struct linked_list **list, struct linked_list *item);
 void _free_list(struct linked_list **ptr);
 void discard(struct linked_list *item);
+char *new(int size);
+struct linked_list *new_item(int size);
 
 /*
  * All the fun defines
@@ -510,20 +512,6 @@ extern int num_checks;
 extern char lvl_mons[27],wand_mons[27];
 extern coord nh;
 
-struct linked_list *find_mons(), *find_obj(), *get_item(), *new_item();
-struct linked_list *new_thing(), *wake_monster();
-
-char *new();
-char *charge_str(),*vowelstr();
-char *ctime(), *num(), *ring_num();
-
-struct room *roomin();
-
-coord *rndmove();
-
-// TODO group these by file
-void auto_save(int p), endit(int p), quit(int p), tstp(), checkout();
-
 /* armor.c */
 void take_off(void);
 void waste_time(void);
@@ -532,11 +520,14 @@ void wear(void);
 /* chase.c */
 int cansee(int y, int x);
 int diag_ok(coord *sp, coord *ep);
+struct linked_list *find_mons(int y, int x);
+struct room *roomin();
 int runners(void);
 void runto(coord *runner, coord *spot);
 
 /* command.c */
 void command(void);
+void quit(int p);
 
 /* daemon.c */
 void do_daemons(int flag);
@@ -610,23 +601,27 @@ int md_unlink_open_file(char *file, int inf);
 
 /* misc.c */
 void add_haste(bool potion);
-void aggravate();
+void aggravate(void);
 void chg_str(int amt);
 void eat(void);
+struct linked_list *find_obj(int y, int x);
 int get_dir(void);
 int is_current(struct object *obj);
 void look(bool wakeup);
 char * tr_name(char ch);
+char *vowelstr(char *str);
 
 /* monsters.c */
 void genocide(void);
 void new_monster(struct linked_list *item, char type, coord *cp);
 int randmonster(bool wander);
+struct linked_list *wake_monster(int y, int x);
 
 /* move.c */
 void do_move(int dy, int dx);
 void do_run(char ch);
 void light(coord *cp);
+coord *rndmove(struct thing *tp);
 char show(int y, int x);
 
 /* monsters.c */
@@ -644,6 +639,7 @@ void strucpy(char *s1, char *s2, int len);
 
 /* pack.c */
 void add_pack(struct linked_list *item, bool silent);
+struct linked_list *get_item(char *purpose, int type);
 int inventory(struct linked_list *list, int type);
 char pack_char(struct object *obj);
 void picky_inven(void);
@@ -658,6 +654,7 @@ void quaff(void);
 
 /* rings.c */
 int ring_eat(int hand);
+char *ring_num(struct object *obj);
 void ring_off(void);
 void ring_on(void);
 
@@ -674,6 +671,7 @@ void rnd_pos(struct room *rp, coord *cp);
 void read_scroll(void);
 
 /* save.c */
+void auto_save(int p);
 int encread(void *starta, unsigned int size, int inf);
 unsigned int encwrite(void *starta, unsigned int size, FILE *outf);
 int restore(char *file, char **envp);
@@ -684,6 +682,7 @@ int rs_save_file(FILE *savef);
 int rs_restore_file(int inf);
 
 /* sticks.c */
+char *charge_str(struct object *obj);
 void do_zap(bool gotdir);
 void fix_stick(struct object *cur);
 
@@ -692,6 +691,7 @@ void drop(void);
 int dropcheck(struct object *op);
 char *inv_name(struct object *obj, bool drop);
 void money(void);
+struct linked_list *new_thing(void);
 
 /* weapons.c */
 void do_motion(struct object *obj, int ydelta, int xdelta);
@@ -699,6 +699,7 @@ void fall(struct linked_list *item, bool pr);
 int fallpos(coord *pos, coord *newpos, bool passages);
 int hit_monster(int y, int x, struct object *obj);
 void init_weapon(struct object *weap, char type);
+char *num(int n1, int n2);
 void missile(int ydelta, int xdelta);
 void wield(void);
 

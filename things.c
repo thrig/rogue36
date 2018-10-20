@@ -351,9 +351,7 @@ new_thing(void)
 	    fix_stick(cur);
 	otherwise:
 	    debug("Picked a bad kind of object");
-            /* KLUGE dunno how to fix this yet
-	    wait_for(' ');
-            */
+	    wait_for(cw, ' ');
     }
     return item;
 }
