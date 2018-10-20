@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -104,8 +104,7 @@ fight(coord *mp, char mn, struct object *weap, bool thrown)
  */
 
 int
-attack(mp)
-struct thing *mp;
+attack(struct thing *mp)
 {
     char *mname;
 
@@ -314,8 +313,7 @@ struct thing *mp;
  */
 
 int
-swing(at_lvl, op_arm, wplus)
-int at_lvl, op_arm, wplus;
+swing(int at_lvl, int op_arm, int wplus)
 {
     int res = rnd(20)+1;
     int need = (21-at_lvl)-op_arm;
@@ -329,7 +327,7 @@ int at_lvl, op_arm, wplus;
  */
 
 void
-check_level()
+check_level(void)
 {
     int i, add;
 
@@ -445,9 +443,7 @@ roll_em(struct stats *att, struct stats *def, struct object *weap, bool hurl)
  */
 
 char *
-prname(who, upper)
-char *who;
-bool upper;
+prname(char *who, bool upper)
 {
     static char tbuf[ROGUE_CHARBUF_MAX];
 
@@ -472,10 +468,9 @@ bool upper;
  */
 
 void
-hit(er, ee)
-char *er, *ee;
+hit(char *er, char *ee)
 {
-    char *s;
+    char *s = NULL;
 
     addmsg(prname(er, TRUE));
     if (terse)
@@ -500,10 +495,9 @@ char *er, *ee;
  */
 
 void
-miss(er, ee)
-char *er, *ee;
+miss(char *er, char *ee)
 {
-    char *s;
+    char *s = NULL;
 
     addmsg(prname(er, TRUE));
     switch (terse ? 0 : rnd(4))
@@ -525,9 +519,7 @@ char *er, *ee;
  */
 
 int
-save_throw(which, tp)
-int which;
-struct thing *tp;
+save_throw(int which, struct thing *tp)
 {
     int need;
 
@@ -541,8 +533,7 @@ struct thing *tp;
  */
 
 int
-save(which)
-int which;
+save(int which)
 {
     return save_throw(which, &player);
 }
@@ -553,8 +544,7 @@ int which;
  */
 
 int
-str_plus(str)
-str_t *str;
+str_plus(str_t *str)
 {
     if (str->st_str == 18)
     {
@@ -576,8 +566,7 @@ str_t *str;
  */
 
 int
-add_dam(str)
-str_t *str;
+add_dam(str_t *str)
 {
     if (str->st_str == 18)
     {
@@ -616,9 +605,7 @@ raise_level(void)
  */
 
 void
-thunk(weap, mname)
-struct object *weap;
-char *mname;
+thunk(struct object *weap, char *mname)
 {
     if (weap->o_type == WEAPON)
 	msg("The %s hits the %s", w_names[weap->o_which], mname);
@@ -632,9 +619,7 @@ char *mname;
  */
 
 void
-bounce(weap, mname)
-struct object *weap;
-char *mname;
+bounce(struct object *weap, char *mname)
 {
     if (weap->o_type == WEAPON)
 	msg("The %s misses the %s", w_names[weap->o_which], mname);
@@ -646,9 +631,7 @@ char *mname;
  * remove a monster from the screen
  */
 void
-remove_monster(mp, item)
-coord *mp;
-struct linked_list *item;
+remove_monster(coord *mp, struct linked_list *item)
 {
     mvwaddch(mw, mp->y, mp->x, ' ');
     mvwaddch(cw, mp->y, mp->x, ((struct thing *) ldata(item))->t_oldch);
@@ -662,8 +645,7 @@ struct linked_list *item;
  */
 
 int
-is_magic(obj)
-struct object *obj;
+is_magic(struct object *obj)
 {
     switch (obj->o_type)
     {

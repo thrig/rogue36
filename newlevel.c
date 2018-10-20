@@ -8,7 +8,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -22,7 +22,7 @@ void
 new_level(void)
 {
     int rm, i;
-    char ch;
+    char ch = TRAPDOOR;
     coord stairs;
 
     if (level > max_level)

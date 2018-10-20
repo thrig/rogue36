@@ -8,7 +8,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -30,7 +30,7 @@ struct delayed_action d_list[MAXDAEMONS] = {
  *	Find an empty slot in the daemon/fuse list
  */
 struct delayed_action *
-d_slot()
+d_slot(void)
 {
     int i;
     struct delayed_action *dev;
@@ -48,8 +48,7 @@ d_slot()
  */
 
 struct delayed_action *
-find_slot(func)
-int (*func)();
+find_slot(int (*func)())
 {
     int i;
     struct delayed_action *dev;
@@ -66,8 +65,7 @@ int (*func)();
  */
 
 void
-start_daemon(func, arg, type)
-int (*func)(), arg, type;
+start_daemon(int (*func)(), int arg, int type)
 {
     struct delayed_action *dev;
 
@@ -88,8 +86,7 @@ int (*func)(), arg, type;
  */
 
 void
-kill_daemon(func)
-int (*func)();
+kill_daemon(int (*func)())
 {
     struct delayed_action *dev;
 
@@ -108,8 +105,7 @@ int (*func)();
  */
 
 void
-do_daemons(flag)
-int flag;
+do_daemons(int flag)
 {
     struct delayed_action *dev;
 
@@ -130,8 +126,7 @@ int flag;
  */
 
 void
-fuse(func, arg, time, type)
-int (*func)(), arg, time, type;
+fuse(int (*func)(), int arg, int time, int type)
 {
     struct delayed_action *wire;
 
@@ -152,9 +147,7 @@ int (*func)(), arg, time, type;
  */
 
 void
-lengthen(func, xtime)
-int (*func)();
-int xtime;
+lengthen(int (*func)(), int xtime)
 {
     struct delayed_action *wire;
 
@@ -169,8 +162,7 @@ int xtime;
  */
 
 void
-extinguish(func)
-int (*func)();
+extinguish(int (*func)())
 {
     struct delayed_action *wire;
 
@@ -185,8 +177,7 @@ int (*func)();
  */
 
 void
-do_fuses(flag)
-int flag;
+do_fuses(int flag)
 {
     struct delayed_action *wire;
 

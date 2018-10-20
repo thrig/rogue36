@@ -1,30 +1,23 @@
 rogue 3.6.3
 ===========
+                                                                 --+-----------
+  this started from a rogue3.6.3-src.tar.gz. this is mostly for  |............|
+historical interest; the code has been modernized to compile on  |............|
+Mac OS X 10.11 with gcc from the vendor (or MacPorts gcc, which  |.........?..|
+appears to be more forgiving) without errors. also GNUisms have  |........H...|
+been removed from the Makefile                                   +............|
+                                                                 |.....*...@..|
+    make                                                         --+-----------
+    ./rogue
 
-       -----------------------
-       |.....................|
-       |.....................+
-       |.....................|
-       ------------------+----
-                         #
-          ################
-     -----@-------------
-     |.................|
-     |...............K.|
-     |...%.............|
-     |.....*.........!.|
-     --------------+----
+the documentation has been consoidated into rogue.6; copy this file into
+a suitable MANPATH directory then run
 
-rogue3.6.3-src.tar.gz from somewhere, I forget where. this is mostly for
-historical interest; the code has been modified to compile on Mac OS X
-10.11 with gcc from the vendor or MacPorts with no errors (for me) via
+    man 6 rogue
 
-    make
+the wizard mode PASSWD can be changed via crypt(3); set this in rogue.h
 
-assuming the development tools and whatnot are installed (or also on
-OpenBSD 6.3 with egcc)
+    $ perl -E 'say crypt shift, "mT"' Hunter2
+    mT6wyq.jl007.
 
-see rogue36.html for docs on the game. to launch (assuming it compiled
-without error):
-
-    ./rogue36
+Level: 1  Gold: 0      Hp: 12(12)  Str: 16  Ac: 6   Exp: 1/0

@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -22,8 +22,7 @@ char secretdoor(int y, int x);
  */
 
 char *
-tr_name(ch)
-char ch;
+tr_name(char ch)
 {
     char *s;
 
@@ -41,6 +40,8 @@ char ch;
 	    s = terse ? "A teleport trap." : "You found a teleport trap.";
 	when DARTTRAP:
 	    s = terse ? "A dart trap." : "You found a poison dart trap.";
+        default:
+            s = terse ? "A no trap??" : "You found no such trap??";
     }
     return s;
 }
@@ -176,8 +177,7 @@ look(bool wakeup)
  */
 
 char
-secretdoor(y, x)
-int y, x;
+secretdoor(int y, int x)
 {
     int i;
     struct room *rp;
@@ -204,9 +204,7 @@ int y, x;
  */
 
 struct linked_list *
-find_obj(y, x)
-int y;
-int x;
+find_obj(int y, int x)
 {
     struct linked_list *obj;
     struct object *op;
@@ -274,8 +272,7 @@ eat(void)
  */
 
 void
-chg_str(amt)
-int amt;
+chg_str(int amt)
 {
     if (amt == 0)
 	return;
@@ -351,7 +348,7 @@ add_haste(bool potion)
  */
 
 void
-aggravate()
+aggravate(void)
 {
     struct linked_list *mi;
 
@@ -363,8 +360,7 @@ aggravate()
  * for printfs: if string starts with a vowel, return "n" for an "an"
  */
 char *
-vowelstr(str)
-char *str;
+vowelstr(char *str)
 {
     switch (*str)
     {
@@ -383,8 +379,7 @@ char *str;
  * see if the object is one of the currently used items
  */
 int
-is_current(obj)
-struct object *obj;
+is_current(struct object *obj)
 {
     if (obj == NULL)
 	return FALSE;

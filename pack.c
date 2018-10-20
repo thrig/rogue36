@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -23,7 +23,7 @@
 void
 add_pack(struct linked_list *item, bool silent)
 {
-    struct linked_list *ip, *lp;
+    struct linked_list *ip, *lp = NULL;
     struct object *obj, *op;
     bool exact, from_floor;
 
@@ -191,9 +191,7 @@ picked_up:
  *	list what is in the pack
  */
 int
-inventory(list, type)
-struct linked_list *list;
-int type;
+inventory(struct linked_list *list, int type)
 {
     struct object *obj;
     char ch;
@@ -334,9 +332,7 @@ picky_inven(void)
  *	pick something out of a pack for a purpose
  */
 struct linked_list *
-get_item(purpose, type)
-char *purpose;
-int type;
+get_item(char *purpose, int type)
 {
     struct linked_list *obj;
     char ch, och;
@@ -390,8 +386,7 @@ int type;
 }
 
 char
-pack_char(obj)
-struct object *obj;
+pack_char(struct object *obj)
 {
     struct linked_list *item;
     char c;

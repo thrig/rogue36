@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 /*
@@ -167,7 +167,7 @@ void discard(struct linked_list *item);
 /*
  * Various constants
  */
-#define	PASSWD		"mTBellIQOsLNA"
+#define	PASSWD		"mTvVTJapOTSbg"
 #define BEARTIME 3
 #define SLEEPTIME 5
 #define HEALTIME 30
@@ -513,8 +513,8 @@ extern coord nh;
 struct linked_list *find_mons(), *find_obj(), *get_item(), *new_item();
 struct linked_list *new_thing(), *wake_monster();
 
-char *tr_name(), *new();
-char *charge_str(),*vowelstr(), *inv_name();
+char *new();
+char *charge_str(),*vowelstr();
 char *ctime(), *num(), *ring_num();
 
 struct room *roomin();
@@ -616,6 +616,7 @@ void eat(void);
 int get_dir(void);
 int is_current(struct object *obj);
 void look(bool wakeup);
+char * tr_name(char ch);
 
 /* monsters.c */
 void genocide(void);
@@ -689,6 +690,7 @@ void fix_stick(struct object *cur);
 /* things.c */
 void drop(void);
 int dropcheck(struct object *op);
+char *inv_name(struct object *obj, bool drop);
 void money(void);
 
 /* weapons.c */

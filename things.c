@@ -8,7 +8,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -24,9 +24,7 @@ int pick_one(struct magic_item *magic, int nitems);
  *	inventory.
  */
 char *
-inv_name(obj, drop)
-struct object *obj;
-bool drop;
+inv_name(struct object *obj, bool drop)
 {
     char *pb;
 
@@ -219,8 +217,7 @@ drop(void)
  * do special checks for dropping or unweilding|unwearing|unringing
  */
 int
-dropcheck(op)
-struct object *op;
+dropcheck(struct object *op)
 {
     str_t save_max;
 
@@ -266,7 +263,7 @@ struct object *op;
  * return a new thing
  */
 struct linked_list *
-new_thing()
+new_thing(void)
 {
     struct linked_list *item;
     struct object *cur;
@@ -366,9 +363,7 @@ new_thing()
  */
 
 int
-pick_one(magic, nitems)
-struct magic_item *magic;
-int nitems;
+pick_one(struct magic_item *magic, int nitems)
 {
     struct magic_item *end;
     int i;

@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -53,8 +53,7 @@ runners(void)
  */
 
 int
-do_chase(th)
-struct thing *th;
+do_chase(struct thing *th)
 {
     struct room *rer, *ree;	/* room of chaser, room of chasee */
     int mindist = 32767, i, dist;
@@ -132,9 +131,7 @@ struct thing *th;
  */
 
 void
-runto(runner, spot)
-coord *runner;
-coord *spot;
+runto(coord *runner, coord *spot)
 {
     struct linked_list *item;
     struct thing *tp;
@@ -164,9 +161,7 @@ coord *spot;
  */
 
 int
-chase(tp, ee)
-struct thing *tp;
-coord *ee;
+chase(struct thing *tp, coord *ee)
 {
     int x, y;
     int dist, thisdist;
@@ -260,8 +255,7 @@ coord *ee;
  */
 
 struct room *
-roomin(cp)
-coord *cp;
+roomin(coord *cp)
 {
     struct room *rp;
 
@@ -277,9 +271,7 @@ coord *cp;
  */
 
 struct linked_list *
-find_mons(y, x)
-int y;
-int x;
+find_mons(int y, int x)
 {
     struct linked_list *item;
     struct thing *th;
@@ -299,8 +291,7 @@ int x;
  */
 
 int
-diag_ok(sp, ep)
-coord *sp, *ep;
+diag_ok(coord *sp, coord *ep)
 {
     if (ep->x == sp->x || ep->y == sp->y)
 	return TRUE;
@@ -313,8 +304,7 @@ coord *sp, *ep;
  */
 
 int
-cansee(y, x)
-int y, x;
+cansee(int y, int x)
 {
     struct room *rer;
     coord tp;

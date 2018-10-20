@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -531,10 +531,7 @@ init_materials(void)
 }
 
 void
-badcheck(name, magic, bound)
-char *name;
-struct magic_item *magic;
-int bound;
+badcheck(char *name, struct magic_item *magic, int bound)
 {
     struct magic_item *end;
 
@@ -575,6 +572,7 @@ struct h_list helpstr[] = {
     { '>',	"	go down a staircase" },
     { 's',	"	search for trap/secret door" },
     { ' ',	"	(space) rest for a while" },
+    { '.',	"	rest for a while" },
     { 'i',	"	inventory" },
     { 'I',	"	inventory single item" },
     { 'q',	"	quaff potion" },

@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -122,8 +122,7 @@ do_rooms(void)
  */
 
 void
-draw_room(rp)
-struct room *rp;
+draw_room(struct room *rp)
 {
     int j, k;
 
@@ -156,8 +155,7 @@ struct room *rp;
  */
 
 void
-horiz(cnt)
-int cnt;
+horiz(int cnt)
 {
     while (cnt--)
 	addch('-');
@@ -169,8 +167,7 @@ int cnt;
  */
 
 void
-vert(cnt)
-int cnt;
+vert(int cnt)
 {
     int x, y;
 
@@ -188,9 +185,7 @@ int cnt;
  */
 
 void
-rnd_pos(rp, cp)
-struct room *rp;
-coord *cp;
+rnd_pos(struct room *rp, coord *cp)
 {
     cp->x = rp->r_pos.x + rnd(rp->r_max.x-2) + 1;
     cp->y = rp->r_pos.y + rnd(rp->r_max.y-2) + 1;

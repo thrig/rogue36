@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -25,7 +25,7 @@ void door(struct room *rm, coord *cp);
 void
 do_passages(void)
 {
-    struct rdes *r1, *r2;
+    struct rdes *r1, *r2 = NULL;
     int i, j;
     int roomcount;
     static struct rdes
@@ -132,8 +132,7 @@ do_passages(void)
  */
 
 void
-conn(r1, r2)
-int r1, r2;
+conn(int r1, int r2)
 {
     struct room *rpf, *rpt;
     char rmt;
@@ -269,9 +268,7 @@ int r1, r2;
  */
 
 void
-door(rm, cp)
-struct room *rm;
-coord *cp;
+door(struct room *rm, coord *cp)
 {
     cmov(*cp);
     addch( (rnd(10) < level - 1 && rnd(100) < 20 ? SECRETDOOR : DOOR) );

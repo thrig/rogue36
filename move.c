@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -42,8 +42,7 @@ do_run(char ch)
  */
 
 void
-do_move(dy, dx)
-int dy, dx;
+do_move(int dy, int dx)
 {
     char ch;
 
@@ -141,8 +140,7 @@ move_stuff:
  */
 
 void
-light(cp)
-coord *cp;
+light(coord *cp)
 {
     struct room *rp;
     int j, k;
@@ -210,8 +208,7 @@ coord *cp;
  */
 
 char
-show(y, x)
-int y, x;
+show(int y, int x)
 {
     char ch = winat(y, x);
     struct linked_list *it;
@@ -241,8 +238,7 @@ int y, x;
  */
 
 char
-be_trapped(tc)
-coord *tc;
+be_trapped(coord *tc)
 {
     struct trap *tp;
     char ch;
@@ -316,8 +312,7 @@ coord *tc;
  */
 
 struct trap *
-trap_at(y, x)
-int y, x;
+trap_at(int y, int x)
 {
     struct trap *tp, *ep;
 
@@ -339,8 +334,7 @@ int y, x;
  */
 
 coord *
-rndmove(who)
-struct thing *who;
+rndmove(struct thing *who)
 {
     int x, y;
     char ch;

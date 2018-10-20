@@ -5,7 +5,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -29,10 +29,7 @@ void chmsg(char *fmt, ...);
 int too_much(void);
 
 int
-main(argc, argv, envp)
-int argc;
-char **argv;
-char **envp;
+main(int argc, char **argv, char **envp)
 {
     char *env;
     struct linked_list *item;
@@ -68,6 +65,7 @@ char **envp;
     strncpy(home, md_gethomedir(), ROGUE_CHARBUF_MAX);
 
     strcpy(file_name, home);
+    strcat(file_name, "/");
     strcat(file_name, "rogue36.sav");
 
     if ((env = getenv("ROGUEOPTS")) != NULL)
@@ -75,7 +73,7 @@ char **envp;
     if (env == NULL || whoami[0] == '\0')
 	strucpy(whoami, md_getusername(md_getuid()), strlen(md_getusername(md_getuid())));
     if (env == NULL || fruit[0] == '\0')
-	strcpy(fruit, "slime-mold");
+	strcpy(fruit, "snozzcumber");
 
     if (too_much() && !wizard && !author())
     {
@@ -218,8 +216,7 @@ endit(int p)
  */
 
 void
-fatal(s)
-char *s;
+fatal(char *s)
 {
     clear();
     move(LINES-2, 0);
@@ -235,8 +232,7 @@ char *s;
  */
 
 int
-rnd(range)
-int range;
+rnd(int range)
 {
     return range == 0 ? 0 : abs(RN) % range;
 }
@@ -247,8 +243,7 @@ int range;
  */
 
 int
-roll(number, sides)
-int number, sides;
+roll(int number, int sides)
 {
     int dtotal = 0;
 

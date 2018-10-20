@@ -8,7 +8,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -19,8 +19,7 @@
 void drain(int ymin, int ymax, int xmin, int xmax);
 
 void
-fix_stick(cur)
-struct object *cur;
+fix_stick(struct object *cur)
 {
     if (strcmp(ws_type[cur->o_which], "staff") == 0)
 	strcpy(cur->o_damage,"2d3");
@@ -347,8 +346,7 @@ do_zap(bool gotdir)
  */
 
 void
-drain(ymin, ymax, xmin, xmax)
-int ymin, ymax, xmin, xmax;
+drain(int ymin, int ymax, int xmin, int xmax)
 {
     int i, j, count;
     struct thing *ick;
@@ -387,8 +385,7 @@ int ymin, ymax, xmin, xmax;
  * charge a wand for wizards.
  */
 char *
-charge_str(obj)
-struct object *obj;
+charge_str(struct object *obj)
 {
     static char buf[20];
 

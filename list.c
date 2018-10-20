@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -21,8 +21,7 @@
  */
 
 void
-_detach(list, item)
-struct linked_list **list, *item;
+_detach(struct linked_list **list, struct linked_list *item)
 {
     if (*list == item)
 	*list = next(item);
@@ -79,8 +78,7 @@ _free_list(struct linked_list **ptr)
  */
 
 void
-discard(item)
-struct linked_list *item;
+discard(struct linked_list *item)
 {
     total -= 2;
     FREE(item->l_data);
@@ -93,8 +91,7 @@ struct linked_list *item;
  */
 
 struct linked_list *
-new_item(size)
-int size;
+new_item(int size)
 {
     struct linked_list *item;
 
@@ -108,8 +105,7 @@ int size;
 }
 
 char *
-new(size)
-int size;
+new(int size)
 {
     char *space = ALLOC(size);
 

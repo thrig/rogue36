@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -76,7 +76,7 @@ new_monster(struct linked_list *item, char type, coord *cp)
 	runto(cp, &hero);
     if (type == 'M')
     {
-	char mch;
+	char mch = GOLD;
 
 	if (tp->t_pack != NULL)
 	    mch = ((struct object *) ldata(tp->t_pack))->o_type;
@@ -139,8 +139,7 @@ wanderer(void)
  * what to do when the hero steps next to a monster
  */
 struct linked_list *
-wake_monster(y, x)
-int y, x;
+wake_monster(int y, int x)
 {
     struct thing *tp;
     struct linked_list *it;

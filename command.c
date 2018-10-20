@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -104,7 +104,7 @@ command(void)
 		    case 'Y': case 'U': case 'B': case 'N':
 		    case 'q': case 'r': case 's': case 'f':
 		    case 't': case 'C': case 'I': case ' ':
-		    case 'z': case 'p':
+		    case 'z': case 'p': case '.':
 			break;
 		    default:
 			count = 0;
@@ -198,7 +198,7 @@ command(void)
 			endwin();
 			exit(0);
 		    }
-		when ' ' : ;			/* Rest command */
+		when ' ' : case '.' : ;			/* Rest command */
 		when CTRL('P') :
 		    after = FALSE;
 		    if (wizard)

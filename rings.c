@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -167,8 +167,7 @@ gethand(void)
  * how much food does this ring use up?
  */
 int
-ring_eat(hand)
-int hand;
+ring_eat(int hand)
 {
     if (cur_ring[hand] == NULL)
 	return 0;
@@ -191,8 +190,7 @@ int hand;
  * print ring bonuses
  */
 char *
-ring_num(obj)
-struct object *obj;
+ring_num(struct object *obj)
 {
     static char buf[5];
 

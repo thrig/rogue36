@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -107,8 +107,7 @@ auto_save(int p)
  * write the saved game on the file
  */
 int
-save_file(savef)
-FILE *savef;
+save_file(FILE *savef)
 {
     char buf[ROGUE_CHARBUF_MAX];
     int ret;
@@ -135,9 +134,7 @@ FILE *savef;
 }
 
 int
-restore(file, envp)
-char *file;
-char **envp;
+restore(char *file, char **envp)
 {
     int inf;
     extern char **environ;
@@ -241,10 +238,7 @@ char **envp;
  * perform an encrypted write
  */
 unsigned int
-encwrite(starta, size, outf)
-void *starta;
-unsigned int size;
-FILE *outf;
+encwrite(void *starta, unsigned int size, FILE *outf)
 {
     char *ep;
     char *start = starta;
@@ -267,10 +261,7 @@ FILE *outf;
  * perform an encrypted read
  */
 int
-encread(starta, size, inf)
-void *starta;
-unsigned int size;
-int inf;
+encread(void *starta, unsigned int size, int inf)
 {
     char *ep;
     int read_size;

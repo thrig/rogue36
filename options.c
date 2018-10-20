@@ -9,7 +9,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -180,9 +180,7 @@ get_bool(bool *bp, WINDOW *win)
  * set a string option
  */
 int
-get_str(opt, win)
-char *opt;
-WINDOW *win;
+get_str(char *opt, WINDOW *win)
 {
     char *sp;
     int c, oy, ox;
@@ -273,8 +271,7 @@ WINDOW *win;
  */
 
 void
-parse_opts(str)
-char *str;
+parse_opts(char *str)
 {
     char *sp;
     OPTION *op;
@@ -345,9 +342,7 @@ char *str;
  * copy string using unctrl for things
  */
 void
-strucpy(s1, s2, len)
-char *s1, *s2;
-int len;
+strucpy(char *s1, char *s2, int len)
 {
     const char *sp;
 

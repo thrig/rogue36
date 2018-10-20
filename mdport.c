@@ -79,7 +79,7 @@ char *strdup(const char *s);
 #define MOD_MOVE(c) (toupper(c) )
 
 void
-md_init()
+md_init(void)
 {
 #ifdef __INTERIX
     char *term;
@@ -98,7 +98,7 @@ md_init()
 }
 
 int
-md_hasclreol()
+md_hasclreol(void)
 {
 #ifdef CE
     return((CE != NULL) && (*CE != 0));
@@ -122,7 +122,7 @@ static int md_standout_mode = 0;
 #endif
 
 void
-md_raw_standout()
+md_raw_standout(void)
 {
 #ifdef _WIN32
     CONSOLE_SCREEN_BUFFER_INFO csbiInfo; 
@@ -145,7 +145,7 @@ md_raw_standout()
 }
 
 void
-md_raw_standend()
+md_raw_standend(void)
 {
 #ifdef _WIN32
     CONSOLE_SCREEN_BUFFER_INFO csbiInfo; 
@@ -204,9 +204,8 @@ md_creat(char *file, int mode)
     return(fd);
 }
 
-
 void
-md_normaluser()
+md_normaluser(void)
 {
 #ifndef _WIN32
     setuid(getuid());
@@ -262,7 +261,7 @@ md_getusername(int uid)
 }
 
 char *
-md_gethomedir()
+md_gethomedir(void)
 {
     static char homedir[PATH_MAX];
     char *h = NULL;
@@ -312,7 +311,7 @@ md_sleep(int s)
 }
 
 char *
-md_getshell()
+md_getshell(void)
 {
     static char shell[PATH_MAX];
     char *s = NULL;
@@ -401,7 +400,7 @@ directory_exists(char *dirname)
 }
 
 char *
-md_getroguedir()
+md_getroguedir(void)
 {
     static char path[1024];
     char *end,*home;
@@ -600,7 +599,7 @@ md_getloadavg(double *avg)
 }
 
 long
-md_random()
+md_random(void)
 {
 #ifdef _WIN32
     return(rand());
@@ -622,7 +621,7 @@ md_srandom(unsigned x)
 }
 
 int
-md_rand()
+md_rand(void)
 {
 #ifdef _WIN32
     return(rand());
@@ -654,7 +653,7 @@ md_strdup(const char *s)
 }
 
 char *
-md_gethostname()
+md_gethostname(void)
 {
     static char nodename[ROGUE_CHARBUF_MAX];
     char *n = NULL;
@@ -717,7 +716,7 @@ md_unctrl(char ch)
 }
 
 void
-md_flushinp()
+md_flushinp(void)
 {
 #ifdef BSD
     ioctl(0, TIOCFLUSH);

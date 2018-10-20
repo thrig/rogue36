@@ -7,7 +7,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -58,8 +58,7 @@ static struct init_weps {
  */
 
 void
-missile(ydelta, xdelta)
-int ydelta, xdelta;
+missile(int ydelta, int xdelta)
 {
     struct object *obj;
     struct linked_list *item, *nitem;
@@ -109,9 +108,7 @@ int ydelta, xdelta;
  * across the room
  */
 void
-do_motion(obj, ydelta, xdelta)
-struct object *obj;
-int ydelta, xdelta;
+do_motion(struct object *obj, int ydelta, int xdelta)
 {
     /*
      * Come fly with us ...
@@ -214,9 +211,7 @@ init_weapon(struct object *weap, char type)
  */
 
 int
-hit_monster(y, x, obj)
-int y, x;
-struct object *obj;
+hit_monster(int y, int x, struct object *obj)
 {
     static coord mp;
 
@@ -231,8 +226,7 @@ struct object *obj;
  */
 
 char *
-num(n1, n2)
-int n1, n2;
+num(int n1, int n2)
 {
     static char numbuf[ROGUE_CHARBUF_MAX];
 

@@ -1,58 +1,356 @@
-.TH ROGUE 6
-.UC
-.SH NAME
-rogue \- Exploring The Dungeons of Doom
-.SH SYNOPSIS
-.B rogue
-[
-.I save_file
-]
-.SH DESCRIPTION
-.PP
-.I Rogue
-is a computer fantasy game with a new twist.  It is crt oriented and the
-object of the game is to survive the attacks of various monsters and get
-a lot of gold, rather than the puzzle solving orientation of most computer
-fantasy games.
-.PP
-To get started you really only need to know two commands.  The command
-.B ?
-will give you a list of the available commands and the command
-.B /
-will identify the things you see on the screen.
-.PP
-To win the game (as opposed to merely playing to beat other people high
-scores) you must locate the Amulet of Yendor which is somewhere below
-the 20th level of the dungeon and get it out.  Nobody has achieved this
-yet and if somebody does, they will probably go down in history as a hero
-among heros.
-.PP
-When the game ends, either by your death, when you quit, or if you (by
-some miracle) manage to win,
-.I rogue
-will give you alist of the top-ten scorers.  The scoring is based entirely
-upon how much gold you get.  There is a 10% penalty for getting yourself
-killed.
-.PP
-For more detailed directions, read the document
-.I "A Guide to the Dungeons of Doom."
-.SH FILES
-.ta 2i
-rogue36.scr                  Score file
-.br
-~/rogue36.sav                Default save file
-.DT
-.SH SEE ALSO
-Michael C. Toy,
-.I "A Guide to the Dungeons of Doom"
-.SH BUGS
-.PP
-Probably infinite.  Currently known bugs are: Sometimes you are still hungry
-even after you eat food and sometimes you get a monster on the screen in
-reverse video which may or may not cause a core dump.
-.SH COPYRIGHT
+.Dd October 19 2018
+.Dt ROGUE 6
+.nh
+.Os
+.Sh NAME
+.Nm rogue
+.Nd exploring the Dungeons of Doom
+.Sh SYNOPSIS
+.Bk -words
+.Nm
+.Nm
+.Fl s
+.Nm
+.Ar savefile
+.Ek
+.Sh DESCRIPTION
+.Nm
+is a computer fantasy game. The object of the game is to survive the
+attacks of various monsters and get a lot of gold. To win the game you
+must locate the Amulet of Yendor which is somewhere below the 20th level
+of the dungeon and get it out.
+.Pp
+The
+.Fl s
+flag will show the high score list and then quit the game.
+.Ar savefile
+will attempt to load a previous game.
+.Ss \&An Overview of the Dungeon
+What do all these things on the screen mean?
+.Bd -literal -offset indent
+  ---------------------
+  |...................+
+  |...@...........[...|
+  |........B..........|
+  |...................|
+  --------+------------
+
+Level: 1  Gold: 0      Hp: 12(12)  Str: 16  Ac: 6  Exp: 1/0
+.Ed
+.Pp
+At the bottom of the screen are a few pieces of cryptic information that
+describe your current status.
+.Qq HP
+or hit points are pretty important. A lower armor class is better
+(this was traditional in Dungeons \&& Dragons) and can be improved by
+wearing heavier armors or via enchantments.
+.Pp
+You are represented by the
+.Qq @
+symbol, and are presently within a lit room with a bat or
+.Qq B
+nearby (see
+.Sx Monsters )
+and also an item
+.Qq \&[ .
+.Sx Items
+are picked up by moving over them.
+.Pp
+.Xr vi 1
+motion keys plus additional keys for diagonal moves (if allowed)
+move your character around the screen, among other such
+.Sx Commands .
+.Pp
+.Qq +
+are doors that lead to corridors that connect rooms;
+.Qq \&.
+is used for the floor of rooms and
+.Qq #
+for the floor in corridors. Stairs, unlike in various modern roguelikes,
+are represented by
+.Qq % ,
+are called passages, and are one-way.
+.Pp
+Messages will be printed at the top of the screen, sometimes with a
+.Qq --More--
+prompt that will need to be cleared by pressing the space bar.
+.Ss Commands
+Some commands take time (such as removing armor) while others do not.
+Two commands can be used to learn about other commands and features of
+the dungeon.
+.Bl -tag -width Ds
+.It Cm \&?
+Displays a list of available commands.
+.It Cm /
+Identifies the things you see on the screen.
+.El
+.Pp
+Motion commands move you about the dungeon. With the shift key they will
+run in the given direction. They can also be used as modifiers for other
+commands, such as
+.Cm t
+for throw.
+.Bl -tag -width Ds
+.It Cm h
+Move left.
+.It Cm j
+Move down.
+.It Cm k
+Move up.
+.It Cm l
+Move right.
+.It Cm y
+Move up and left.
+.It Cm u
+Move up and right.
+.It Cm b
+Move down and left.
+.It Cm n
+Move down and right.
+.El
+.Pp
+The remainder of the commands carry out various actions.
+.Bl -tag -width Ds
+.It Cm t Ar dir
+Throw something in the given motion direction.
+.It Cm f Ar dir
+Move until something is found in the given direction.
+.It Cm p Ar dir
+Zap a wand in a direction.
+.It Cm z
+Zap a wand.
+.It Cm >
+Go down a staircase.
+.It Cm \&.
+Rest for a while (also via the more traditional space key).
+.It Cm i
+Display the inventory.
+.It Cm I Ar slot
+Display the given inventory item.
+.It Cm q
+Quaff a potion.
+.It Cm r
+Read a paper.
+.It Cm e
+Eat food.
+.It Cm w
+Wield a weapon. To fire an arrow first wield the bow.
+.It Cm W
+Wear armor. Only one piece can be worn at a time.
+.It Cm T
+Take armor off.
+.It Cm P
+Put on a ring.
+.It Cm R
+Remove a ring.
+.It Cm d
+Drop an object.
+.It Cm c
+Call an object.
+.It Cm o
+Examine or set
+.Sx Options .
+.It Cm C-l
+Redraw the screen.
+.It Cm C-r
+Repeat the last message.
+.It Cm esc
+Cancel a command.
+.It Cm v
+Program version number.
+.It Cm \&!
+Shell escape.
+.It Cm S
+Save game.
+.It Cm Q
+Quit.
+.El
+.Ss Items
+Pick these up by moving over them.
+.Bl -tag -width Ds
+.It !
+A flask containing a magic potion.
+.It )
+A weapon of some sort.
+.It *
+A pile or pot of gold.
+.It :
+A piece of food.
+.It ?
+A piece of paper, usually a magic scroll.
+.It ]
+A piece of armor.
+.El
+.Ss Monsters
+There are twenty-six different monsters.
+.Bl -tag -width Ds
+.It A
+Giant ant.
+.It B
+A bat, or possibly someone dressed up as a bat.
+.It C
+Centaur.
+.It D
+Dragon.
+.It E
+Floating eye.
+.It F
+Violet Fungi.
+.It G
+Gnome.
+.It H
+Hobgoblin.
+.It J
+Jackal.
+.It K
+Kobold.
+.It L
+Leprechaun.
+.It M
+Mimic.
+.It N
+Nymph.
+.It O
+Orc.
+.It P
+Purple worm.
+.It Q
+Quasit.
+.It R
+Rust monster.
+.It S
+Snake.
+.It T
+Troll.
+.It U
+Umber hulk.
+.It V
+Vampire.
+.It W
+Wraith.
+.It X
+Xorn.
+.It Y
+Yeti.
+.It Z
+Zombie.
+.El
+.Ss Options
+These can be set via the
+.Ev ROGUEOPTS
+environment variable or in-game with the
+.Cm o
+command.
+.Pp
+The
+.Cm o
+command places the cursor by the value of the first option and waits for
+you to type. You can type a RETURN which means to go to the next option,
+a 
+.Cm \&-
+which means to go to the previous option, an ESCAPE which means to
+return to the game, or you can give the option a value. For boolean
+options this merely involves pressing
+.Cm t
+for true or
+.Cm f
+for false. For string options, type the new value followed by a RETURN.
+.Bl -tag -width Ds
+.It Cm askme , Cm noaskme
+After reading a scroll or quaffing a potion that does not self identify
+upon use,
+.Nm
+will ask you what to name it so you can recognize it in the future.
+.It Cm file Ns = Ns Ar filename
+Where the game should be saved to.
+.Nm
+may automatically save the game in this file under certain conditions.
+The file name may contain the special character "~" which expands to
+your home directory.
+.It Cm flush , Cm noflush
+If flush is set, all typeahead is thrown away after each round of
+battle. This is useful for those who type way ahead and watch to their
+dismay as a Kobold kills them.
+.It Cm fruit Ns = Ns Ar fruit-name
+This should hold the name of a fruit that you enjoy eating, such as a
+snozzcumber. It is basically a whimsy that the program uses in a couple
+of places.
+.It Cm jump , Cm nojump
+If this option is set, running moves will not be displayed until you
+reach the end of the move. This saves considerable CPU time and display
+time. This option defaults to on if you are using a slow terminal.
+.It Cm name Ns = Ns Ar character-name
+This is the name of your character. It is used if you get on the top ten
+list. It must be less than 80 characters long.
+.It Cm step , Cm nostep
+When set lists of things, like inventories or
+.Qq *
+responses to
+.Qq Which item do you wish to xxxx?
+questions, are displayed one item at a time on the top of the screen,
+rather than clearing the screen, displaying the list, then re-displaying
+the dungeon level.
+.It Cm terse , Cm noterse
+Useful for those who are tired of the sometimes lengthy messages. This
+is a useful option for those on slow terminals. This option defaults to
+on if your are on a slow (under 1200 baud) terminal.
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width Ds
+.It Ev ROGUEOPTS
+A comma separated list of values for the various
+.Sx Options .
+.It Ev SEED
+Seed for wizard mode. Integer.
+.El
+.Sh FILES
+.Bl -tag -width Ds
+.It Pa rogue36.scr
+Score file.
+.It Pa ~/rogue36.sav
+Default save file.
+.El
+.Sh EXIT STATUS
+.Ex -std
+.Sh SEE ALSO
+.Cm Brogue ,
+.Cm crawl ,
+.Xr ncurses 3 ,
+.Xr vi 3
+.Sh HISTORY
+This version began from a
+.Pa rogue3.6.3-src.tar.gz
+file found somewhere on the Internet and has been updated to compile
+under modern compilers, plus a few other changes, hopefully without
+introducing too many new bugs.
+.Sh AUTHORS
+.An Ken Arnold ,
+.An Michael Toy ,
+.An Glenn Wichman
+.Pp
+Machine Dependent Code for Porting Unix/Curses games:
+.Pp
+.An Nicholas J. Kisseberth
+.Pp
+FreeSec: libcrypt:
+.Pp
+.An David Burren
+.Ss Acknowledgements
+Rogue was originally conceived of by Glenn Wichman and Michael Toy. The
+help of Ken Arnold in making the program easier to use and putting the
+finishing touches on is greatly appreciated. I would also like to thank
+Marty McNary, Scott Nelson, Daniel Jensen, Kipp Hickman, Joe Kalash,
+Steve Maurer, Bill Joy, Mark Horton and Jan Miller for their ideas and
+assistance.
+.Sh COPYRIGHT
 Rogue: Exploring the Dungeons of Doom
-.br
-Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
-.br
+.Pp
+Copyright (C) 1980, 1981 Michael Toy, Ken Arnold, and Glenn Wichman
+.Pp
 All rights reserved.
+.Sh CAVEATS
+Many.
+.Sh BUGS
+.Qq Probably infinite.
+.Sh SECURITY CONSIDERATIONS
+It's C code from the 1980s.

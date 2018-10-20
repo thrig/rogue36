@@ -8,7 +8,7 @@
  * Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
  * All rights reserved.
  *
- * See the file LICENSE.TXT for full copyright and licensing information.
+ * See the LICENSE file for full copyright and licensing information.
  */
 
 #include "curses.h"
@@ -38,7 +38,7 @@ static char *rip[] = {
     0
 };
 
-char	*killname();
+char *killname(char monst);
 
 /*
  * death:
@@ -71,7 +71,7 @@ death(char monst)
     move(LINES-1, 0);
     draw(stdscr);
     score(purse, 0, monst);
-    exit(0);
+    exit(1);
 }
 
 /*
@@ -255,7 +255,7 @@ total_winner(void)
 {
     struct linked_list *item;
     struct object *obj;
-    int worth;
+    int worth = 0;
     char c;
     int oldpurse;
 
@@ -362,8 +362,7 @@ total_winner(void)
 }
 
 char *
-killname(monst)
-char monst;
+killname(char monst)
 {
     if (isupper(monst))
 	return monsters[monst-'A'].m_name;
