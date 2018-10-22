@@ -88,7 +88,7 @@ look(bool wakeup)
 		else
 		    it = find_mons(y, x);
 		tp = (struct thing *) ldata(it);
-		if ((tp->t_oldch = mvinch(y, x)) == TRAP)
+		if ((tp->t_oldch = (char) mvinch(y, x)) == TRAP)
 		    tp->t_oldch =
 			(trap_at(y,x)->tr_flags&ISFOUND) ? TRAP : FLOOR;
 		if (tp->t_oldch == FLOOR && (rp->r_flags & ISDARK)

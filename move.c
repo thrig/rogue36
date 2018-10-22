@@ -77,7 +77,7 @@ do_move(int dy, int dx)
     }
     if (running && ce(hero, nh))
 	after = running = FALSE;
-    ch = winat(nh.y, nh.x);
+    ch = (char) winat(nh.y, nh.x);
     if (on(player, ISHELD) && ch != 'F')
     {
 	msg("You are being held");
@@ -125,7 +125,7 @@ move_stuff:
 		fight(&nh, ch, cur_weapon, FALSE);
 		return;
 	    }
-	    ch = winat(hero.y, hero.x);
+	    ch = (char) winat(hero.y, hero.x);
 	    wmove(cw, unc(hero));
 	    waddch(cw, ch);
 	    hero = nh;
@@ -175,12 +175,12 @@ light(coord *cp)
 		    item = wake_monster(rp->r_pos.y+j, rp->r_pos.x+k);
 		    if (((struct thing *) ldata(item))->t_oldch == ' ')
 			if (!(rp->r_flags & ISDARK))
-			    ((struct thing *) ldata(item))->t_oldch =
+			    ((struct thing *) ldata(item))->t_oldch = (char)
 				mvwinch(stdscr, rp->r_pos.y+j, rp->r_pos.x+k);
 		}
 		if (rp->r_flags & ISDARK)
 		{
-		    rch = mvwinch(cw, rp->r_pos.y+j, rp->r_pos.x+k);
+		    rch = (char) mvwinch(cw, rp->r_pos.y+j, rp->r_pos.x+k);
 		    switch (rch)
 		    {
 			case DOOR:
@@ -210,7 +210,7 @@ light(coord *cp)
 char
 show(int y, int x)
 {
-    char ch = winat(y, x);
+    char ch = (char) winat(y, x);
     struct linked_list *it;
     struct thing *tp;
 
@@ -227,7 +227,7 @@ show(int y, int x)
 	 * Hide invisible monsters
 	 */
 	else if (off(player, CANSEE))
-	    ch = mvwinch(stdscr, y, x);
+	    ch = (char) mvwinch(stdscr, y, x);
     }
     return ch;
 }
@@ -358,7 +358,7 @@ rndmove(struct thing *who)
 	    {
 		if (x < 0 || x >= COLS)
 		    continue;
-		ch = winat(y, x);
+		ch = (char) winat(y, x);
 		if (step_ok(ch))
 		{
 		    dest.y = y;

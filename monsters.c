@@ -60,7 +60,7 @@ new_monster(struct linked_list *item, char type, coord *cp)
     tp = (struct thing *) ldata(item);
     tp->t_type = type;
     tp->t_pos = *cp;
-    tp->t_oldch = mvwinch(cw, cp->y, cp->x);
+    tp->t_oldch = (char) mvwinch(cw, cp->y, cp->x);
     mvwaddch(mw, cp->y, cp->x, tp->t_type);
     mp = &monsters[tp->t_type-'A'];
     tp->t_stats.s_hpt = roll(mp->m_stats.s_lvl, 8);
@@ -181,7 +181,7 @@ wake_monster(int y, int x)
      * Hide invisible monsters
      */
     if (on(*tp, ISINVIS) && off(player, CANSEE))
-	ch = mvwinch(stdscr, y, x);
+	ch = (char) mvwinch(stdscr, y, x);
     /*
      * Let greedy ones guard gold
      */

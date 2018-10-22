@@ -131,7 +131,7 @@ read_scroll(void)
 			/*
 			 * Or anything else nasty
 			 */
-			if (step_ok(winat(y, x)))
+			if (step_ok((char) winat(y, x)))
 			{
 			    if (rnd(++appear) == 0)
 			    {
@@ -168,7 +168,7 @@ read_scroll(void)
 	    for (i = 0; i < LINES; i++)
 		for (j = 0; j < COLS; j++)
 		{
-		    switch (nch = ch = mvwinch(hw, i, j))
+		    switch (nch = ch = (char) mvwinch(hw, i, j))
 		    {
 			case SECRETDOOR:
                             nch = DOOR;

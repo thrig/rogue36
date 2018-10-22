@@ -217,7 +217,7 @@ hit_monster(int y, int x, struct object *obj)
 
     mp.y = y;
     mp.x = x;
-    return fight(&mp, winat(y, x), obj, TRUE);
+    return fight(&mp, (char) winat(y, x), obj, TRUE);
 }
 
 /*

@@ -134,9 +134,9 @@ do_passages(void)
 void
 conn(int r1, int r2)
 {
-    struct room *rpf, *rpt;
+    struct room *rpf, *rpt = NULL;
     char rmt;
-    int distance, turn_spot, turn_distance;
+    int distance = 0, turn_spot, turn_distance;
     int rm;
     char direc;
     coord delta, curr, turn_delta, spos, epos;

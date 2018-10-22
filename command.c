@@ -375,7 +375,7 @@ search(void)
     for (x = hero.x - 1; x <= hero.x + 1; x++)
 	for (y = hero.y - 1; y <= hero.y + 1; y++)
 	{
-	    ch = winat(y, x);
+	    ch = (char) winat(y, x);
 	    switch (ch)
 	    {
 		case SECRETDOOR:

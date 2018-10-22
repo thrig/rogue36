@@ -102,7 +102,7 @@ do_chase(struct thing *th)
     else if (th->t_type == 'F')
 	return(0);
     mvwaddch(cw, th->t_pos.y, th->t_pos.x, th->t_oldch);
-    sch = mvwinch(cw, ch_ret.y, ch_ret.x);
+    sch = (char) mvwinch(cw, ch_ret.y, ch_ret.x);
     if (rer != NULL && (rer->r_flags & ISDARK) && sch == FLOOR
 	&& DISTANCE(ch_ret.y, ch_ret.x, th->t_pos.y, th->t_pos.x) < 3
 	&& off(player, ISBLIND))
@@ -214,7 +214,7 @@ chase(struct thing *tp, coord *ee)
 		tryp.y = y;
 		if (!diag_ok(er, &tryp))
 		    continue;
-		ch = winat(y, x);
+		ch = (char) winat(y, x);
 		if (step_ok(ch))
 		{
 		    /*
@@ -295,7 +295,7 @@ diag_ok(coord *sp, coord *ep)
 {
     if (ep->x == sp->x || ep->y == sp->y)
 	return TRUE;
-    return (step_ok(mvinch(ep->y, sp->x)) && step_ok(mvinch(sp->y, ep->x)));
+    return (step_ok((char) mvinch(ep->y, sp->x)) && step_ok((char) mvinch(sp->y, ep->x)));
 }
 
 /*

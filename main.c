@@ -9,6 +9,8 @@
  */
 
 #include "curses.h"
+#include <err.h>
+#include <errno.h>
 #include <time.h>
 #include <signal.h>
 #include <limits.h>
@@ -24,6 +26,7 @@ WINDOW *cw;                     /* Window that the player sees */
 WINDOW *hw;                     /* Used for the help command */
 WINDOW *mw;                     /* Used to store mosnters */
 
+long argtol(const char *arg, const long min, const long max);
 int author(void);
 void checkout(int);
 void chmsg(char *fmt, ...);
@@ -93,7 +96,7 @@ main(int argc, char **argv, char **envp)
     time(&now);
     lowtime = (int) now;
     dnum = (wizard && getenv("SEED") != NULL ?
-	atoi(getenv("SEED")) :
+	(int) argtol(getenv("SEED"), (long) INT_MIN, (long) INT_MAX) :
 	lowtime + getpid());
     if (wizard)
 	printf("Hello %s, welcome to dungeon #%d", whoami, dnum);
@@ -201,6 +204,26 @@ main(int argc, char **argv, char **envp)
     /* modern systems are far too fast at the above steps */
     sleep(1);
     playit();
+}
+
+/*
+ * What kind of wizard uses atoi to accept user input?!
+ */
+long argtol(const char *arg, const long min, const long max)
+{
+    char *ep;
+    long val;
+    errno = 0;
+    val = strtol(arg, &ep, 0);
+    if (arg[0] == '\0' || *ep != '\0')
+        errx(1, "strtol failed");
+    if (errno == ERANGE && (val == LONG_MIN || val == LONG_MAX))
+        errx(1, "argument outside range of long");
+    if (min != LONG_MIN && val < min)
+        errx(1, "value is below minimum");
+    if (max != LONG_MAX && val > max)
+        errx(1, "value is above maximum");
+    return val;
 }
 
 /*

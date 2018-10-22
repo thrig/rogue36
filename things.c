@@ -176,7 +176,7 @@ drop(void)
     struct linked_list *obj, *nobj;
     struct object *op;
 
-    ch = mvwinch(stdscr, hero.y, hero.x);
+    ch = (char) mvwinch(stdscr, hero.y, hero.x);
     if (ch != FLOOR && ch != PASSAGE)
     {
 	msg("There is something there already");

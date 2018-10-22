@@ -115,12 +115,12 @@ do_zap(bool gotdir)
 
 	    y = hero.y;
 	    x = hero.x;
-	    while (step_ok(winat(y, x)))
+	    while (step_ok((char) winat(y, x)))
 	    {
 		y += delta.y;
 		x += delta.x;
 	    }
-	    if (isupper(monster = mvwinch(mw, y, x)))
+	    if (isupper(monster = (char) mvwinch(mw, y, x)))
 	    {
 		char omonst = monster;
 
@@ -169,7 +169,7 @@ do_zap(bool gotdir)
 		    mvwaddch(mw, y, x, ' ');
 		    mvwaddch(mw, tp->t_pos.y, tp->t_pos.x, monster);
 		    if (tp->t_pos.y != y || tp->t_pos.x != x)
-			tp->t_oldch = mvwinch(cw, tp->t_pos.y, tp->t_pos.x);
+			tp->t_oldch = (char) mvwinch(cw, tp->t_pos.y, tp->t_pos.x);
 		}
 	    }
 	}
@@ -196,7 +196,7 @@ do_zap(bool gotdir)
 
 	    delta.y += hero.y;
 	    delta.x += hero.x;
-	    ch = winat(delta.y, delta.x);
+	    ch = (char) winat(delta.y, delta.x);
 	    if (isupper(ch))
 	    {
 		if (rnd(20) == 0)
@@ -216,7 +216,7 @@ do_zap(bool gotdir)
 	case WS_SLOW_M:
 	    y = hero.y;
 	    x = hero.x;
-	    while (step_ok(winat(y, x)))
+	    while (step_ok((char) winat(y, x)))
 	    {
 		y += delta.y;
 		x += delta.x;
@@ -275,7 +275,7 @@ do_zap(bool gotdir)
 		name = "ice";
 	    for (y = 0; y < BOLT_LENGTH && !used; y++)
 	    {
-		ch = winat(pos.y, pos.x);
+		ch = (char) winat(pos.y, pos.x);
 		spotpos[y] = pos;
 		switch (ch)
 		{
