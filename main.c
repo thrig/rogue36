@@ -204,6 +204,7 @@ main(int argc, char **argv, char **envp)
     /* modern systems are far too fast at the above steps */
     sleep(1);
     playit();
+    exit(1);                    /* NOTREACHED */
 }
 
 /*

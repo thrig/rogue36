@@ -31,6 +31,8 @@
 
 #define ROGUE_CHARBUF_MAX 80
 
+#include <sys/wait.h>
+
 #if defined(_WIN32)
 #include <Windows.h>
 #include <Lmcons.h>
