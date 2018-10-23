@@ -160,7 +160,7 @@ score(int amount, int flags, char monst)
 	    encread((char *) &top_ten[i].sc_name, 80, fd);
 	    encread((char *) &top_ten[i].sc_login, 8, fd);
 	    encread((char *) scoreline, 100, fd);
-	    sscanf(scoreline, " %d %d %d %d \n",
+	    sscanf(scoreline, " %d %d %d %u \n",
 		&top_ten[i].sc_score,  &top_ten[i].sc_flags,
 		&top_ten[i].sc_level,  &sc_monster_i);
                 top_ten[i].sc_monster = (unsigned char) sc_monster_i;
