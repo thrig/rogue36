@@ -11,11 +11,15 @@
  */
 
 #include "curses.h"
+#include <time.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <signal.h>
 #include <string.h>
 #include "rogue.h"
+
+/* make nojump do something on modern systems */
+struct timespec yawn = { 0, 25000000 };
 
 void call(void);
 void d_level(void);
@@ -37,7 +41,6 @@ command(void)
     int ntimes = 1;			/* Number of player moves */
     static char countch, direction, newcount = FALSE;
 
-
     if (on(player, ISHASTE)) ntimes++;
     /*
      * Let the daemons start up
@@ -52,8 +55,10 @@ command(void)
 	status();
 	lastscore = purse;
 	wmove(cw, hero.y, hero.x);
-	if (!((running || count) && jump))
+	if (!((running || count) && jump)) {
 	    draw(cw);			/* Draw screen */
+            nanosleep(&yawn, NULL);
+	}
 	take = 0;
 	after = TRUE;
 	/*

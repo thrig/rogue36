@@ -9,7 +9,6 @@
  */
 
 #include "curses.h"
-#include <err.h>
 #include <errno.h>
 #include <time.h>
 #include <signal.h>
@@ -217,13 +216,13 @@ long argtol(const char *arg, const long min, const long max)
     errno = 0;
     val = strtol(arg, &ep, 0);
     if (arg[0] == '\0' || *ep != '\0')
-        errx(1, "strtol failed");
+        fatal("strtol failed");
     if (errno == ERANGE && (val == LONG_MIN || val == LONG_MAX))
-        errx(1, "argument outside range of long");
+        fatal("argument outside range of long");
     if (min != LONG_MIN && val < min)
-        errx(1, "value is below minimum");
+        fatal("value is below minimum");
     if (max != LONG_MAX && val > max)
-        errx(1, "value is above maximum");
+        fatal("value is above maximum");
     return val;
 }
 
