@@ -40,7 +40,7 @@ tr_name(char ch)
 	    s = terse ? "A teleport trap." : "You found a teleport trap.";
 	when DARTTRAP:
 	    s = terse ? "A dart trap." : "You found a poison dart trap.";
-        default:
+        otherwise:
             s = terse ? "A no trap??" : "You found no such trap??";
     }
     return s;
