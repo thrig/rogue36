@@ -1,16 +1,8 @@
 /* a traditional scroll name generator */
 
-#include <err.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
+#include "rogue.h"
 
 #define MAXSCROLLS 16
-
-#define RN (((seed = seed*11109+13849) & 0x7fff) >> 1)
 
 int seed;
 char prbuf[80];
@@ -33,29 +25,6 @@ char *sylls[] = {
     "wed", "werg", "wex", "whon", "wun", "xo", "y", "yot", "yu",
     "zant", "zap", "zeb", "zim", "zok", "zon", "zum",
 };
-
-/* atoi is certainly less typing */
-long argtol(const char *arg, const long min, const long max)
-{
-    char *ep;
-    long val;
-    errno = 0;
-    val = strtol(arg, &ep, 0);
-    if (arg[0] == '\0' || *ep != '\0')
-        errx(1, "strtol failed");
-    if (errno == ERANGE && (val == LONG_MIN || val == LONG_MAX))
-        errx(1, "argument outside range of long");
-    if (min != LONG_MIN && val < min)
-        errx(1, "value is below minimum");
-    if (max != LONG_MAX && val > max)
-        errx(1, "value is above maximum");
-    return val;
-}
-
-int rnd(int range)
-{
-    return range == 0 ? 0 : abs(RN) % range;
-}
 
 int main(int argc, char *argv[])
 {
