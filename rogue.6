@@ -1,4 +1,4 @@
-.Dd October 20 2018
+.Dd November  9 2018
 .Dt ROGUE 6
 .nh
 .Os
@@ -72,7 +72,8 @@ is used for the lit floor of rooms and
 for the floor in corridors. Stairs, unlike in various modern roguelikes,
 are represented by
 .Qq %
-and are one-way.
+and are one-way. Note that doors cannot be entered on the diagonal, nor
+can monsters attack you on the diagonal if you stand on a door.
 .Pp
 Messages will be printed at the top of the screen, sometimes with a
 .Qq --More--
@@ -147,12 +148,18 @@ Zap a wand in a direction.
 .It Cm z
 Zap a wand.
 .It Cm >
-Go down a staircase.
+Go down a staircase. Staircase are represented by
+.Qq % .
 .It Cm s
 Search for traps or secret doors. It may take multiple attempts to
 find these.
 .It Cm \&.
-Rest for a while (also via the more traditional space key).
+Rest for a while.
+.It Cm Space
+Space is the traditional command to rest, though beware that it is also
+used to clear
+.Qq "--More--"
+prompts, and that giving free moves to monsters is probably not ideal.
 .It Cm i
 Display the inventory.
 .It Cm I Ar slot
@@ -200,6 +207,8 @@ Pick these up by moving over them.
 .Bl -tag -width Ds
 .It !
 A flask containing a magic potion.
+.It %
+Not an item; this is a one-way staircase to the next level.
 .It )
 A weapon of some sort.
 .It *
