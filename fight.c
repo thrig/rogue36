@@ -133,7 +133,7 @@ attack(struct thing *mp)
 		    /*
 		     * If a rust monster hits, you lose armor
 		     */
-		    if (cur_armor != NULL && cur_armor->o_ac < 9)
+		    if (cur_armor != NULL && cur_armor->o_which != LEATHER && cur_armor->o_ac < 9)
 		    {
 			if (!terse)
 			    msg("Your armor appears to be weaker now. Oh my!");
