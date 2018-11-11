@@ -1,4 +1,4 @@
-.Dd November  9 2018
+.Dd November 11 2018
 .Dt ROGUE 6
 .nh
 .Os
@@ -142,7 +142,12 @@ Throw something in the given motion direction.
 .It Cm f Ar dir
 Move until something is found in the given direction. This is more
 conservative than running with shift +
-.Ar dir .
+.Ar dir
+and is more like the
+.Cm t
+command of
+.Xr vi 1
+in that it stops next to the found object, not on said object.
 .It Cm p Ar dir
 Zap a wand in a direction.
 .It Cm z
@@ -202,6 +207,16 @@ Save game.
 .It Cm Q
 Quit.
 .El
+.Pp
+As in
+.Xr vi 1
+you may prefix some of the commands with a number to indicate how many 
+times that action should be repeated. For example
+.Cm 5l
+would move five spaces to the left. If resting beware that this will
+let a monster get a free hit on you before interrupting. See also the
+.Cm flush
+option.
 .Ss Items
 Pick these up by moving over them.
 .Bl -tag -width Ds
@@ -320,6 +335,11 @@ as claimed by previous authors.
 If this option is set, running moves will not be displayed until you
 reach the end of the move. This saves considerable CPU time and display
 time. This option defaults to on if you are using a slow terminal.
+.Pp
+.Xr nanosleep 2
+calls have been added to make
+.Cm nojump
+slow enough to be seen on modern systems.
 .It Cm name Ns = Ns Ar character-name
 This is the name of your character. It is used if you get on the top ten
 list. It must be less than 80 characters long.
@@ -358,8 +378,8 @@ Default save file.
 .Sh EXIT STATUS
 .Ex -std
 .Sh SEE ALSO
-.Cm Brogue ,
-.Cm crawl ,
+.Nm Brogue ,
+.Nm crawl ,
 .Xr ncurses 3 ,
 .Xr vi 1
 .Sh HISTORY
@@ -394,8 +414,40 @@ Copyright (C) 1980, 1981 Michael Toy, Ken Arnold, and Glenn Wichman
 .Pp
 All rights reserved.
 .Sh CAVEATS
-Many.
+.Nm
+is an old game that shows its age.
+.Bl -bullet
+.It
+The interface for selecting items has been much improved on by 
+new roguelikes. In particular it is very easy to throw away your bow 
+while shooting, and the extra trips to the inventory list to pick a 
+letter are cumbersome, especially given that the letters move around
+as your inventory changes. Cancelling an action is also difficult.
+.It
+Blindness lasts for way, way, way too long.
+.It
+The need to carry spare armor because of rust monsters compounds
+inventory problems, assuming you find any spare armor, especially given 
+how frequently rust monsters appear, their odds of hitting, and how 
+long they take to kill.
+.Nm Brogue
+offers a protect armor scroll (or reasonable odds of punching an acid 
+mound to death, among other options) and
+.Nm crawl
+has made corrosion a temporary effect.
+.It
+It is difficult to heal up by resting; modern roguelikes typically 
+offer a rest command that will be interrupted when a monster appears. 
+On the other hand, a desperate plunge into a lethal dungeon could be a 
+design goal.
+.It
+Searching is difficult though somewhat improved on by the limited 
+number of ways the grid of rooms can be wired to one another.
+.Nm Brogue
+(as of 1.7.5) will reveal secrets after a certain number of turns;
+this avoids the long tail of an unfavorable RNG or wasting time 
+searching where there really is no door.
 .Sh BUGS
 .Qq Probably infinite.
 .Sh SECURITY CONSIDERATIONS
-It's C code from the 1980s.
+An abundance of C code from the 1980s.
