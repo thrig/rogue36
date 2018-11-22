@@ -1,4 +1,4 @@
-.Dd November 20 2018
+.Dd November 22 2018
 .Dt ROGUE 6
 .nh
 .Os
@@ -155,6 +155,8 @@ Zap a wand.
 .It Cm >
 Go down a staircase. Staircase are represented by
 .Qq % .
+.It Cm <
+With the amulet in hand, use this command to climb up at a staircase.
 .It Cm s
 Search for traps or secret doors. It may take multiple attempts to
 find these.
@@ -451,5 +453,17 @@ this avoids the long tail of an unfavorable RNG or wasting time
 searching where there really is no door.
 .Sh BUGS
 .Qq Probably infinite.
+.Pp
+In particular
+.Nm
+does not change
+.Dv LINES
+nor
+.Dv COLS
+when the terminal is resized; this may lead to corrupted maps where
+vertical walls are shown as runs of
+.Qq || .
+So do not resize the terminal after starting the game. The minimum
+required terminal size is 70x22.
 .Sh SECURITY CONSIDERATIONS
 An abundance of C code from the 1980s.
