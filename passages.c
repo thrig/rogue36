@@ -10,9 +10,8 @@
  * See the LICENSE file for full copyright and licensing information.
  */
 
-#include "curses.h"
-#include "rogue.h"
 #include <stdlib.h>
+#include "rogue.h"
 
 void conn(int r1, int r2);
 void door(struct room *rm, coord *cp);

@@ -45,12 +45,14 @@
 #elif defined(__DJGPP__)
 #include <process.h>
 #elif defined(__OpenBSD__)
-#include <pwd.h>
 #include <sys/utsname.h>
+
+#include <pwd.h>
 #include <unistd.h>
 #else
-#include <pwd.h>
 #include <sys/utsname.h>
+
+#include <pwd.h>
 #include <unistd.h>
 #include <utmpx.h>
 #endif

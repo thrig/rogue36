@@ -10,12 +10,11 @@
  * See the LICENSE file for full copyright and licensing information.
  */
 
-#include "curses.h"
-#include <time.h>
-#include <stdlib.h>
 #include <ctype.h>
 #include <signal.h>
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "rogue.h"
 
 /* make nojump do something on modern systems */

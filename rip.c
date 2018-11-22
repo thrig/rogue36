@@ -11,13 +11,13 @@
  * See the LICENSE file for full copyright and licensing information.
  */
 
-#include "curses.h"
-#include <time.h>
-#include <signal.h>
-#include <ctype.h>
 #include <sys/types.h>
+
+#include <ctype.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <string.h>
+#include <time.h>
 #include "machdep.h"
 #include "rogue.h"
 

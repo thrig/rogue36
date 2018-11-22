@@ -10,6 +10,8 @@
  * See the LICENSE file for full copyright and licensing information.
  */
 
+#include <curses.h>
+
 /*
  * Used in various buffers
  */

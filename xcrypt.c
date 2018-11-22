@@ -50,6 +50,7 @@
  */
 
 #include <sys/types.h>
+
 #include <string.h>
 
 extern unsigned long int md_ntohl(unsigned long int x);

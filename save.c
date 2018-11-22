@@ -10,15 +10,15 @@
  * See the LICENSE file for full copyright and licensing information.
  */
 
-#include "curses.h"
-#include <ctype.h>
-#include <sys/types.h>
 #include <sys/stat.h>
-#include <signal.h>
+#include <sys/types.h>
+
+#include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <string.h>
+#include <signal.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include "rogue.h"
 #include "machdep.h"

@@ -8,14 +8,13 @@
  * See the LICENSE file for full copyright and licensing information.
  */
 
-#include "curses.h"
 #include <errno.h>
-#include <time.h>
-#include <signal.h>
 #include <limits.h>
-#include <stdlib.h>
+#include <signal.h>
 #include <stdarg.h>
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 #include "machdep.h"
 #include "rogue.h"

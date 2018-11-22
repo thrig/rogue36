@@ -10,9 +10,8 @@
  * See the LICENSE file for full copyright and licensing information.
  */
 
-#include "curses.h"
-#include "rogue.h"
 #include <stdlib.h>
+#include "rogue.h"
 
 void draw_room(struct room *rp);
 void horiz(int cnt);

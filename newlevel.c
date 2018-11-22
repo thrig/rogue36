@@ -11,10 +11,8 @@
  * See the LICENSE file for full copyright and licensing information.
  */
 
-#include "curses.h"
-#include "rogue.h"
-
 #include <string.h>
+#include "rogue.h"
 
 void put_things();
 

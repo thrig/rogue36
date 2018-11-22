@@ -15,7 +15,7 @@ OBJS    = vers.o armor.o chase.o command.o daemon.o daemons.o fight.o init.o \
 	  options.o pack.o passages.o potions.o rings.o rip.o rooms.o save.o \
 	  scrolls.o state.o sticks.o things.o weapons.o wizard.o xcrypt.o
 
-CFLAGS += -Wall -pedantic -pipe
+CFLAGS += -std=c99 -Wall -pedantic -pipe
 LIBS	= -lcurses
 RM	= rm -f
 LD	= $(CC)
