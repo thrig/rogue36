@@ -229,7 +229,7 @@ command(void)
 		    after = FALSE;
 		    if (wizard) switch (ch)
 		    {
-			case '@' : msg("@ %d,%d", hero.y, hero.x);
+			case '@' : msg("@ %d,%d (window %d,%d)", hero.y, hero.x, LINES, COLS);
 			when 'C' : create_obj();
 			when CTRL('I') : inventory(lvl_obj, 0);
 			when CTRL('W') : whatis();
