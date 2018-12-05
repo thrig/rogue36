@@ -15,7 +15,6 @@ int randmonster(int level, int wander);
 int main(void)
 {
     for (int level = 1; level <= 27; level++) {
-        int fd;
         for (int i = 0; i < SEEDS; i++) {
             seed = (int) arc4random();
             for (int n = 0; n < TRIALS; n++)
