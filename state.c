@@ -29,6 +29,7 @@
     SUCH DAMAGE.
 */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -508,11 +509,12 @@ rs_write_long(FILE *savef, long c)
     return(WRITESTAT);
 }
 
+/* NOTE this the 32-bit flavor of 'long' */
 int
 rs_read_long(int inf, long *i)
 {
     unsigned char bytes[4];
-    long input;
+    uint32_t input;
     unsigned char *buf = (unsigned char *) &input;
     
     if (read_error || format_error)
@@ -529,7 +531,7 @@ rs_read_long(int inf, long *i)
         buf = bytes;
     }
     
-    *i = *((long *) buf);
+    *i = (long) input;
 
     return(READSTAT);
 }
