@@ -1,0 +1,30 @@
+#!/usr/bin/env expect
+#
+# a wee little rogue wrapper that finds a savefile, if any, and either
+# loads that or starts a new game, with logging for future review.
+# rogue(6) has details on the contents of ROGUEOPTS; the log_file bit
+# may need to be customized or disabled, as desired
+
+package require Tcl 8.5
+
+set cmd rogue
+
+set options [array get env ROGUEOPTS]
+set savefile ""
+if {[llength $options] == 2} {
+    foreach opt [split [lindex $options 1] ,] {
+        set fields [split $opt =]
+        if {[lindex $fields 0] eq "file"} {
+            set savefile [lindex $fields 1]
+            break
+        }
+    }
+}
+if {[string length $savefile] == 0} { set savefile ~/rogue36.sav }
+if {[file exists $savefile]} { lappend cmd $savefile }
+
+file mkdir ~/share/rogue/rec
+log_file ~/share/rogue/rec/rogue.[clock seconds].log
+
+spawn -noecho {*}$cmd
+interact

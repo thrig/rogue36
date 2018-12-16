@@ -196,7 +196,7 @@ rs_read_int(int inf, int *i)
         buf = bytes;
     }
     
-    *i = *((int *) buf);
+    *i = input;
 
     return(READSTAT);
 }
@@ -343,7 +343,7 @@ rs_read_short(int inf, short *i)
         buf = bytes;
     }
     
-    *i = *((short *) buf);
+    *i = input;
 
     return(READSTAT);
 } 
@@ -425,7 +425,7 @@ rs_read_ushort(int inf, unsigned short *i)
         buf = bytes;
     }
     
-    *i = *((unsigned short *) buf);
+    *i = input;
 
     return(READSTAT);
 } 
@@ -474,7 +474,7 @@ rs_read_uint(int inf, unsigned int *i)
         buf = bytes;
     }
     
-    *i = *((unsigned int *) buf);
+    *i = input;
 
     return(READSTAT);
 }
@@ -623,7 +623,7 @@ rs_read_ulong(int inf, unsigned long *i)
         buf = bytes;
     }
     
-    *i = *((unsigned long *) buf);
+    *i = input;
 
     return(READSTAT);
 }
@@ -1509,7 +1509,7 @@ rs_read_object(int inf, struct object *o)
     rs_read_int(inf, &o->o_count);
     rs_read_int(inf, &o->o_which);
     rs_read_int(inf, &o->o_hplus);
-    rs_read_int(inf, &o->o_hplus);
+    rs_read_int(inf, &o->o_dplus);
     rs_read_int(inf,&o->o_ac);
     rs_read_int(inf,&o->o_flags);
     rs_read_int(inf,&o->o_group);
