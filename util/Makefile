@@ -1,6 +1,9 @@
 CFLAGS=-std=c99 -O3 -Wall -pedantic -fno-diagnostics-color -fstack-protector-all -fPIC -fPIE -pie -pipe
 
-all: monster-odds scroll-o-matic
+all: gaze-odds monster-odds scroll-o-matic
+
+gaze-odds: gaze-odds.c rogue.o rogue.h
+	$(CC) $(CFLAGS) rogue.o gaze-odds.c -o gaze-odds
 
 monster-odds: monster-odds.c rogue.o rogue.h
 	$(CC) $(CFLAGS) rogue.o monster-odds.c -o monster-odds

@@ -20,7 +20,9 @@ if {[llength $options] == 2} {
         }
     }
 }
-if {[string length $savefile] == 0} { set savefile ~/rogue36.sav }
+if {[string length $savefile] == 0} {
+    set savefile [file nativename ~/rogue36.sav]
+}
 if {[file exists $savefile]} { lappend cmd $savefile }
 
 file mkdir ~/share/rogue/rec

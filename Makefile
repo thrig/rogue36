@@ -1,13 +1,8 @@
-#
-# Makefile for rogue
-# %W% (Berkeley) %G%
-#
 # Rogue: Exploring the Dungeons of Doom
 # Copyright (C) 1980, 1981 Michael Toy, Ken Arnold and Glenn Wichman
 # All rights reserved.
 #
 # See the LICENSE file for full copyright and licensing information.
-#
 
 PROGRAM = rogue
 OBJS    = vers.o armor.o chase.o command.o daemon.o daemons.o fight.o init.o \
@@ -15,7 +10,7 @@ OBJS    = vers.o armor.o chase.o command.o daemon.o daemons.o fight.o init.o \
 	  options.o pack.o passages.o potions.o rings.o rip.o rooms.o save.o \
 	  scrolls.o state.o sticks.o things.o weapons.o wizard.o xcrypt.o
 
-CFLAGS += -std=c99 -Wall -pedantic -pipe
+CFLAGS += -std=c99 -O3 -Wall -pedantic -pipe
 LIBS	= -lcurses
 RM	= rm -f
 LD	= $(CC)

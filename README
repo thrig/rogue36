@@ -1,17 +1,17 @@
 rogue 3.6.3
 ===========
-                                                                 --+-----------
-  this started from a rogue3.6.3-src.tar.gz. this is mostly for  |............|
-historical interest; the code has been modernized to compile on  |............|
-Mac OS X 10.11 with gcc from the vendor (or MacPorts gcc, which  |.........?..|
-appears to be more forgiving) without errors. also GNUisms have  |........H...|
-been removed from the Makefile                                   +............|
-                                                                 |.....*...@..|
-    make                                                         --+-----------
+                                                               --+-----------
+   this began from a rogue3.6.3-src.tar.gz and is mostly for   |............|
+historical interest. the code has been updated to compile on   |............|
+modern systems without errors, plus bugfixes and other minor   |.........?..|
+tweaks where deemed necessary. the GNUisms have been removed   |........H...|
+from the Makefile                                              +............|
+                                                               |.....*...@..|
+    make                                                       --+-----------
     ./rogue
 
-the documentation has been consolidated into rogue.6; copy this file into
-a suitable MANPATH directory then run
+the documentation has been consolidated into rogue.6; copy this into a
+suitable MANPATH directory (e.g. /usr/local/share/man/man6) and then run
 
     man 6 rogue
 
