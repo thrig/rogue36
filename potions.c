@@ -171,7 +171,7 @@ quaff(void)
 	    if (off(player, ISBLIND))
 	    {
 		player.t_flags |= ISBLIND;
-		fuse(sight, 0, SEEDURATION, AFTER);
+		fuse(sight, 0, rnd(20)+SEEDURATION, AFTER);
 		look(FALSE);
 	    }
 	    p_know[P_BLIND] = TRUE;

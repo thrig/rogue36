@@ -152,8 +152,14 @@ attack(struct thing *mp)
 			if (!terse)
 			    addmsg(" by the gaze of the floating eye.");
 			endmsg();
+			no_command = rnd(6)+HOLDTIME;
 		    }
-		    no_command += rnd(2)+2;
+		    else
+		    {
+			pstats.s_hpt -= 1;
+			if (pstats.s_hpt <= 0)
+			    death(mp->t_type);  /* Bye bye life ... */
+                    }
 		when 'A':
 		    /*
 		     * Ants have poisonous bites
@@ -336,7 +342,7 @@ check_level(void)
     i++;
     if (i > pstats.s_lvl)
     {
-	add = roll(i-pstats.s_lvl,10);
+	add = 2 * (i-pstats.s_lvl) + roll(i-pstats.s_lvl,8);
 	max_hp += add;
 	if ((pstats.s_hpt += add) > max_hp)
 	    pstats.s_hpt = max_hp;
