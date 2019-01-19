@@ -21,7 +21,7 @@
 
 struct delayed_action d_list[MAXDAEMONS] = {
     _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_,
-    _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, 
+    _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_,
 };
 
 /*
@@ -69,8 +69,8 @@ start_daemon(int (*func)(), int arg, int type)
     struct delayed_action *dev;
 
     dev = d_slot();
- 
-    if (dev != NULL) 
+
+    if (dev != NULL)
     {
         dev->d_type = type;
         dev->d_func = func;

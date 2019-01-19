@@ -157,7 +157,7 @@ status(void)
 	&& s_str == pstats.s_str.st_str && s_add == pstats.s_str.st_add
 	&& s_lvl == level && s_hungry == hungry_state)
 	    return;
-	
+
     getyx(cw, oy, ox);
     if (s_hp != max_hp)
     {
@@ -185,7 +185,7 @@ status(void)
     s_hp = pstats.s_hpt;
     s_str = pstats.s_str.st_str;
     s_add = pstats.s_str.st_add;
-    s_exp = pstats.s_exp; 
+    s_exp = pstats.s_exp;
     s_ac = (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm);
     mvwaddstr(cw, LINES - 1, 0, buf);
     switch (hungry_state)

@@ -28,7 +28,7 @@ SUCH DAMAGE.
 
 ===========================================================================
 
-Portions of this software (save/restore game state) are based on the work 
+Portions of this software (save/restore game state) are based on the work
 of Nicholas J. Kisseberth. Used under license:
 
 Copyright (C) 1999, 2000, 2006 Nicholas J. Kisseberth
@@ -59,7 +59,7 @@ SUCH DAMAGE.
 
 ===========================================================================
 
-Portions of this software (encryption) are based on the work 
+Portions of this software (encryption) are based on the work
 of David Burren. Used under license:
 
 FreeSec: libcrypt

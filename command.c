@@ -192,11 +192,11 @@ command(void)
 		when 'v' : msg("Rogue version %s. (mctesq was here)", release);
 		when CTRL('L') : after = FALSE; clearok(curscr,TRUE);draw(curscr);
 		when CTRL('R') : after = FALSE; msg(huh);
-		when 'S' : 
+		when 'S' :
 		    after = FALSE;
 		    if (save_game())
 		    {
-			wmove(cw, LINES-1, 0); 
+			wmove(cw, LINES-1, 0);
 			wclrtoeol(cw);
 			draw(cw);
 			endwin();

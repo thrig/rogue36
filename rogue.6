@@ -1,4 +1,4 @@
-.Dd January 18 2019
+.Dd January 19 2019
 .Dt ROGUE 6
 .nh
 .Os
@@ -84,11 +84,11 @@ option, see
 .Sx Options .
 .Bd -literal -offset indent
         ##                                              ---
-  -------+------            -------------            ###+   
-  |............|            |...........|            #  |  
-  |............|            |...........|            #  |%  
-  |............|            |...........|            #  |   
-  |............|            |...........+#############  |  
+  -------+------            -------------            ###+
+  |............|            |...........|            #  |
+  |............|            |...........|            #  |%
+  |............|            |...........|            #  |
+  |............|            |...........+#############  |
   ------+-------            -------+-----               -+-
         #                          #                     #
         ####                       ###                   ##
@@ -216,7 +216,7 @@ Quit.
 .Pp
 As in
 .Xr vi 1
-you may prefix some of the commands with a number to indicate how many 
+you may prefix some of the commands with a number to indicate how many
 times that action should be repeated. For example
 .Cm 5l
 would move five spaces to the left. If resting beware that this will
@@ -306,7 +306,7 @@ The
 .Cm o
 command places the cursor by the value of the first option and waits for
 you to type. You can type a RETURN which means to go to the next option,
-a 
+a
 .Cm \&-
 which means to go to the previous option, an ESCAPE which means to
 return to the game, or you can give the option a value. For boolean
@@ -424,25 +424,25 @@ All rights reserved.
 is an old game that shows its age.
 .Bl -bullet
 .It
-The interface for selecting items has been much improved on by 
-new roguelikes. In particular it is very easy to throw away your bow 
-while shooting, and the extra trips to the inventory list to pick a 
+The interface for selecting items has been much improved on by
+new roguelikes. In particular it is very easy to throw away your bow
+while shooting, and the extra trips to the inventory list to pick a
 letter are cumbersome, especially given that the letters move around
 as your inventory changes. Cancelling an action is also difficult.
 .It
 The need to carry spare armor because of rust monsters compounds
-inventory problems, assuming you find any spare armor, especially given 
-how frequently rust monsters appear, their odds of hitting, and how 
+inventory problems, assuming you find any spare armor, especially given
+how frequently rust monsters appear, their odds of hitting, and how
 long they take to kill.
 .Nm Brogue
-offers a protect armor scroll (or reasonable odds of punching an acid 
+offers a protect armor scroll (or reasonable odds of punching an acid
 mound to death, among other options) and
 .Nm crawl
 has made corrosion a temporary effect.
 .It
-It is difficult to heal up by resting; modern roguelikes typically 
-offer a rest command that will be interrupted when a monster appears. 
-On the other hand, a desperate plunge into a lethal dungeon could be a 
+It is difficult to heal up by resting; modern roguelikes typically
+offer a rest command that will be interrupted when a monster appears.
+On the other hand, a desperate plunge into a lethal dungeon could be a
 design goal.
 .Sh BUGS
 .Qq Probably infinite.

@@ -110,7 +110,7 @@ score(int amount, int flags, char monst)
     /*
      * Open file and read list
      */
-    
+
     /* Get default score file */
     strcpy(score_file, md_getroguedir());
 

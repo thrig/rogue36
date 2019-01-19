@@ -30,7 +30,7 @@ int lastscore = -1;
 struct thing player;
 struct room rooms[MAXROOMS];
 struct room *oldrp;
-struct stats max_stats; 
+struct stats max_stats;
 struct object *cur_armor;
 struct object *cur_ring[2];
 bool after;

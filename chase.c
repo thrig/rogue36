@@ -69,7 +69,7 @@ do_chase(struct thing *th)
 	rer = NULL;
     this = *th->t_dest;
     /*
-     * If the object of our desire is in a different room, 
+     * If the object of our desire is in a different room,
      * than we are and we ar not in a corridor, run to the
      * door nearest to our goal.
      */
@@ -183,7 +183,7 @@ chase(struct thing *tp, coord *ee)
 	ch_ret = *rndmove(tp);
 	dist = DISTANCE(ch_ret.y, ch_ret.x, ee->y, ee->x);
 	/*
-	 * Small chance that it will become un-confused 
+	 * Small chance that it will become un-confused
 	 */
 	if (rnd(1000) < 50)
 	    tp->t_flags &= ~ISHUH;

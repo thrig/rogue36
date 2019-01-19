@@ -140,7 +140,7 @@ get_bool(bool *bp, WINDOW *win)
     op_bad = TRUE;
     getyx(win, oy, ox);
     waddstr(win, *bp ? "True" : "False");
-    while(op_bad)	
+    while(op_bad)
     {
 	wmove(win, oy, ox);
 	draw(win);

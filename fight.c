@@ -246,11 +246,11 @@ attack(struct thing *mp)
 		    for (nobj = 0, list = pack; list != NULL; list = next(list))
 		    {
 			obj = (struct object *) ldata(list);
-			if (obj != cur_armor && 
+			if (obj != cur_armor &&
                             obj != cur_weapon &&
                             obj != cur_ring[LEFT] &&
                             obj != cur_ring[RIGHT] && /* Nymph bug fix */
-			    is_magic(obj) && 
+			    is_magic(obj) &&
                             rnd(++nobj) == 0)
 				steal = list;
 		    }
@@ -454,7 +454,7 @@ prname(char *who, bool upper)
 
     *tbuf = '\0';
     if (who == 0)
-	strcpy(tbuf, "you"); 
+	strcpy(tbuf, "you");
     else if (on(player, ISBLIND))
 	strcpy(tbuf, "it");
     else

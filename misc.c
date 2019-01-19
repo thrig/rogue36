@@ -374,7 +374,7 @@ vowelstr(char *str)
     }
 }
 
-/* 
+/*
  * see if the object is one of the currently used items
  */
 int

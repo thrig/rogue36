@@ -237,7 +237,7 @@ num(int n1, int n2)
         sprintf(numbuf, "%s%d,%s%d",
 				n1 < 0 ? "" : "+", n1, n2 < 0 ? "" : "+", n2);
     return numbuf;
-}    
+}
 
 /*
  * wield:

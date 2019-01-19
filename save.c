@@ -177,7 +177,7 @@ restore(char *file, char **envp)
      */
 
     initscr();
-	
+
     if (slines > LINES)
     {
 	endwin();
@@ -185,7 +185,7 @@ restore(char *file, char **envp)
 	printf("Current screen only has %d lines. Unable to restore game\n",LINES);
 	return(FALSE);
     }
-	
+
     if (scols > COLS)
     {
 	endwin();
@@ -193,7 +193,7 @@ restore(char *file, char **envp)
 	printf("Current screen only has %d columns. Unable to restore game\n",COLS);
 	return(FALSE);
     }
-    
+
     cw = newwin(LINES, COLS, 0, 0);
     mw = newwin(LINES, COLS, 0, 0);
     hw = newwin(LINES, COLS, 0, 0);
@@ -208,7 +208,7 @@ restore(char *file, char **envp)
 	printf("Cannot restore file\n");
     	return(FALSE);
     }
-	
+
     if (!wizard && (md_unlink_open_file(file, inf) < 0))
     {
 	endwin();

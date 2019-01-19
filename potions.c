@@ -127,7 +127,7 @@ quaff(void)
 		}
 		if (show)
 		{
-		    show_win(hw, 
+		    show_win(hw,
 			"You sense the presence of magic on this level.--More--");
 		    break;
 		}

@@ -153,7 +153,7 @@ add_pack(struct linked_list *item, bool silent)
     else
     {
 	/*
-	 * If we found an exact match.  If it is a potion, food, or a 
+	 * If we found an exact match.  If it is a potion, food, or a
 	 * scroll, increase the count, otherwise put it with its clones.
 	 */
 	if (exact && ISMULT(obj->o_type))
@@ -282,7 +282,7 @@ pick_up(char ch)
 	case POTION:
 	case FOOD:
 	case WEAPON:
-	case SCROLL:	
+	case SCROLL:
 	case AMULET:
 	case RING:
 	case STICK:
@@ -377,7 +377,7 @@ get_item(char *purpose, int type)
 		msg("Please specify a letter between 'a' and '%c'", och-1);
 		continue;
 	    }
-	    else 
+	    else
 		return obj;
 	}
     }
