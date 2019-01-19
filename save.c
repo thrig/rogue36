@@ -120,7 +120,7 @@ save_file(FILE *savef)
     strcpy(buf,version);
     encwrite(buf,80,savef);
     memset(buf,0,80);
-    strcpy(buf,"R36 2\n");
+    strcpy(buf,"R36 3\n");
     encwrite(buf,80,savef);
     memset(buf,0,80);
     sprintf(buf,"%d x %d\n", LINES, COLS);
@@ -162,7 +162,7 @@ restore(char *file, char **envp)
     encread(buf, 80, inf);
     sscanf(buf, "R%d %d\n", &rogue_version, &savefile_version);
 
-    if ((rogue_version != 36) && (savefile_version != 2))
+    if ((rogue_version != 36) && (savefile_version != 3))
     {
 	printf("Sorry, saved game format is out of date.\n");
 	return FALSE;

@@ -238,6 +238,7 @@ read_scroll(void)
 		rm = teleport();
 		if (cur_room != &rooms[rm])
 		    s_know[S_TELEP] = TRUE;
+		search_repeat = 0;
 	    }
 	when S_ENCH:
 	    if (cur_weapon == NULL)

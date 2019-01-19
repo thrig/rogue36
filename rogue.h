@@ -450,6 +450,7 @@ extern int lastscore;				/* Score before this turn */
 extern int no_food;				/* Number of levels without food */
 extern int seed;				/* Random number seed */
 extern int count;				/* Number of times to repeat command */
+extern int search_repeat;			/* Increase odds to find doors on repeated searches */
 extern int dnum;				/* Dungeon number */
 extern int fung_hit;				/* Number of time fungi has hit */
 extern int quiet;				/* Number of quiet turns */

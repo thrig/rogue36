@@ -1,5 +1,5 @@
-rogue 3.6.3
-===========
+rogue 3.6.3 + bugfixes + changes
+================================
                                                                --+-----------
    this began from a rogue3.6.3-src.tar.gz and is mostly for   |............|
 historical interest. the code has been updated to compile on   |............|

@@ -158,8 +158,9 @@ Go down a staircase. Staircase are represented by
 .It Cm <
 With the amulet in hand, use this command to climb up at a staircase.
 .It Cm s
-Search for traps or secret doors. It may take multiple attempts to
-find these.
+Search adjacent for traps or secret doors. It may take multiple attempts
+to find these. Multiple attempts without moving increases the odds that
+a secret door will be found.
 .It Cm \&.
 Rest. A numeric prefix will rest for longer though will allow wandering
 monsters a free hit should they pathfind to you.
@@ -443,13 +444,6 @@ It is difficult to heal up by resting; modern roguelikes typically
 offer a rest command that will be interrupted when a monster appears. 
 On the other hand, a desperate plunge into a lethal dungeon could be a 
 design goal.
-.It
-Searching is difficult though somewhat improved on by the limited 
-number of ways the grid of rooms can be wired to one another.
-.Nm Brogue
-(as of 1.7.5) will reveal secrets after a certain number of turns;
-this avoids the long tail of an unfavorable RNG or wasting time 
-searching where there really is no door.
 .Sh BUGS
 .Qq Probably infinite.
 .Pp

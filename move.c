@@ -62,6 +62,7 @@ do_move(int dy, int dx)
 	nh.y = hero.y + dy;
 	nh.x = hero.x + dx;
     }
+    search_repeat = 0;
 
     /*
      * Check if he tried to move off the screen or make an illegal

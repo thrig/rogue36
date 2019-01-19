@@ -23,7 +23,7 @@ bool amulet = FALSE, in_shell = FALSE;
 struct linked_list *lvl_obj = NULL, *mlist = NULL;
 struct object *cur_weapon = NULL;
 int mpos = 0, no_move = 0, no_command = 0, level = 1, purse = 0, inpack = 0;
-int total = 0, no_food = 0, count = 0, fung_hit = 0, quiet = 0;
+int total = 0, no_food = 0, count = 0, fung_hit = 0, quiet = 0, search_repeat = 0;
 int food_left = HUNGERTIME, group = 1, hungry_state = 0;
 int lastscore = -1;
 
