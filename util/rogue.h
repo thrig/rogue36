@@ -15,7 +15,9 @@ int seed;                       /* Random number seed */
 
 #define RN (((seed = seed*11109+13849) & 0x7fff) >> 1)
 
-int rnd(int range);
 long argtol(const char *arg, const long min, const long max);
+
+int rnd(int range);
+int roll(int number, int sides);
 
 #endif

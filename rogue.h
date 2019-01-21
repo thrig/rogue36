@@ -181,7 +181,7 @@ struct linked_list *new_item(int size);
 #define BEFORE 1
 #define AFTER 2
 #define HUHDURATION 20
-#define SEEDURATION 100
+#define SEEDURATION 200
 #define HUNGERTIME 1300
 #define MORETIME 150
 #define STOMACHSIZE 2000

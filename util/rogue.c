@@ -24,3 +24,11 @@ int rnd(int range)
 {
     return range == 0 ? 0 : abs(RN) % range;
 }
+
+int roll(int number, int sides)
+{
+    int dtotal = 0;
+    while (number--)
+        dtotal += rnd(sides) + 1;
+    return dtotal;
+}

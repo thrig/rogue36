@@ -277,6 +277,7 @@ roll(int number, int sides)
 	dtotal += rnd(sides)+1;
     return dtotal;
 }
+
 /*
  * handle stop and start signals
  */

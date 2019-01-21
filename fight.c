@@ -142,7 +142,8 @@ attack(struct thing *mp)
 		    }
 		when 'E':
 		    /*
-		     * The gaze of the floating eye hypnotizes you
+		     * The gaze of the floating eye hypnotizes you (and then
+                     * somehow hurts you, to avoid softlocks)
 		     */
 		    if (on(player, ISBLIND))
 			break;
@@ -152,11 +153,11 @@ attack(struct thing *mp)
 			if (!terse)
 			    addmsg(" by the gaze of the floating eye.");
 			endmsg();
-			no_command = rnd(6)+HOLDTIME;
+			no_command = SLEEPTIME + rnd(4);
 		    }
 		    else
 		    {
-			pstats.s_hpt -= 1;
+			pstats.s_hpt -= 1 + rnd(4);
 			if (pstats.s_hpt <= 0)
 			    death(mp->t_type);  /* Bye bye life ... */
                     }
