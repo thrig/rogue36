@@ -1,6 +1,9 @@
 CFLAGS=-std=c99 -O3 -Wall -pedantic -fno-diagnostics-color -fstack-protector-all -fPIC -fPIE -pie -pipe
 
-all: gaze-odds monster-odds newesim scroll-o-matic
+all: door-search gaze-odds monster-odds newesim scroll-o-matic
+
+door-search: door-search.c rogue.o rogue.h
+	$(CC) $(CFLAGS) rogue.o door-search.c -o door-search
 
 gaze-odds: gaze-odds.c rogue.o rogue.h
 	$(CC) $(CFLAGS) rogue.o gaze-odds.c -o gaze-odds
@@ -18,6 +21,6 @@ scroll-o-matic: scroll-o-matic.c rogue.o rogue.h
 	$(CC) $(CFLAGS) rogue.o scroll-o-matic.c -o scroll-o-matic
 
 clean:
-	rm -f gaze-odds monster-odds newesim rogue.o scroll-o-matic
+	rm -f door-search gaze-odds monster-odds newesim rogue.o scroll-o-matic
 
 .PHONY: all clean

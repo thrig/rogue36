@@ -383,7 +383,7 @@ search(void)
 	    switch (ch)
 	    {
 		case SECRETDOOR:
-		    if (rnd(100) < 20 + 10 * search_repeat++) {
+		    if (rnd(100) < 10 + 4 * search_repeat++) {
 			mvaddch(y, x, DOOR);
 			count = 0;
 			search_repeat = 0;
