@@ -202,7 +202,7 @@ command(void)
 			endwin();
 			exit(0);
 		    }
-		when ' ' : case '.' : ;			/* Rest command */
+		when '.' : ;		        	/* Rest command */
 		when CTRL('P') :
 		    after = FALSE;
 		    if (wizard)
