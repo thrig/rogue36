@@ -350,13 +350,13 @@ get_item(char *purpose, int type)
 	    msg("? (* for list): ");
 	    ch = readchar(cw);
 	    mpos = 0;
+	    msg("");
 	    /*
 	     * Give the poor player a chance to abort the command
 	     */
 	    if (ch == ESCAPE || ch == CTRL('G'))
 	    {
 		after = FALSE;
-		msg("");
 		return NULL;
 	    }
 	    if (ch == '*')

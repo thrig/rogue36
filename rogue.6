@@ -379,7 +379,9 @@ Seed for wizard mode. Integer.
 .It Pa rogue36.scr
 Score file.
 .It Pa ~/rogue36.sav
-Default save file.
+Default save file. An automatic save will be attempted in response to
+various signals such as
+.Dv SIGHUP .
 .El
 .Sh EXIT STATUS
 .Ex -std
@@ -458,5 +460,17 @@ vertical walls are shown as runs of
 .Qq || .
 So do not resize the terminal after starting the game. The minimum
 required terminal size is 70x22.
+.Pp
+If
+.Nm
+goes to 100% CPU try sending the process a
+.Dv HUP
+signal then restoring from the save game file.
+.Pp
+Soft locks involving floating eyes have been worked around by making
+floating eyes more lethal.
+.Pp
+The RNG is really bad and exhibits non-random results from inputs such
+as repeated coinflips.
 .Sh SECURITY CONSIDERATIONS
 An abundance of C code from the 1980s.

@@ -10,14 +10,14 @@ OBJS    = vers.o armor.o chase.o command.o daemon.o daemons.o fight.o init.o \
 	  options.o pack.o passages.o potions.o rings.o rip.o rooms.o save.o \
 	  scrolls.o state.o sticks.o things.o weapons.o wizard.o xcrypt.o
 
-CFLAGS += -std=c99 -O3 -Wall -pedantic -pipe
+CFLAGS += -std=c99 -g -Wall -pedantic -pipe
 LIBS	= -lcurses
 RM	= rm -f
 LD	= $(CC)
 LDOUT	= -o
 
 $(PROGRAM): $(OBJS)
-	$(LD) $(LDFLAGS) $(OBJS) $(LIBS) $(LDOUT) $(PROGRAM)
+	$(LD) -g $(LDFLAGS) $(OBJS) $(LIBS) $(LDOUT) $(PROGRAM)
 
 armor.o: armor.c rogue.h
 chase.o: chase.c rogue.h

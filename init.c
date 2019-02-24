@@ -429,7 +429,7 @@ init_names(void)
     for (i = 0; i < MAXSCROLLS; i++)
     {
 	cp = prbuf;
-	nwords = rnd(4)+2;
+	nwords = rnd(2)+1;
 	while(nwords--)
 	{
 	    nsyl = rnd(3)+1;
