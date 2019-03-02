@@ -142,8 +142,8 @@ put_things(void)
 	    /*
 	     * Put it somewhere
 	     */
-	    rm = rnd_room();
 	    do {
+		rm = rnd_room();
 		rnd_pos(&rooms[rm], &tp);
 	    } until (winat(tp.y, tp.x) == FLOOR);
 	    mvaddch(tp.y, tp.x, cur->o_type);
