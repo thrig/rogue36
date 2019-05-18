@@ -398,11 +398,12 @@ search(void)
 		    if (rnd(100) > 50)
 			break;
 		    tp = trap_at(y, x);
-		    tp->tr_flags |= ISFOUND;
 		    mvwaddch(cw, y, x, TRAP);
 		    count = 0;
 		    running = FALSE;
-		    msg(tr_name(tp->tr_type));
+		    if ((tp->tr_flags & ISFOUND) != ISFOUND)
+		        msg(tr_name(tp->tr_type));
+		    tp->tr_flags |= ISFOUND;
 		}
 	    }
 	}
