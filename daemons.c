@@ -17,31 +17,26 @@
  *	A healing daemon that restors hit points after rest
  */
 
-int
-doctor(void)
+int doctor(void)
 {
     int lv, ohp;
 
     lv = pstats.s_lvl;
     ohp = pstats.s_hpt;
     quiet++;
-    if (lv < 8)
-    {
-	if (quiet > 20 - lv*2)
-	    pstats.s_hpt++;
-    }
-    else
-	if (quiet >= 3)
-	    pstats.s_hpt += rnd(lv - 7)+1;
+    if (lv < 8) {
+        if (quiet > 20 - lv * 2)
+            pstats.s_hpt++;
+    } else if (quiet >= 3)
+        pstats.s_hpt += rnd(lv - 7) + 1;
     if (ISRING(LEFT, R_REGEN))
-	pstats.s_hpt++;
+        pstats.s_hpt++;
     if (ISRING(RIGHT, R_REGEN))
-	pstats.s_hpt++;
-    if (ohp != pstats.s_hpt)
-    {
-	if (pstats.s_hpt > max_hp)
-	    pstats.s_hpt = max_hp;
-	quiet = 0;
+        pstats.s_hpt++;
+    if (ohp != pstats.s_hpt) {
+        if (pstats.s_hpt > max_hp)
+            pstats.s_hpt = max_hp;
+        quiet = 0;
     }
     return 0;
 }
@@ -51,8 +46,7 @@ doctor(void)
  *	Called when it is time to start rolling for wandering monsters
  */
 
-int
-swander(void)
+int swander(void)
 {
     start_daemon(rollwand, 0, BEFORE);
     return 0;
@@ -65,18 +59,15 @@ swander(void)
 
 int between = 0;
 
-int
-rollwand(void)
+int rollwand(void)
 {
-    if (++between >= 4)
-    {
-	if (roll(1, 6) == 4)
-	{
-	    wanderer();
-	    kill_daemon(rollwand);
-	    fuse(swander, 0, WANDERTIME, BEFORE);
-	}
-	between = 0;
+    if (++between >= 4) {
+        if (roll(1, 6) == 4) {
+            wanderer();
+            kill_daemon(rollwand);
+            fuse(swander, 0, WANDERTIME, BEFORE);
+        }
+        between = 0;
     }
     return 0;
 }
@@ -86,8 +77,7 @@ rollwand(void)
  *	Release the poor player from his confusion
  */
 
-int
-unconfuse(void)
+int unconfuse(void)
 {
     player.t_flags &= ~ISHUH;
     msg("You feel less confused now");
@@ -100,8 +90,7 @@ unconfuse(void)
  *	He lost his see invisible power
  */
 
-int
-unsee(void)
+int unsee(void)
 {
     player.t_flags &= ~CANSEE;
     return 0;
@@ -112,15 +101,13 @@ unsee(void)
  *	He gets his sight back
  */
 
-int
-sight(void)
+int sight(void)
 {
-    if (on(player, ISBLIND))
-    {
-	extinguish(sight);
-	player.t_flags &= ~ISBLIND;
-	light(&hero);
-	msg("The veil of darkness lifts");
+    if (on(player, ISBLIND)) {
+        extinguish(sight);
+        player.t_flags &= ~ISBLIND;
+        light(&hero);
+        msg("The veil of darkness lifts");
     }
     return 0;
 }
@@ -130,8 +117,7 @@ sight(void)
  *	End the hasting
  */
 
-int
-nohaste(void)
+int nohaste(void)
 {
     player.t_flags &= ~ISHASTE;
     msg("You feel yourself slowing down.");
@@ -141,44 +127,37 @@ nohaste(void)
 /*
  * digest the hero's food
  */
-int
-stomach(void)
+int stomach(void)
 {
     int oldfood;
 
-    if (food_left <= 0)
-    {
-	/*
-	 * the hero is fainting
-	 */
-	if (no_command || rnd(100) > 20)
-	    return 0;
-	no_command = rnd(8)+4;
-	if (!terse)
-	    addmsg("You feel too weak from lack of food.  ");
-	msg("You faint");
-	running = FALSE;
-	count = 0;
-	hungry_state = 3;
-    }
-    else
-    {
-	oldfood = food_left;
-	food_left -= ring_eat(LEFT) + ring_eat(RIGHT) + 1 - amulet;
+    if (food_left <= 0) {
+        /*
+         * the hero is fainting
+         */
+        if (no_command || rnd(100) > 20)
+            return 0;
+        no_command = rnd(8) + 4;
+        if (!terse)
+            addmsg("You feel too weak from lack of food.  ");
+        msg("You faint");
+        running = FALSE;
+        count = 0;
+        hungry_state = 3;
+    } else {
+        oldfood = food_left;
+        food_left -= ring_eat(LEFT) + ring_eat(RIGHT) + 1 - amulet;
 
-	if (food_left < MORETIME && oldfood >= MORETIME)
-	{
-	    msg("You are starting to feel weak");
-	    hungry_state = 2;
-	}
-	else if (food_left < 2 * MORETIME && oldfood >= 2 * MORETIME)
-	{
-	    if (!terse)
-		msg("You are starting to get hungry");
-	    else
-		msg("Getting hungry");
-	    hungry_state = 1;
-	}
+        if (food_left < MORETIME && oldfood >= MORETIME) {
+            msg("You are starting to feel weak");
+            hungry_state = 2;
+        } else if (food_left < 2 * MORETIME && oldfood >= 2 * MORETIME) {
+            if (!terse)
+                msg("You are starting to get hungry");
+            else
+                msg("Getting hungry");
+            hungry_state = 1;
+        }
     }
     return 0;
 }

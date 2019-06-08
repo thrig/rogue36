@@ -19,13 +19,14 @@
  *	Takes an item out of whatever linked list it might be in
  */
 
-void
-_detach(struct linked_list **list, struct linked_list *item)
+void _detach(struct linked_list **list, struct linked_list *item)
 {
     if (*list == item)
-	*list = next(item);
-    if (prev(item) != NULL) item->l_prev->l_next = next(item);
-    if (next(item) != NULL) item->l_next->l_prev = prev(item);
+        *list = next(item);
+    if (prev(item) != NULL)
+        item->l_prev->l_next = next(item);
+    if (next(item) != NULL)
+        item->l_next->l_prev = prev(item);
     item->l_next = NULL;
     item->l_prev = NULL;
 }
@@ -35,19 +36,15 @@ _detach(struct linked_list **list, struct linked_list *item)
  *	add an item to the head of a list
  */
 
-void
-_attach(struct linked_list **list, struct linked_list *item)
+void _attach(struct linked_list **list, struct linked_list *item)
 {
-    if (*list != NULL)
-    {
-	item->l_next = *list;
-	(*list)->l_prev = item;
-	item->l_prev = NULL;
-    }
-    else
-    {
-	item->l_next = NULL;
-	item->l_prev = NULL;
+    if (*list != NULL) {
+        item->l_next = *list;
+        (*list)->l_prev = item;
+        item->l_prev = NULL;
+    } else {
+        item->l_next = NULL;
+        item->l_prev = NULL;
     }
 
     *list = item;
@@ -58,16 +55,14 @@ _attach(struct linked_list **list, struct linked_list *item)
  *	Throw the whole blamed thing away
  */
 
-void
-_free_list(struct linked_list **ptr)
+void _free_list(struct linked_list **ptr)
 {
     struct linked_list *item;
 
-    while (*ptr != NULL)
-    {
-	item = *ptr;
-	*ptr = next(item);
-	discard(item);
+    while (*ptr != NULL) {
+        item = *ptr;
+        *ptr = next(item);
+        discard(item);
     }
 }
 
@@ -76,8 +71,7 @@ _free_list(struct linked_list **ptr)
  *	free up an item
  */
 
-void
-discard(struct linked_list *item)
+void discard(struct linked_list *item)
 {
     total -= 2;
     FREE(item->l_data);
@@ -89,28 +83,25 @@ discard(struct linked_list *item)
  *	get a new item with a specified size
  */
 
-struct linked_list *
-new_item(int size)
+struct linked_list *new_item(int size)
 {
     struct linked_list *item;
 
     if ((item = (struct linked_list *) new(sizeof *item)) == NULL)
-	msg("Ran out of memory for header after %d items", total);
+        msg("Ran out of memory for header after %d items", total);
     if ((item->l_data = new(size)) == NULL)
-	msg("Ran out of memory for data after %d items", total);
+        msg("Ran out of memory for data after %d items", total);
     item->l_next = item->l_prev = NULL;
-    memset(item->l_data,0,size);
+    memset(item->l_data, 0, size);
     return item;
 }
 
-char *
-new(int size)
+char *new(int size)
 {
     char *space = ALLOC(size);
 
-    if (space == NULL)
-    {
-	sprintf(prbuf, "Rogue ran out of memory.  Fatal error!");
+    if (space == NULL) {
+        sprintf(prbuf, "Rogue ran out of memory.  Fatal error!");
         fatal(prbuf);
     }
     total++;

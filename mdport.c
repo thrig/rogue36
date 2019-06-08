@@ -82,8 +82,7 @@ char *strdup(const char *s);
 
 #define MOD_MOVE(c) (toupper(c) )
 
-void
-md_init(void)
+void md_init(void)
 {
 #ifdef __INTERIX
     char *term;
@@ -91,32 +90,30 @@ md_init(void)
     term = getenv("TERM");
 
     if (term == NULL)
-        setenv("TERM","interix",1);
+        setenv("TERM", "interix", 1);
 #endif
 #if defined(__DJGPP__) || defined(_WIN32)
     _fmode = _O_BINARY;
 #endif
 #if defined(__CYGWIN__) || defined(__MSYS__)
-    ESCDELAY=250;
+    ESCDELAY = 250;
 #endif
 }
 
-int
-md_hasclreol(void)
+int md_hasclreol(void)
 {
 #ifdef CE
-    return((CE != NULL) && (*CE != 0));
+    return ((CE != NULL) && (*CE != 0));
 #elif defined (clr_eol)
-    return((clr_eol != NULL) && (*clr_eol != 0));
+    return ((clr_eol != NULL) && (*clr_eol != 0));
 #elif !defined(__PDCURSES__)
-    return(clr_eol != NULL);
+    return (clr_eol != NULL);
 #else
-    return(TRUE);
+    return (TRUE);
 #endif
 }
 
-void
-md_putchar(int c)
+void md_putchar(int c)
 {
     putchar(c);
 }
@@ -125,54 +122,49 @@ md_putchar(int c)
 static int md_standout_mode = 0;
 #endif
 
-void
-md_raw_standout(void)
+void md_raw_standout(void)
 {
 #ifdef _WIN32
     CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
     HANDLE hStdout;
-    int fgattr,bgattr;
+    int fgattr, bgattr;
 
-    if (md_standout_mode == 0)
-    {
+    if (md_standout_mode == 0) {
         hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
         GetConsoleScreenBufferInfo(hStdout, &csbiInfo);
         fgattr = (csbiInfo.wAttributes & 0xF);
         bgattr = (csbiInfo.wAttributes & 0xF0);
-        SetConsoleTextAttribute(hStdout,(fgattr << 4) | (bgattr >> 4));
+        SetConsoleTextAttribute(hStdout, (fgattr << 4) | (bgattr >> 4));
         md_standout_mode = 1;
     }
 #elif defined(SO)
-    tputs(SO,0,md_putchar);
+    tputs(SO, 0, md_putchar);
     fflush(stdout);
 #endif
 }
 
-void
-md_raw_standend(void)
+void md_raw_standend(void)
 {
 #ifdef _WIN32
     CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
     HANDLE hStdout;
-    int fgattr,bgattr;
+    int fgattr, bgattr;
 
-    if (md_standout_mode == 1)
-    {
+    if (md_standout_mode == 1) {
         hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
         GetConsoleScreenBufferInfo(hStdout, &csbiInfo);
         fgattr = (csbiInfo.wAttributes & 0xF);
         bgattr = (csbiInfo.wAttributes & 0xF0);
-        SetConsoleTextAttribute(hStdout,(fgattr << 4) | (bgattr >> 4));
+        SetConsoleTextAttribute(hStdout, (fgattr << 4) | (bgattr >> 4));
         md_standout_mode = 0;
     }
 #elif defined(SE)
-    tputs(SE,0,md_putchar);
+    tputs(SE, 0, md_putchar);
     fflush(stdout);
 #endif
 }
 
-int
-md_unlink_open_file(char *file, int inf)
+int md_unlink_open_file(char *file, int inf)
 {
 #ifdef _WIN32
     _close(inf);
@@ -183,33 +175,30 @@ md_unlink_open_file(char *file, int inf)
 #endif
 }
 
-int
-md_unlink(char *file)
+int md_unlink(char *file)
 {
 #ifdef _WIN32
     _chmod(file, 0600);
-    return( _unlink(file) );
+    return (_unlink(file));
 #else
-    return(unlink(file));
+    return (unlink(file));
 #endif
 }
 
-int
-md_creat(char *file, int mode)
+int md_creat(char *file, int mode)
 {
     int fd;
 #ifdef _WIN32
     mode = _S_IREAD | _S_IWRITE;
-    fd = _open(file,O_CREAT | O_EXCL | O_WRONLY, mode);
+    fd = _open(file, O_CREAT | O_EXCL | O_WRONLY, mode);
 #else
-    fd = open(file,O_CREAT | O_EXCL | O_WRONLY, mode);
+    fd = open(file, O_CREAT | O_EXCL | O_WRONLY, mode);
 #endif
 
-    return(fd);
+    return (fd);
 }
 
-void
-md_normaluser(void)
+void md_normaluser(void)
 {
 #ifndef _WIN32
     setuid(getuid());
@@ -217,18 +206,16 @@ md_normaluser(void)
 #endif
 }
 
-int
-md_getuid(void)
+int md_getuid(void)
 {
 #ifndef _WIN32
-    return( getuid() );
+    return (getuid());
 #else
-    return(42);
+    return (42);
 #endif
 }
 
-char *
-md_getusername(int uid)
+char *md_getusername(int uid)
 {
     static char login[ROGUE_CHARBUF_MAX];
     char *l = NULL;
@@ -239,9 +226,9 @@ md_getusername(int uid)
 
     mybuffer = buffer;
     if (uid != md_getuid())
-	strcpy(mybuffer, "someone");
+        strcpy(mybuffer, "someone");
     else
-	GetUserName(mybuffer,&size);
+        GetUserName(mybuffer, &size);
     l = mybuffer;
 #endif
 #if !defined(_WIN32) && !defined(DJGPP)
@@ -253,19 +240,18 @@ md_getusername(int uid)
 #endif
 
     if ((l == NULL) || (*l == '\0'))
-        if ( (l = getenv("USERNAME")) == NULL )
-            if ( (l = getenv("LOGNAME")) == NULL )
-                if ( (l = getenv("USER")) == NULL )
+        if ((l = getenv("USERNAME")) == NULL)
+            if ((l = getenv("LOGNAME")) == NULL)
+                if ((l = getenv("USER")) == NULL)
                     l = "nobody";
 
-    strncpy(login,l,80);
+    strncpy(login, l, 80);
     login[79] = 0;
 
-    return(login);
+    return (login);
 }
 
-char *
-md_gethomedir(void)
+char *md_gethomedir(void)
 {
     static char homedir[PATH_MAX];
     char *h = NULL;
@@ -274,7 +260,7 @@ md_gethomedir(void)
     TCHAR szPath[PATH_MAX];
 #endif
 #if defined(_WIN32) || defined(DJGPP)
-        char slash = '\\';
+    char slash = '\\';
 #else
     char slash = '/';
     struct passwd *pw;
@@ -282,30 +268,29 @@ md_gethomedir(void)
 
     h = pw->pw_dir;
 
-    if (strcmp(h,"/") == 0)
+    if (strcmp(h, "/") == 0)
         h = NULL;
 #endif
     homedir[0] = 0;
 #ifdef _WIN32
-    if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, szPath)))
+    if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, szPath)))
         h = szPath;
 #endif
 
-    if ( (h == NULL) || (*h == '\0') )
-        if ( (h = getenv("HOME")) == NULL )
-                h = "";
+    if ((h == NULL) || (*h == '\0'))
+        if ((h = getenv("HOME")) == NULL)
+            h = "";
 
-    strncpy(homedir,h,PATH_MAX-1);
+    strncpy(homedir, h, PATH_MAX - 1);
     len = strlen(homedir);
 
-    if ((len > 0) && (homedir[len-1] == slash))
-	homedir[len-1] = 0;
+    if ((len > 0) && (homedir[len - 1] == slash))
+        homedir[len - 1] = 0;
 
-    return(homedir);
+    return (homedir);
 }
 
-void
-md_sleep(int s)
+void md_sleep(int s)
 {
 #ifdef _WIN32
     Sleep(s);
@@ -314,8 +299,7 @@ md_sleep(int s)
 #endif
 }
 
-char *
-md_getshell(void)
+char *md_getshell(void)
 {
     static char shell[PATH_MAX];
     char *s = NULL;
@@ -330,40 +314,38 @@ md_getshell(void)
     s = pw->pw_shell;
 #endif
     if ((s == NULL) || (*s == '\0'))
-        if ( (s = getenv("COMSPEC")) == NULL)
-            if ( (s = getenv("SHELL")) == NULL)
-                if ( (s = getenv("SystemRoot")) == NULL)
+        if ((s = getenv("COMSPEC")) == NULL)
+            if ((s = getenv("SHELL")) == NULL)
+                if ((s = getenv("SystemRoot")) == NULL)
                     s = def;
 
-    strncpy(shell,s,PATH_MAX);
-    shell[PATH_MAX-1] = 0;
+    strncpy(shell, s, PATH_MAX);
+    shell[PATH_MAX - 1] = 0;
 
-    return(shell);
+    return (shell);
 }
 
-int
-md_shellescape(void)
+int md_shellescape(void)
 {
 #if (!defined(_WIN32) && !defined(__DJGPP__))
     int ret_status;
     int pid;
-    void (*myquit)(int);
-    void (*myend)(int);
+    void (*myquit) (int);
+    void (*myend) (int);
 #endif
     char *sh;
 
     sh = md_getshell();
 
 #if defined(_WIN32)
-    return((int)_spawnl(_P_WAIT,sh,"shell",NULL,0));
+    return ((int) _spawnl(_P_WAIT, sh, "shell", NULL, 0));
 #elif defined(__DJGPP__)
-    return ( spawnl(P_WAIT,sh,"shell",NULL,0) );
+    return (spawnl(P_WAIT, sh, "shell", NULL, 0));
 #else
-    while((pid = fork()) < 0)
+    while ((pid = fork()) < 0)
         sleep(1);
 
-    if (pid == 0) /* Shell Process */
-    {
+    if (pid == 0) {             /* Shell Process */
         /*
          * Set back to original user, just in case
          */
@@ -372,10 +354,9 @@ md_shellescape(void)
         execl(sh == NULL ? "/bin/sh" : sh, "shell", "-i", (char *) 0);
         perror("No shelly");
         _exit(-1);
-    }
-    else /* Application */
-    {
-	myend = signal(SIGINT, SIG_IGN);
+    } else {                    /* Application */
+
+        myend = signal(SIGINT, SIG_IGN);
 #ifdef SIGQUIT
         myquit = signal(SIGQUIT, SIG_IGN);
 #endif
@@ -388,88 +369,79 @@ md_shellescape(void)
 #endif
     }
 
-    return(ret_status);
+    return (ret_status);
 #endif
 }
 
-int
-directory_exists(char *dirname)
+int directory_exists(char *dirname)
 {
     struct stat sb;
 
-    if (stat(dirname, &sb) == 0) /* path exists */
+    if (stat(dirname, &sb) == 0)        /* path exists */
         return (sb.st_mode & S_IFDIR);
 
-    return(0);
+    return (0);
 }
 
-char *
-md_getroguedir(void)
+char *md_getroguedir(void)
 {
     static char path[1024];
-    char *end,*home;
+    char *end, *home;
 
-    if ( (home = getenv("ROGUEHOME")) != NULL)
-    {
-        if (*home)
-        {
+    if ((home = getenv("ROGUEHOME")) != NULL) {
+        if (*home) {
             strncpy(path, home, PATH_MAX - 20);
 
-            end = &path[strlen(path)-1];
+            end = &path[strlen(path) - 1];
 
-            while( (end >= path) && ((*end == '/') || (*end == '\\')))
+            while ((end >= path) && ((*end == '/') || (*end == '\\')))
                 *end-- = '\0';
 
             if (directory_exists(path))
-                return(path);
+                return (path);
         }
     }
 
     if (directory_exists("/var/games/roguelike"))
-        return("/var/games/roguelike");
+        return ("/var/games/roguelike");
     if (directory_exists("/var/lib/roguelike"))
-        return("/var/lib/roguelike");
+        return ("/var/lib/roguelike");
     if (directory_exists("/var/roguelike"))
-        return("/var/roguelike");
+        return ("/var/roguelike");
     if (directory_exists("/usr/games/lib"))
-        return("/usr/games/lib");
+        return ("/usr/games/lib");
     if (directory_exists("/games/roguelik"))
-        return("/games/roguelik");
+        return ("/games/roguelik");
     if (directory_exists(md_gethomedir()))
-	return(md_gethomedir());
-    return("");
+        return (md_gethomedir());
+    return ("");
 }
 
-char *
-md_getrealname(int uid)
+char *md_getrealname(int uid)
 {
     static char uidstr[20];
 #if !defined(_WIN32) && !defined(DJGPP)
     struct passwd *pp;
 
-	if ((pp = getpwuid(uid)) == NULL)
-    {
-        sprintf(uidstr,"%d", uid);
-        return(uidstr);
-    }
-	else
-	    return(pp->pw_name);
+    if ((pp = getpwuid(uid)) == NULL) {
+        sprintf(uidstr, "%d", uid);
+        return (uidstr);
+    } else
+        return (pp->pw_name);
 #else
-   sprintf(uidstr,"%d", uid);
-   return(uidstr);
+    sprintf(uidstr, "%d", uid);
+    return (uidstr);
 #endif
 }
 
 extern char *xcrypt(char *key, char *salt);
 
-char *
-md_crypt(char *key, char *salt)
+char *md_crypt(char *key, char *salt)
 {
-    return( xcrypt(key,salt) );
+    return (xcrypt(key, salt));
 }
 
-char *
-md_getpass(char *prompt)
+char *md_getpass(char *prompt)
 {
 #ifdef _WIN32
     static char password_buffer[9];
@@ -479,14 +451,12 @@ md_getpass(char *prompt)
 
     fflush(stdout);
     /* If we can't prompt, abort */
-    if (fputs(prompt, stderr) < 0)
-    {
+    if (fputs(prompt, stderr) < 0) {
         *p = '\0';
         return NULL;
     }
 
-    for(;;)
-    {
+    for (;;) {
         /* Get a character with no echo */
         c = _getch();
 
@@ -499,8 +469,7 @@ md_getpass(char *prompt)
             break;
 
         /* Back up on backspace */
-        if (c == '\b')
-        {
+        if (c == '\b') {
             if (count)
                 count--;
             else if (p > password_buffer)
@@ -518,102 +487,93 @@ md_getpass(char *prompt)
         else
             count++;
     }
-   *p = '\0';
+    *p = '\0';
 
-   fputc('\n', stderr);
+    fputc('\n', stderr);
 
-   return password_buffer;
+    return password_buffer;
 #else
-   return( (char *) getpass(prompt) );
+    return ((char *) getpass(prompt));
 #endif
 }
 
 
 int md_endian = 0x01020304;
 
-unsigned long int
-md_ntohl(unsigned long int x)
+unsigned long int md_ntohl(unsigned long int x)
 {
 #ifdef _WIN32
-    if ( *((char *)&md_endian) == 0x01 )
-        return(x);
+    if (*((char *) &md_endian) == 0x01)
+        return (x);
     else
-        return( ((x & 0x000000ffU) << 24) |
-                ((x & 0x0000ff00U) <<  8) |
-                ((x & 0x00ff0000U) >>  8) |
-                ((x & 0xff000000U) >> 24) );
+        return (((x & 0x000000ffU) << 24) |
+                ((x & 0x0000ff00U) << 8) |
+                ((x & 0x00ff0000U) >> 8) | ((x & 0xff000000U) >> 24));
 #else
-    return( ntohl(x) );
+    return (ntohl(x));
 #endif
 }
 
-unsigned long int
-md_htonl(unsigned long int x)
+unsigned long int md_htonl(unsigned long int x)
 {
 #ifdef _WIN32
-    if ( *((char *)&md_endian) == 0x01 )
-        return(x);
+    if (*((char *) &md_endian) == 0x01)
+        return (x);
     else
-        return( ((x & 0x000000ffU) << 24) |
-                ((x & 0x0000ff00U) <<  8) |
-                ((x & 0x00ff0000U) >>  8) |
-                ((x & 0xff000000U) >> 24) );
+        return (((x & 0x000000ffU) << 24) |
+                ((x & 0x0000ff00U) << 8) |
+                ((x & 0x00ff0000U) >> 8) | ((x & 0xff000000U) >> 24));
 #else
-    return( htonl(x) );
+    return (htonl(x));
 #endif
 }
 
-int
-md_ucount(void)
+int md_ucount(void)
 {
 #ifdef __DJGPP__
-    return(1);
+    return (1);
 #elif defined(_WIN32)
-    return(1);
+    return (1);
 #elif defined(__OpenBSD__)
-    return(1);
+    return (1);
 #else
-    struct utmpx *up=NULL;
-    int count=0;
+    struct utmpx *up = NULL;
+    int count = 0;
 
     setutxent();
-    do
-    {
-	up = getutxent();
-	if (up && up->ut_type == USER_PROCESS)
-	    count++;
-    } while(up != NULL);
+    do {
+        up = getutxent();
+        if (up && up->ut_type == USER_PROCESS)
+            count++;
+    } while (up != NULL);
 
-   endutxent();
+    endutxent();
 
-   return(count);
+    return (count);
 #endif
 }
 
-int
-md_getloadavg(double *avg)
+int md_getloadavg(double *avg)
 {
 #if defined(__GLIBC__) || defined(_BSD)
     if (getloadavg(avg, 3) == -1)
 #endif
     {
-	avg[0] = avg[1] = avg[2] = 0.0;
-	return -1;
+        avg[0] = avg[1] = avg[2] = 0.0;
+        return -1;
     }
 }
 
-long
-md_random(void)
+long md_random(void)
 {
 #ifdef _WIN32
-    return(rand());
+    return (rand());
 #else
-    return( random() );
+    return (random());
 #endif
 }
 
-void
-md_srandom(unsigned x)
+void md_srandom(unsigned x)
 {
 #ifdef _WIN32
     srand(x);
@@ -624,18 +584,16 @@ md_srandom(unsigned x)
 #endif
 }
 
-int
-md_rand(void)
+int md_rand(void)
 {
 #ifdef _WIN32
-    return(rand());
+    return (rand());
 #else
-    return(lrand48() & 0x7fffffff);
+    return (lrand48() & 0x7fffffff);
 #endif
 }
 
-void
-md_srand(int seed)
+void md_srand(int seed)
 {
 #ifdef _WIN32
     srand(seed);
@@ -646,18 +604,16 @@ md_srand(int seed)
 #endif
 }
 
-char *
-md_strdup(const char *s)
+char *md_strdup(const char *s)
 {
 #ifdef _WIN32
-    return( _strdup(s) );
+    return (_strdup(s));
 #else
-    return(strdup(s));
+    return (strdup(s));
 #endif
 }
 
-char *
-md_gethostname(void)
+char *md_gethostname(void)
 {
     static char nodename[ROGUE_CHARBUF_MAX];
     char *n = NULL;
@@ -668,37 +624,35 @@ md_gethostname(void)
         n = ourname.nodename;
 #endif
     if ((n == NULL) || (*n == '\0'))
-        if ( (n = getenv("COMPUTERNAME")) == NULL)
-            if ( (n = getenv("HOSTNAME")) == NULL)
+        if ((n = getenv("COMPUTERNAME")) == NULL)
+            if ((n = getenv("HOSTNAME")) == NULL)
                 n = "localhost";
 
     strncpy(nodename, n, 80);
     nodename[79] = 0;
 
-    return(nodename);
+    return (nodename);
 }
 
-int
-md_erasechar(void)
+int md_erasechar(void)
 {
 #ifdef BSD
-    return(_tty.sg_erase); /* process erase character */
+    return (_tty.sg_erase);     /* process erase character */
 #elif defined(USG5_0)
-    return(_tty.c_cc[VERASE]); /* process erase character */
-#else /* USG5_2 .... curses */
-    return( erasechar() ); /* process erase character */
+    return (_tty.c_cc[VERASE]); /* process erase character */
+#else                           /* USG5_2 .... curses */
+    return (erasechar());       /* process erase character */
 #endif
 }
 
-int
-md_killchar(void)
+int md_killchar(void)
 {
 #ifdef BSD
-    return(_tty.sg_kill);
+    return (_tty.sg_kill);
 #elif defined(USG5_0)
-    return(_tty.c_cc[VKILL]);
-#else /* USG5_2 ..... curses */
-    return( killchar() );
+    return (_tty.c_cc[VKILL]);
+#else                           /* USG5_2 ..... curses */
+    return (killchar());
 #endif
 }
 
@@ -707,26 +661,24 @@ md_killchar(void)
  *	Print a readable version of a certain character
  */
 
-const char *
-md_unctrl(char ch)
+const char *md_unctrl(char ch)
 {
 #if USG5_0
-    extern char *_unctrl[];		/* Defined in curses library */
+    extern char *_unctrl[];     /* Defined in curses library */
 
-    return _unctrl[ch&0177];
+    return _unctrl[ch & 0177];
 #else
     return unctrl(ch);
 #endif
 }
 
-void
-md_flushinp(void)
+void md_flushinp(void)
 {
 #ifdef BSD
     ioctl(0, TIOCFLUSH);
 #elif defined(USG5_0)
-    ioctl(_tty_ch,TCFLSH,0)
-#else /* USG5_2.... curses */
+    ioctl(_tty_ch, TCFLSH, 0)
+#else                           /* USG5_2.... curses */
     flushinp();
 #endif
 }
@@ -1017,20 +969,17 @@ md_flushinp(void)
 #define M_KEYPAD 2
 #define M_TRAIL  3
 
-int
-md_readchar(WINDOW *win)
+int md_readchar(WINDOW * win)
 {
     int ch = 0;
     int lastch = 0;
     int mode = M_NORMAL;
     int mode2 = M_NORMAL;
 
-    for(;;)
-    {
+    for (;;) {
         ch = wgetch(win);
 
-        if (ch == ERR)      /* timed out waiting for valid sequence */
-        {                   /* flush input so far and start over    */
+        if (ch == ERR) {        /* timed out waiting for valid sequence *//* flush input so far and start over    */
             mode = M_NORMAL;
             nocbreak();
             raw();
@@ -1038,217 +987,426 @@ md_readchar(WINDOW *win)
             break;
         }
 
-        if (mode == M_TRAIL)
-        {
-            if (ch == '^')              /* msys console  : 7,5,6,8: modified*/
-                ch = MOD_MOVE( toupper(lastch) );
+        if (mode == M_TRAIL) {
+            if (ch == '^')      /* msys console  : 7,5,6,8: modified */
+                ch = MOD_MOVE(toupper(lastch));
 
-            if (ch == '~')              /* cygwin console: 1,5,6,4: normal  */
+            if (ch == '~')      /* cygwin console: 1,5,6,4: normal  */
                 ch = tolower(lastch);   /* windows telnet: 1,5,6,4: normal  */
-                                        /* msys console  : 7,5,6,8: normal  */
+            /* msys console  : 7,5,6,8: normal  */
 
-            if (mode2 == M_ESC)         /* cygwin console: 1,5,6,4: modified*/
-                ch = MOD_MOVE( toupper(ch) );
+            if (mode2 == M_ESC) /* cygwin console: 1,5,6,4: modified */
+                ch = MOD_MOVE(toupper(ch));
 
             break;
         }
 
-        if (mode == M_ESC)
-        {
-            if (ch == 27)
-            {
+        if (mode == M_ESC) {
+            if (ch == 27) {
                 mode2 = M_ESC;
                 continue;
             }
 
-            if ((ch == 'F') || (ch == 'O') || (ch == '['))
-            {
+            if ((ch == 'F') || (ch == 'O') || (ch == '[')) {
                 mode = M_KEYPAD;
                 continue;
             }
 
 
-            switch(ch)
-            {
+            switch (ch) {
                 /* Cygwin Console   */
                 /* PuTTY            */
-                case KEY_LEFT : ch = MOD_MOVE('H'); break;
-                case KEY_RIGHT: ch = MOD_MOVE('L'); break;
-                case KEY_UP   : ch = MOD_MOVE('K'); break;
-                case KEY_DOWN : ch = MOD_MOVE('J'); break;
-                case KEY_HOME : ch = MOD_MOVE('Y'); break;
-                case KEY_PPAGE: ch = MOD_MOVE('U'); break;
-                case KEY_NPAGE: ch = MOD_MOVE('N'); break;
-                case KEY_END  : ch = MOD_MOVE('B'); break;
+            case KEY_LEFT:
+                ch = MOD_MOVE('H');
+                break;
+            case KEY_RIGHT:
+                ch = MOD_MOVE('L');
+                break;
+            case KEY_UP:
+                ch = MOD_MOVE('K');
+                break;
+            case KEY_DOWN:
+                ch = MOD_MOVE('J');
+                break;
+            case KEY_HOME:
+                ch = MOD_MOVE('Y');
+                break;
+            case KEY_PPAGE:
+                ch = MOD_MOVE('U');
+                break;
+            case KEY_NPAGE:
+                ch = MOD_MOVE('N');
+                break;
+            case KEY_END:
+                ch = MOD_MOVE('B');
+                break;
 
-                default: break;
+            default:
+                break;
             }
 
             break;
         }
 
-        if (mode == M_KEYPAD)
-        {
-            switch(ch)
-            {
+        if (mode == M_KEYPAD) {
+            switch (ch) {
                 /* ESC F - Interix Console codes */
-                case   '^': ch = MOD_MOVE('H'); break;      /* Shift-Left       */
-                case   '$': ch = MOD_MOVE('L'); break;      /* Shift-Right      */
+            case '^':
+                ch = MOD_MOVE('H');
+                break;          /* Shift-Left       */
+            case '$':
+                ch = MOD_MOVE('L');
+                break;          /* Shift-Right      */
 
                 /* ESC [ - Interix Console codes */
-                case   'H': ch = 'y'; break;            /* Home             */
-                case     1: ch = MOD_MOVE('K'); break;      /* Ctl-Keypad Up    */
-                case     2: ch = MOD_MOVE('J'); break;      /* Ctl-Keypad Down  */
-                case     3: ch = MOD_MOVE('L'); break;      /* Ctl-Keypad Right */
-                case     4: ch = MOD_MOVE('H'); break;      /* Ctl-Keypad Left  */
-                case   263: ch = MOD_MOVE('Y'); break;      /* Ctl-Keypad Home  */
-                case    19: ch = MOD_MOVE('U'); break;      /* Ctl-Keypad PgUp  */
-                case    20: ch = MOD_MOVE('N'); break;      /* Ctl-Keypad PgDn  */
-                case    21: ch = MOD_MOVE('B'); break;      /* Ctl-Keypad End   */
+            case 'H':
+                ch = 'y';
+                break;          /* Home             */
+            case 1:
+                ch = MOD_MOVE('K');
+                break;          /* Ctl-Keypad Up    */
+            case 2:
+                ch = MOD_MOVE('J');
+                break;          /* Ctl-Keypad Down  */
+            case 3:
+                ch = MOD_MOVE('L');
+                break;          /* Ctl-Keypad Right */
+            case 4:
+                ch = MOD_MOVE('H');
+                break;          /* Ctl-Keypad Left  */
+            case 263:
+                ch = MOD_MOVE('Y');
+                break;          /* Ctl-Keypad Home  */
+            case 19:
+                ch = MOD_MOVE('U');
+                break;          /* Ctl-Keypad PgUp  */
+            case 20:
+                ch = MOD_MOVE('N');
+                break;          /* Ctl-Keypad PgDn  */
+            case 21:
+                ch = MOD_MOVE('B');
+                break;          /* Ctl-Keypad End   */
 
                 /* ESC [ - Cygwin Console codes */
-                case   'G': ch = '.'; break;            /* Keypad 5         */
-                case   '7': lastch = 'Y'; mode=M_TRAIL; break;  /* Ctl-Home */
-                case   '5': lastch = 'U'; mode=M_TRAIL; break;  /* Ctl-PgUp */
-                case   '6': lastch = 'N'; mode=M_TRAIL; break;  /* Ctl-PgDn */
+            case 'G':
+                ch = '.';
+                break;          /* Keypad 5         */
+            case '7':
+                lastch = 'Y';
+                mode = M_TRAIL;
+                break;          /* Ctl-Home */
+            case '5':
+                lastch = 'U';
+                mode = M_TRAIL;
+                break;          /* Ctl-PgUp */
+            case '6':
+                lastch = 'N';
+                mode = M_TRAIL;
+                break;          /* Ctl-PgDn */
 
                 /* ESC [ - Win32 Telnet, PuTTY */
-                case   '1': lastch = 'y'; mode=M_TRAIL; break;  /* Home     */
-                case   '4': lastch = 'b'; mode=M_TRAIL; break;  /* End      */
+            case '1':
+                lastch = 'y';
+                mode = M_TRAIL;
+                break;          /* Home     */
+            case '4':
+                lastch = 'b';
+                mode = M_TRAIL;
+                break;          /* End      */
 
                 /* ESC O - PuTTY */
-                case   'D': ch = MOD_MOVE('H'); break;
-                case   'C': ch = MOD_MOVE('L'); break;
-                case   'A': ch = MOD_MOVE('K'); break;
-                case   'B': ch = MOD_MOVE('J'); break;
-                case   't': ch = 'h'; break;
-                case   'v': ch = 'l'; break;
-                case   'x': ch = 'k'; break;
-                case   'r': ch = 'j'; break;
-                case   'w': ch = 'y'; break;
-                case   'y': ch = 'u'; break;
-                case   's': ch = 'n'; break;
-                case   'q': ch = 'b'; break;
-                case   'u': ch = '.'; break;
+            case 'D':
+                ch = MOD_MOVE('H');
+                break;
+            case 'C':
+                ch = MOD_MOVE('L');
+                break;
+            case 'A':
+                ch = MOD_MOVE('K');
+                break;
+            case 'B':
+                ch = MOD_MOVE('J');
+                break;
+            case 't':
+                ch = 'h';
+                break;
+            case 'v':
+                ch = 'l';
+                break;
+            case 'x':
+                ch = 'k';
+                break;
+            case 'r':
+                ch = 'j';
+                break;
+            case 'w':
+                ch = 'y';
+                break;
+            case 'y':
+                ch = 'u';
+                break;
+            case 's':
+                ch = 'n';
+                break;
+            case 'q':
+                ch = 'b';
+                break;
+            case 'u':
+                ch = '.';
+                break;
             }
 
             if (mode != M_KEYPAD)
                 continue;
         }
 
-        if (ch == 27)
-        {
+        if (ch == 27) {
             halfdelay(1);
             mode = M_ESC;
             continue;
         }
 
-        switch(ch)
-        {
-            case KEY_LEFT   : ch = 'h'; break;
-            case KEY_DOWN   : ch = 'j'; break;
-            case KEY_UP     : ch = 'k'; break;
-            case KEY_RIGHT  : ch = 'l'; break;
-            case KEY_HOME   : ch = 'y'; break;
-            case KEY_PPAGE  : ch = 'u'; break;
-            case KEY_END    : ch = 'b'; break;
+        switch (ch) {
+        case KEY_LEFT:
+            ch = 'h';
+            break;
+        case KEY_DOWN:
+            ch = 'j';
+            break;
+        case KEY_UP:
+            ch = 'k';
+            break;
+        case KEY_RIGHT:
+            ch = 'l';
+            break;
+        case KEY_HOME:
+            ch = 'y';
+            break;
+        case KEY_PPAGE:
+            ch = 'u';
+            break;
+        case KEY_END:
+            ch = 'b';
+            break;
 #ifdef KEY_LL
-            case KEY_LL     : ch = 'b'; break;
+        case KEY_LL:
+            ch = 'b';
+            break;
 #endif
-            case KEY_NPAGE  : ch = 'n'; break;
+        case KEY_NPAGE:
+            ch = 'n';
+            break;
 
 #ifdef KEY_B1
-            case KEY_B1     : ch = 'h'; break;
-            case KEY_C2     : ch = 'j'; break;
-            case KEY_A2     : ch = 'k'; break;
-            case KEY_B3     : ch = 'l'; break;
+        case KEY_B1:
+            ch = 'h';
+            break;
+        case KEY_C2:
+            ch = 'j';
+            break;
+        case KEY_A2:
+            ch = 'k';
+            break;
+        case KEY_B3:
+            ch = 'l';
+            break;
 #endif
-            case KEY_A1     : ch = 'y'; break;
-            case KEY_A3     : ch = 'u'; break;
-            case KEY_C1     : ch = 'b'; break;
-            case KEY_C3     : ch = 'n'; break;
+        case KEY_A1:
+            ch = 'y';
+            break;
+        case KEY_A3:
+            ch = 'u';
+            break;
+        case KEY_C1:
+            ch = 'b';
+            break;
+        case KEY_C3:
+            ch = 'n';
+            break;
             /* next should be '.', but for problem with putty/linux */
-            case KEY_B2     : ch = 'u'; break;
+        case KEY_B2:
+            ch = 'u';
+            break;
 
 #ifdef KEY_SLEFT
-            case KEY_SRIGHT  : ch = MOD_MOVE('L'); break;
-            case KEY_SLEFT   : ch = MOD_MOVE('H'); break;
+        case KEY_SRIGHT:
+            ch = MOD_MOVE('L');
+            break;
+        case KEY_SLEFT:
+            ch = MOD_MOVE('H');
+            break;
 #ifdef KEY_SUP
-            case KEY_SUP     : ch = MOD_MOVE('K'); break;
-            case KEY_SDOWN   : ch = MOD_MOVE('J'); break;
+        case KEY_SUP:
+            ch = MOD_MOVE('K');
+            break;
+        case KEY_SDOWN:
+            ch = MOD_MOVE('J');
+            break;
 #endif
-            case KEY_SHOME   : ch = MOD_MOVE('Y'); break;
-            case KEY_SPREVIOUS:ch = MOD_MOVE('U'); break;
-            case KEY_SEND    : ch = MOD_MOVE('B'); break;
-            case KEY_SNEXT   : ch = MOD_MOVE('N'); break;
+        case KEY_SHOME:
+            ch = MOD_MOVE('Y');
+            break;
+        case KEY_SPREVIOUS:
+            ch = MOD_MOVE('U');
+            break;
+        case KEY_SEND:
+            ch = MOD_MOVE('B');
+            break;
+        case KEY_SNEXT:
+            ch = MOD_MOVE('N');
+            break;
 #endif
-            case 0x146       : ch = MOD_MOVE('K'); break;   /* Shift-Up     */
-            case 0x145       : ch = MOD_MOVE('J'); break;   /* Shift-Down   */
+        case 0x146:
+            ch = MOD_MOVE('K');
+            break;              /* Shift-Up     */
+        case 0x145:
+            ch = MOD_MOVE('J');
+            break;              /* Shift-Down   */
 
 #ifdef CTL_RIGHT
-            case CTL_RIGHT   : ch = MOD_MOVE('L'); break;
-            case CTL_LEFT    : ch = MOD_MOVE('H'); break;
-            case CTL_UP      : ch = MOD_MOVE('K'); break;
-            case CTL_DOWN    : ch = MOD_MOVE('J'); break;
-            case CTL_HOME    : ch = MOD_MOVE('Y'); break;
-            case CTL_PGUP    : ch = MOD_MOVE('U'); break;
-            case CTL_END     : ch = MOD_MOVE('B'); break;
-            case CTL_PGDN    : ch = MOD_MOVE('N'); break;
+        case CTL_RIGHT:
+            ch = MOD_MOVE('L');
+            break;
+        case CTL_LEFT:
+            ch = MOD_MOVE('H');
+            break;
+        case CTL_UP:
+            ch = MOD_MOVE('K');
+            break;
+        case CTL_DOWN:
+            ch = MOD_MOVE('J');
+            break;
+        case CTL_HOME:
+            ch = MOD_MOVE('Y');
+            break;
+        case CTL_PGUP:
+            ch = MOD_MOVE('U');
+            break;
+        case CTL_END:
+            ch = MOD_MOVE('B');
+            break;
+        case CTL_PGDN:
+            ch = MOD_MOVE('N');
+            break;
 #endif
 #ifdef KEY_EOL
-            case KEY_EOL     : ch = MOD_MOVE('B'); break;
+        case KEY_EOL:
+            ch = MOD_MOVE('B');
+            break;
 #endif
 
 #ifndef CTL_PAD1
             /* MSYS rxvt console */
-            case 511         : ch = MOD_MOVE('J'); break; /* Shift Dn */
-            case 512         : ch = MOD_MOVE('J'); break; /* Ctl Down */
-            case 514         : ch = MOD_MOVE('H'); break; /* Ctl Left */
-            case 516         : ch = MOD_MOVE('L'); break; /* Ctl Right*/
-            case 518         : ch = MOD_MOVE('K'); break; /* Shift Up */
-            case 519         : ch = MOD_MOVE('K'); break; /* Ctl Up   */
+        case 511:
+            ch = MOD_MOVE('J');
+            break;              /* Shift Dn */
+        case 512:
+            ch = MOD_MOVE('J');
+            break;              /* Ctl Down */
+        case 514:
+            ch = MOD_MOVE('H');
+            break;              /* Ctl Left */
+        case 516:
+            ch = MOD_MOVE('L');
+            break;              /* Ctl Right */
+        case 518:
+            ch = MOD_MOVE('K');
+            break;              /* Shift Up */
+        case 519:
+            ch = MOD_MOVE('K');
+            break;              /* Ctl Up   */
 #endif
 
 #ifdef CTL_PAD1
-            case CTL_PAD1   : ch = MOD_MOVE('B'); break;
-            case CTL_PAD2   : ch = MOD_MOVE('J'); break;
-            case CTL_PAD3   : ch = MOD_MOVE('N'); break;
-            case CTL_PAD4   : ch = MOD_MOVE('H'); break;
-            case CTL_PAD5   : ch = '.'; break;
-            case CTL_PAD6   : ch = MOD_MOVE('L'); break;
-            case CTL_PAD7   : ch = MOD_MOVE('Y'); break;
-            case CTL_PAD8   : ch = MOD_MOVE('K'); break;
-            case CTL_PAD9   : ch = MOD_MOVE('U'); break;
+        case CTL_PAD1:
+            ch = MOD_MOVE('B');
+            break;
+        case CTL_PAD2:
+            ch = MOD_MOVE('J');
+            break;
+        case CTL_PAD3:
+            ch = MOD_MOVE('N');
+            break;
+        case CTL_PAD4:
+            ch = MOD_MOVE('H');
+            break;
+        case CTL_PAD5:
+            ch = '.';
+            break;
+        case CTL_PAD6:
+            ch = MOD_MOVE('L');
+            break;
+        case CTL_PAD7:
+            ch = MOD_MOVE('Y');
+            break;
+        case CTL_PAD8:
+            ch = MOD_MOVE('K');
+            break;
+        case CTL_PAD9:
+            ch = MOD_MOVE('U');
+            break;
 #endif
 
 #ifdef ALT_RIGHT
-            case ALT_RIGHT  : ch = MOD_MOVE('L'); break;
-            case ALT_LEFT   : ch = MOD_MOVE('H'); break;
-            case ALT_DOWN   : ch = MOD_MOVE('J'); break;
-            case ALT_HOME   : ch = MOD_MOVE('Y'); break;
-            case ALT_PGUP   : ch = MOD_MOVE('U'); break;
-            case ALT_END    : ch = MOD_MOVE('B'); break;
-            case ALT_PGDN   : ch = MOD_MOVE('N'); break;
+        case ALT_RIGHT:
+            ch = MOD_MOVE('L');
+            break;
+        case ALT_LEFT:
+            ch = MOD_MOVE('H');
+            break;
+        case ALT_DOWN:
+            ch = MOD_MOVE('J');
+            break;
+        case ALT_HOME:
+            ch = MOD_MOVE('Y');
+            break;
+        case ALT_PGUP:
+            ch = MOD_MOVE('U');
+            break;
+        case ALT_END:
+            ch = MOD_MOVE('B');
+            break;
+        case ALT_PGDN:
+            ch = MOD_MOVE('N');
+            break;
 #endif
 
 #ifdef ALT_PAD1
-            case ALT_PAD1   : ch = MOD_MOVE('B'); break;
-            case ALT_PAD2   : ch = MOD_MOVE('J'); break;
-            case ALT_PAD3   : ch = MOD_MOVE('N'); break;
-            case ALT_PAD4   : ch = MOD_MOVE('H'); break;
-            case ALT_PAD5   : ch = '.'; break;
-            case ALT_PAD6   : ch = MOD_MOVE('L'); break;
-            case ALT_PAD7   : ch = MOD_MOVE('Y'); break;
-            case ALT_PAD8   : ch = MOD_MOVE('K'); break;
-            case ALT_PAD9   : ch = MOD_MOVE('U'); break;
+        case ALT_PAD1:
+            ch = MOD_MOVE('B');
+            break;
+        case ALT_PAD2:
+            ch = MOD_MOVE('J');
+            break;
+        case ALT_PAD3:
+            ch = MOD_MOVE('N');
+            break;
+        case ALT_PAD4:
+            ch = MOD_MOVE('H');
+            break;
+        case ALT_PAD5:
+            ch = '.';
+            break;
+        case ALT_PAD6:
+            ch = MOD_MOVE('L');
+            break;
+        case ALT_PAD7:
+            ch = MOD_MOVE('Y');
+            break;
+        case ALT_PAD8:
+            ch = MOD_MOVE('K');
+            break;
+        case ALT_PAD9:
+            ch = MOD_MOVE('U');
+            break;
 #endif
         }
 
         break;
     }
 
-    nocbreak();     /* disable halfdelay mode if on */
+    nocbreak();                 /* disable halfdelay mode if on */
     raw();
 
-    return(ch & 0x7F);
+    return (ch & 0x7F);
 }

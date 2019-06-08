@@ -29,10 +29,9 @@ extern char version[], encstr[];
 
 STAT sbuf;
 
-int save_file(FILE *savef);
+int save_file(FILE * savef);
 
-int
-save_game(void)
+int save_game(void)
 {
     FILE *savef;
     int c;
@@ -42,43 +41,37 @@ save_game(void)
      * get file name
      */
     mpos = 0;
-    if (file_name[0] != '\0')
-    {
-	msg("Save file (%s)? ", file_name);
-	do
-	{
-	    c = readchar(cw);
-	} while (c != 'n' && c != 'N' && c != 'y' && c != 'Y');
-	mpos = 0;
-	if (c == 'y' || c == 'Y')
-	{
-	    msg("File name: %s", file_name);
-	    goto gotfile;
-	}
+    if (file_name[0] != '\0') {
+        msg("Save file (%s)? ", file_name);
+        do {
+            c = readchar(cw);
+        } while (c != 'n' && c != 'N' && c != 'y' && c != 'Y');
+        mpos = 0;
+        if (c == 'y' || c == 'Y') {
+            msg("File name: %s", file_name);
+            goto gotfile;
+        }
     }
 
-    do
-    {
-	msg("File name: ");
-	mpos = 0;
-	buf[0] = '\0';
-	if (get_str(buf, cw) == QUIT)
-	{
-	    msg("");
-	    return FALSE;
-	}
-	strcpy(file_name, buf);
-gotfile:
-	if ((savef = fopen(file_name, "w")) == NULL)
-	    msg(strerror(errno));	/* fake perror() */
+    do {
+        msg("File name: ");
+        mpos = 0;
+        buf[0] = '\0';
+        if (get_str(buf, cw) == QUIT) {
+            msg("");
+            return FALSE;
+        }
+        strcpy(file_name, buf);
+      gotfile:
+        if ((savef = fopen(file_name, "w")) == NULL)
+            msg(strerror(errno));       /* fake perror() */
     } while (savef == NULL);
 
     /*
      * write out encrpyted file (after a stat)
      * The fwrite is to force allocation of the buffer before the write
      */
-    if (save_file(savef) != 0)
-    {
+    if (save_file(savef) != 0) {
         msg("Save game failed!");
         return FALSE;
     }
@@ -89,16 +82,15 @@ gotfile:
  * automatically save a file.  This is used if a HUP signal is
  * recieved
  */
-void
-auto_save(int p)
+void auto_save(int p)
 {
     FILE *savef;
     int i;
 
     for (i = 0; i < NSIG; i++)
-	signal(i, SIG_IGN);
+        signal(i, SIG_IGN);
     if (file_name[0] != '\0' && (savef = fopen(file_name, "w")) != NULL)
-	save_file(savef);
+        save_file(savef);
     endwin();
     exit(1);
 }
@@ -106,35 +98,33 @@ auto_save(int p)
 /*
  * write the saved game on the file
  */
-int
-save_file(FILE *savef)
+int save_file(FILE * savef)
 {
     char buf[ROGUE_CHARBUF_MAX];
     int ret;
 
-    wmove(cw, LINES-1, 0);
+    wmove(cw, LINES - 1, 0);
     draw(cw);
     fseek(savef, 0L, 0);
 
-    memset(buf,0,80);
-    strcpy(buf,version);
-    encwrite(buf,80,savef);
-    memset(buf,0,80);
-    strcpy(buf,"R36 3\n");
-    encwrite(buf,80,savef);
-    memset(buf,0,80);
-    sprintf(buf,"%d x %d\n", LINES, COLS);
-    encwrite(buf,80,savef);
+    memset(buf, 0, 80);
+    strcpy(buf, version);
+    encwrite(buf, 80, savef);
+    memset(buf, 0, 80);
+    strcpy(buf, "R36 3\n");
+    encwrite(buf, 80, savef);
+    memset(buf, 0, 80);
+    sprintf(buf, "%d x %d\n", LINES, COLS);
+    encwrite(buf, 80, savef);
 
     ret = rs_save_file(savef);
 
     fclose(savef);
 
-    return(ret);
+    return (ret);
 }
 
-int
-restore(char *file, char **envp)
+int restore(char *file, char **envp)
 {
     int inf;
     extern char **environ;
@@ -143,33 +133,30 @@ restore(char *file, char **envp)
     int rogue_version = 0, savefile_version = 0;
 
     if (strcmp(file, "-r") == 0)
-	file = file_name;
-    if ((inf = open(file, 0)) < 0)
-    {
-	perror(file);
-	return FALSE;
+        file = file_name;
+    if ((inf = open(file, 0)) < 0) {
+        perror(file);
+        return FALSE;
     }
 
     fflush(stdout);
     encread(buf, 80, inf);
 
-    if (strcmp(buf, version) != 0)
-    {
-	printf("Sorry, saved game is out of date.\n");
-	return FALSE;
+    if (strcmp(buf, version) != 0) {
+        printf("Sorry, saved game is out of date.\n");
+        return FALSE;
     }
 
     encread(buf, 80, inf);
     sscanf(buf, "R%d %d\n", &rogue_version, &savefile_version);
 
-    if ((rogue_version != 36) && (savefile_version != 3))
-    {
-	printf("Sorry, saved game format is out of date.\n");
-	return FALSE;
+    if ((rogue_version != 36) && (savefile_version != 3)) {
+        printf("Sorry, saved game format is out of date.\n");
+        return FALSE;
     }
 
-    encread(buf,80,inf);
-    sscanf(buf,"%d x %d\n",&slines, &scols);
+    encread(buf, 80, inf);
+    sscanf(buf, "%d x %d\n", &slines, &scols);
 
     /*
      * we do not close the file so that we will have a hold of the
@@ -178,42 +165,42 @@ restore(char *file, char **envp)
 
     initscr();
 
-    if (slines > LINES)
-    {
-	endwin();
-	printf("Sorry, original game was played on a screen with %d lines.\n",slines);
-	printf("Current screen only has %d lines. Unable to restore game\n",LINES);
-	return(FALSE);
+    if (slines > LINES) {
+        endwin();
+        printf("Sorry, original game was played on a screen with %d lines.\n",
+               slines);
+        printf("Current screen only has %d lines. Unable to restore game\n",
+               LINES);
+        return (FALSE);
     }
 
-    if (scols > COLS)
-    {
-	endwin();
-	printf("Sorry, original game was played on a screen with %d columns.\n",scols);
-	printf("Current screen only has %d columns. Unable to restore game\n",COLS);
-	return(FALSE);
+    if (scols > COLS) {
+        endwin();
+        printf("Sorry, original game was played on a screen with %d columns.\n",
+               scols);
+        printf("Current screen only has %d columns. Unable to restore game\n",
+               COLS);
+        return (FALSE);
     }
 
     cw = newwin(LINES, COLS, 0, 0);
     mw = newwin(LINES, COLS, 0, 0);
     hw = newwin(LINES, COLS, 0, 0);
     nocrmode();
-    keypad(cw,1);
+    keypad(cw, 1);
     mpos = 0;
     mvwprintw(cw, 0, 0, "%s", file);
 
-    if (rs_restore_file(inf) != 0)
-    {
-	endwin();
-	printf("Cannot restore file\n");
-    	return(FALSE);
+    if (rs_restore_file(inf) != 0) {
+        endwin();
+        printf("Cannot restore file\n");
+        return (FALSE);
     }
 
-    if (!wizard && (md_unlink_open_file(file, inf) < 0))
-    {
-	endwin();
-    	printf("Cannot unlink file\n");
-	return FALSE;
+    if (!wizard && (md_unlink_open_file(file, inf) < 0)) {
+        endwin();
+        printf("Cannot unlink file\n");
+        return FALSE;
     }
 
     environ = envp;
@@ -230,53 +217,48 @@ restore(char *file, char **envp)
 #endif
     status();
     playit();
-    /*NOTREACHED*/
-    return(0);
+     /*NOTREACHED*/ return (0);
 }
 
 /*
  * perform an encrypted write
  */
-unsigned int
-encwrite(void *starta, unsigned int size, FILE *outf)
+unsigned int encwrite(void *starta, unsigned int size, FILE * outf)
 {
     char *ep;
     char *start = starta;
     unsigned int o_size = size;
     ep = encstr;
 
-    while (size)
-    {
-	if (putc(*start++ ^ *ep++, outf) == EOF)
-	    return(o_size - size);
-	if (*ep == '\0')
-	    ep = encstr;
-	size--;
+    while (size) {
+        if (putc(*start++ ^ *ep++, outf) == EOF)
+            return (o_size - size);
+        if (*ep == '\0')
+            ep = encstr;
+        size--;
     }
 
-    return(o_size - size);
+    return (o_size - size);
 }
 
 /*
  * perform an encrypted read
  */
-int
-encread(void *starta, unsigned int size, int inf)
+int encread(void *starta, unsigned int size, int inf)
 {
     char *ep;
     int read_size;
     char *start = starta;
 
     if ((read_size = read(inf, start, size)) == -1 || read_size == 0)
-	return read_size;
+        return read_size;
 
     ep = encstr;
 
-    while (size--)
-    {
-	*start++ ^= *ep++;
-	if (*ep == '\0')
-	    ep = encstr;
+    while (size--) {
+        *start++ ^= *ep++;
+        if (*ep == '\0')
+            ep = encstr;
     }
     return read_size;
 }

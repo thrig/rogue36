@@ -21,50 +21,48 @@
  *	What a certin object is
  */
 
-void
-whatis(void)
+void whatis(void)
 {
     struct object *obj;
     struct linked_list *item;
 
     if ((item = get_item("identify", 0)) == NULL)
-	return;
+        return;
     obj = (struct object *) ldata(item);
-    switch (obj->o_type)
-    {
-        case SCROLL:
-	    s_know[obj->o_which] = TRUE;
-	    if (s_guess[obj->o_which])
-	    {
-		free(s_guess[obj->o_which]);
-		s_guess[obj->o_which] = NULL;
-	    }
-        when POTION:
-	    p_know[obj->o_which] = TRUE;
-	    if (p_guess[obj->o_which])
-	    {
-		free(p_guess[obj->o_which]);
-		p_guess[obj->o_which] = NULL;
-	    }
-	when STICK:
-	    ws_know[obj->o_which] = TRUE;
-	    obj->o_flags |= ISKNOW;
-	    if (ws_guess[obj->o_which])
-	    {
-		free(ws_guess[obj->o_which]);
-		ws_guess[obj->o_which] = NULL;
-	    }
-        when WEAPON:
-        case ARMOR:
-	    obj->o_flags |= ISKNOW;
-        when RING:
-	    r_know[obj->o_which] = TRUE;
-	    obj->o_flags |= ISKNOW;
-	    if (r_guess[obj->o_which])
-	    {
-		free(r_guess[obj->o_which]);
-		r_guess[obj->o_which] = NULL;
-	    }
+    switch (obj->o_type) {
+    case SCROLL:
+        s_know[obj->o_which] = TRUE;
+        if (s_guess[obj->o_which]) {
+            free(s_guess[obj->o_which]);
+            s_guess[obj->o_which] = NULL;
+        }
+        break;
+    case POTION:
+        p_know[obj->o_which] = TRUE;
+        if (p_guess[obj->o_which]) {
+            free(p_guess[obj->o_which]);
+            p_guess[obj->o_which] = NULL;
+        }
+        break;
+    case STICK:
+        ws_know[obj->o_which] = TRUE;
+        obj->o_flags |= ISKNOW;
+        if (ws_guess[obj->o_which]) {
+            free(ws_guess[obj->o_which]);
+            ws_guess[obj->o_which] = NULL;
+        }
+        break;
+    case WEAPON:
+    case ARMOR:
+        obj->o_flags |= ISKNOW;
+        break;
+    case RING:
+        r_know[obj->o_which] = TRUE;
+        obj->o_flags |= ISKNOW;
+        if (r_guess[obj->o_which]) {
+            free(r_guess[obj->o_which]);
+            r_guess[obj->o_which] = NULL;
+        }
     }
     msg(inv_name(obj, FALSE));
 }
@@ -74,8 +72,7 @@ whatis(void)
  *	Wizard command for getting anything he wants
  */
 
-void
-create_obj(void)
+void create_obj(void)
 {
     struct linked_list *item;
     struct object *obj;
@@ -91,48 +88,41 @@ create_obj(void)
     obj->o_group = 0;
     obj->o_count = 1;
     mpos = 0;
-    if (obj->o_type == WEAPON || obj->o_type == ARMOR)
-    {
-	msg("Blessing? (+,-,n)");
-	bless = readchar(cw);
-	mpos = 0;
-	if (obj->o_type == WEAPON)
-	{
-	    init_weapon(obj, obj->o_which);
-	    if (bless == '-') {
-		obj->o_hplus -= rnd(3)+1;
-		obj->o_flags |= ISCURSED;
-	    }
-	    if (bless == '+')
-		obj->o_hplus += rnd(3)+1;
-	}
-	else
-	{
-	    obj->o_ac = a_class[obj->o_which];
-	    if (bless == '-') {
-		obj->o_ac += rnd(3)+1;
-		obj->o_flags |= ISCURSED;
-	    }
-	    if (bless == '+')
-		obj->o_ac -= rnd(3)+1;
-	}
-    }
-    else if (obj->o_type == RING)
-	switch (obj->o_which)
-	{
-	    case R_PROTECT:
-	    case R_ADDSTR:
-	    case R_ADDHIT:
-	    case R_ADDDAM:
-		msg("Blessing? (+,-,n)");
-		bless = readchar(cw);
-		mpos = 0;
-		if (bless == '-')
-		    obj->o_flags |= ISCURSED;
-		obj->o_ac = (bless == '-' ? -1 : rnd(2) + 1);
-	}
-    else if (obj->o_type == STICK)
-	fix_stick(obj);
+    if (obj->o_type == WEAPON || obj->o_type == ARMOR) {
+        msg("Blessing? (+,-,n)");
+        bless = readchar(cw);
+        mpos = 0;
+        if (obj->o_type == WEAPON) {
+            init_weapon(obj, obj->o_which);
+            if (bless == '-') {
+                obj->o_hplus -= rnd(3) + 1;
+                obj->o_flags |= ISCURSED;
+            }
+            if (bless == '+')
+                obj->o_hplus += rnd(3) + 1;
+        } else {
+            obj->o_ac = a_class[obj->o_which];
+            if (bless == '-') {
+                obj->o_ac += rnd(3) + 1;
+                obj->o_flags |= ISCURSED;
+            }
+            if (bless == '+')
+                obj->o_ac -= rnd(3) + 1;
+        }
+    } else if (obj->o_type == RING)
+        switch (obj->o_which) {
+        case R_PROTECT:
+        case R_ADDSTR:
+        case R_ADDHIT:
+        case R_ADDDAM:
+            msg("Blessing? (+,-,n)");
+            bless = readchar(cw);
+            mpos = 0;
+            if (bless == '-')
+                obj->o_flags |= ISCURSED;
+            obj->o_ac = (bless == '-' ? -1 : rnd(2) + 1);
+    } else if (obj->o_type == STICK)
+        fix_stick(obj);
     add_pack(item, FALSE);
 }
 
@@ -141,19 +131,17 @@ create_obj(void)
  *	Bamf the hero someplace else
  */
 
-int
-teleport(void)
+int teleport(void)
 {
     int rm;
     coord c;
 
     c = hero;
     mvwaddch(cw, hero.y, hero.x, mvwinch(stdscr, hero.y, hero.x));
-    do
-    {
-	rm = rnd_room();
-	rnd_pos(&rooms[rm], &hero);
-    } until(winat(hero.y, hero.x) == FLOOR);
+    do {
+        rm = rnd_room();
+        rnd_pos(&rooms[rm], &hero);
+    } while (winat(hero.y, hero.x) != FLOOR);
     light(&c);
     light(&hero);
     mvwaddch(cw, hero.y, hero.x, PLAYER);
@@ -162,13 +150,13 @@ teleport(void)
      * a Fungi
      */
     if (on(player, ISHELD)) {
-	player.t_flags &= ~ISHELD;
-	fung_hit = 0;
-	strcpy(monsters['F'-'A'].m_stats.s_dmg, "000d0");
+        player.t_flags &= ~ISHELD;
+        fung_hit = 0;
+        strcpy(monsters['F' - 'A'].m_stats.s_dmg, "000d0");
     }
     count = 0;
     running = FALSE;
-    flush_type();		/* flush typeahead */
+    flush_type();               /* flush typeahead */
     return rm;
 }
 
@@ -177,8 +165,7 @@ teleport(void)
  *	see if user knows password
  */
 
-int
-passwd(void)
+int passwd(void)
 {
     char *sp, c;
     char buf[ROGUE_CHARBUF_MAX], *xcrypt();
@@ -187,14 +174,14 @@ passwd(void)
     mpos = 0;
     sp = buf;
     while ((c = readchar(cw)) != '\n' && c != '\r' && c != '\033')
-	if (c == md_killchar())
-	    sp = buf;
-	else if (c == md_erasechar() && sp > buf)
-	    sp--;
-	else
-	    *sp++ = c;
+        if (c == md_killchar())
+            sp = buf;
+        else if (c == md_erasechar() && sp > buf)
+            sp--;
+        else
+            *sp++ = c;
     if (sp == buf)
-	return FALSE;
+        return FALSE;
     *sp = '\0';
     return (strcmp(PASSWD, xcrypt(buf, "mT")) == 0);
 }

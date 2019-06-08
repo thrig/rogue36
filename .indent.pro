@@ -1,0 +1,3 @@
+--k-and-r-style
+--no-tabs
+-l80

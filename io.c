@@ -24,19 +24,17 @@ static char msgbuf[BUFSIZ];
 static int newpos = 0;
 
 /*VARARGS1*/
-void
-msg(char *fmt, ...)
+void msg(char *fmt, ...)
 {
     va_list ap;
     /*
      * if the string is "", just clear the line
      */
-    if (*fmt == '\0')
-    {
-	wmove(cw, 0, 0);
-	wclrtoeol(cw);
-	mpos = 0;
-	return;
+    if (*fmt == '\0') {
+        wmove(cw, 0, 0);
+        wclrtoeol(cw);
+        mpos = 0;
+        return;
     }
     /*
      * otherwise add to the message and flush it out
@@ -50,8 +48,7 @@ msg(char *fmt, ...)
 /*
  * add things to the current message
  */
-void
-addmsg(char *fmt, ...)
+void addmsg(char *fmt, ...)
 {
     va_list ap;
 
@@ -64,18 +61,16 @@ addmsg(char *fmt, ...)
  * Display a new msg (giving him a chance to see the previous one if it
  * is up there with the --More--)
  */
-void
-endmsg(void)
+void endmsg(void)
 {
     strncpy(huh, msgbuf, 80);
     huh[79] = 0;
 
-    if (mpos)
-    {
-	wmove(cw, 0, mpos);
-	waddstr(cw, "--More--");
-	draw(cw);
-	wait_for(cw,' ');
+    if (mpos) {
+        wmove(cw, 0, mpos);
+        waddstr(cw, "--More--");
+        draw(cw);
+        wait_for(cw, ' ');
     }
     mvwaddstr(cw, 0, 0, msgbuf);
     wclrtoeol(cw);
@@ -84,8 +79,7 @@ endmsg(void)
     draw(cw);
 }
 
-void
-doadd(char *fmt, va_list ap)
+void doadd(char *fmt, va_list ap)
 {
     vsprintf(&msgbuf[newpos], fmt, ap);
     newpos = (int) strlen(msgbuf);
@@ -96,18 +90,16 @@ doadd(char *fmt, va_list ap)
  *	returns true if it is ok to step on ch
  */
 
-int
-step_ok(char ch)
+int step_ok(char ch)
 {
-    switch (ch)
-    {
-	case ' ':
-	case '|':
-	case '-':
-	case SECRETDOOR:
-	    return FALSE;
-	default:
-	    return (!isalpha(ch));
+    switch (ch) {
+    case ' ':
+    case '|':
+    case '-':
+    case SECRETDOOR:
+        return FALSE;
+    default:
+        return (!isalpha(ch));
     }
 }
 
@@ -117,20 +109,18 @@ step_ok(char ch)
  *	getchar.
  */
 
-int
-readchar(WINDOW *win)
+int readchar(WINDOW * win)
 {
     int ch;
 
     ch = md_readchar(win);
 
-    if ((ch == 3) || (ch == 0))
-    {
-	quit(0);
-        return(27);
+    if ((ch == 3) || (ch == 0)) {
+        quit(0);
+        return (27);
     }
 
-    return(ch);
+    return (ch);
 }
 
 /*
@@ -138,8 +128,7 @@ readchar(WINDOW *win)
  *	Display the important stats line.  Keep the cursor where it was.
  */
 
-void
-status(void)
+void status(void)
 {
     int oy, ox, temp;
     char *pb;
@@ -153,30 +142,28 @@ status(void)
      * bother.
      */
     if (s_hp == pstats.s_hpt && s_exp == pstats.s_exp && s_pur == purse
-	&& s_ac == (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm)
-	&& s_str == pstats.s_str.st_str && s_add == pstats.s_str.st_add
-	&& s_lvl == level && s_hungry == hungry_state)
-	    return;
+        && s_ac == (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm)
+        && s_str == pstats.s_str.st_str && s_add == pstats.s_str.st_add
+        && s_lvl == level && s_hungry == hungry_state)
+        return;
 
     getyx(cw, oy, ox);
-    if (s_hp != max_hp)
-    {
-	temp = s_hp = max_hp;
-	for (hpwidth = 0; temp; hpwidth++)
-	    temp /= 10;
+    if (s_hp != max_hp) {
+        temp = s_hp = max_hp;
+        for (hpwidth = 0; temp; hpwidth++)
+            temp /= 10;
     }
     sprintf(buf, "Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %-2d",
-	level, purse, hpwidth, pstats.s_hpt, hpwidth, max_hp,
-	pstats.s_str.st_str);
-    if (pstats.s_str.st_add != 0)
-    {
-	pb = &buf[strlen(buf)];
-	sprintf(pb, "/%d", pstats.s_str.st_add);
+            level, purse, hpwidth, pstats.s_hpt, hpwidth, max_hp,
+            pstats.s_str.st_str);
+    if (pstats.s_str.st_add != 0) {
+        pb = &buf[strlen(buf)];
+        sprintf(pb, "/%d", pstats.s_str.st_add);
     }
     pb = &buf[strlen(buf)];
     sprintf(pb, "  Ac: %-2d  Exp: %d/%ld",
-	cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm, pstats.s_lvl,
-	pstats.s_exp);
+            cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm,
+            pstats.s_lvl, pstats.s_exp);
     /*
      * Save old status
      */
@@ -188,15 +175,17 @@ status(void)
     s_exp = pstats.s_exp;
     s_ac = (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm);
     mvwaddstr(cw, LINES - 1, 0, buf);
-    switch (hungry_state)
-    {
-	case 0: ;
-	when 1:
-	    waddstr(cw, "  Hungry");
-	when 2:
-	    waddstr(cw, "  Weak");
-	when 3:
-	    waddstr(cw, "  Fainting");
+    switch (hungry_state) {
+    case 0:;
+        break;
+    case 1:
+        waddstr(cw, "  Hungry");
+        break;
+    case 2:
+        waddstr(cw, "  Weak");
+        break;
+    case 3:
+        waddstr(cw, "  Fainting");
     }
     wclrtoeol(cw);
     s_hungry = hungry_state;
@@ -208,17 +197,16 @@ status(void)
  *	Sit around until the guy types the right key
  */
 
-void
-wait_for(WINDOW *win, char ch)
+void wait_for(WINDOW * win, char ch)
 {
     char c;
 
     if (ch == '\n')
         while ((c = readchar(win)) != '\n' && c != '\r')
-	    continue;
+            continue;
     else
         while (readchar(win) != ch)
-	    continue;
+            continue;
 }
 
 /*
@@ -226,20 +214,18 @@ wait_for(WINDOW *win, char ch)
  *	function used to display a window and wait before returning
  */
 
-void
-show_win(WINDOW *scr, char *message)
+void show_win(WINDOW * scr, char *message)
 {
     mvwaddstr(scr, 0, 0, message);
     touchwin(scr);
     wmove(scr, hero.y, hero.x);
     draw(scr);
-    wait_for(scr,' ');
+    wait_for(scr, ' ');
     clearok(cw, TRUE);
     touchwin(cw);
 }
 
-void
-flush_type(void)
+void flush_type(void)
 {
-	flushinp();
+    flushinp();
 }

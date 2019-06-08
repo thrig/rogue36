@@ -19,7 +19,7 @@
 #include "machdep.h"
 #include "rogue.h"
 
-int num_checks;			/* times we've gone over in checkout() */
+int num_checks;                 /* times we've gone over in checkout() */
 WINDOW *cw;                     /* Window that the player sees */
 WINDOW *hw;                     /* Used for the help command */
 WINDOW *mw;                     /* Used to store mosnters */
@@ -32,8 +32,7 @@ void endit(int p);
 int too_much(void);
 void tstp(int);
 
-int
-main(int argc, char **argv, char **envp)
+int main(int argc, char **argv, char **envp)
 {
     char *env;
     struct linked_list *item;
@@ -46,22 +45,21 @@ main(int argc, char **argv, char **envp)
     /*
      * check for print-score option
      */
-    if (argc == 2 && strcmp(argv[1], "-s") == 0)
-    {
-	waswizard = TRUE;
-	score(0, -1, 0);
-	exit(0);
+    if (argc == 2 && strcmp(argv[1], "-s") == 0) {
+        waswizard = TRUE;
+        score(0, -1, 0);
+        exit(0);
     }
     /*
      * Check to see if he is a wizard
      */
     if (argc >= 2 && argv[1][0] == '\0')
-	if (strcmp(PASSWD, xcrypt(md_getpass("Wizard's password: "), "mT")) == 0)
-	{
-	    wizard = TRUE;
-	    argv++;
-	    argc--;
-	}
+        if (strcmp(PASSWD, xcrypt(md_getpass("Wizard's password: "), "mT")) ==
+            0) {
+            wizard = TRUE;
+            argv++;
+            argc--;
+        }
 
     /*
      * get home and options from environment
@@ -73,56 +71,56 @@ main(int argc, char **argv, char **envp)
     strcat(file_name, "rogue36.sav");
 
     if ((env = getenv("ROGUEOPTS")) != NULL)
-	parse_opts(env);
+        parse_opts(env);
     if (env == NULL || whoami[0] == '\0')
-	strucpy(whoami, md_getusername(md_getuid()), strlen(md_getusername(md_getuid())));
+        strucpy(whoami, md_getusername(md_getuid()),
+                strlen(md_getusername(md_getuid())));
     if (env == NULL || fruit[0] == '\0')
-	strcpy(fruit, "snozzcumber");
+        strcpy(fruit, "snozzcumber");
 
-    if (too_much() && !wizard && !author())
-    {
-	printf("Sorry, %s, but the system is too loaded now.\n", whoami);
-	printf("Try again later.  Meanwhile, why not enjoy a%s %s?\n",
-	    vowelstr(fruit), fruit);
-	exit(1);
+    if (too_much() && !wizard && !author()) {
+        printf("Sorry, %s, but the system is too loaded now.\n", whoami);
+        printf("Try again later.  Meanwhile, why not enjoy a%s %s?\n",
+               vowelstr(fruit), fruit);
+        exit(1);
     }
 
     if (argc == 2)
-	if (!restore(argv[1], envp)) /* Note: restore will never return */
-	    exit(1);
+        if (!restore(argv[1], envp))    /* Note: restore will never return */
+            exit(1);
 
     time(&now);
     lowtime = (int) now;
     dnum = (wizard && getenv("SEED") != NULL ?
-	(int) argtol(getenv("SEED"), (long) INT_MIN, (long) INT_MAX) :
-	lowtime + getpid());
+            (int) argtol(getenv("SEED"), (long) INT_MIN, (long) INT_MAX) :
+            lowtime + getpid());
     if (wizard)
-	printf("Hello %s, welcome to dungeon #%d", whoami, dnum);
+        printf("Hello %s, welcome to dungeon #%d", whoami, dnum);
     else
-	printf("Hello %s, just a moment while I dig the dungeon...", whoami);
+        printf("Hello %s, just a moment while I dig the dungeon...", whoami);
     fflush(stdout);
     seed = dnum;
-    init_player();			/* Roll up the rogue */
-    init_things();			/* Set up probabilities of things */
-    init_names();			/* Set up names of scrolls */
-    init_colors();			/* Set up colors of potions */
-    init_stones();			/* Set up stone settings of rings */
-    init_materials();			/* Set up materials of wands */
-    initscr();				/* Start up cursor package */
+    init_player();              /* Roll up the rogue */
+    init_things();              /* Set up probabilities of things */
+    init_names();               /* Set up names of scrolls */
+    init_colors();              /* Set up colors of potions */
+    init_stones();              /* Set up stone settings of rings */
+    init_materials();           /* Set up materials of wands */
+    initscr();                  /* Start up cursor package */
 
-    if (COLS < 70)
-    {
-	endwin();
-	printf("\n\nSorry, %s, but your terminal window has too few columns.\n", whoami);
-	printf("Your terminal has %d columns, needs 70.\n",COLS);
-	exit(1);
+    if (COLS < 70) {
+        endwin();
+        printf("\n\nSorry, %s, but your terminal window has too few columns.\n",
+               whoami);
+        printf("Your terminal has %d columns, needs 70.\n", COLS);
+        exit(1);
     }
-    if (LINES < 22)
-    {
-	endwin();
-	printf("\n\nSorry, %s, but your terminal window has too few lines.\n", whoami);
-	printf("Your terminal has %d lines, needs 22.\n",LINES);
-	exit(1);
+    if (LINES < 22) {
+        endwin();
+        printf("\n\nSorry, %s, but your terminal window has too few lines.\n",
+               whoami);
+        printf("Your terminal has %d lines, needs 22.\n", LINES);
+        exit(1);
     }
 
     setup();
@@ -132,9 +130,9 @@ main(int argc, char **argv, char **envp)
     cw = newwin(LINES, COLS, 0, 0);
     mw = newwin(LINES, COLS, 0, 0);
     hw = newwin(LINES, COLS, 0, 0);
-    keypad(cw,1);
+    keypad(cw, 1);
     waswizard = wizard;
-    new_level();			/* Draw current level */
+    new_level();                /* Draw current level */
     /*
      * Start up daemons and fuses
      */
@@ -175,7 +173,7 @@ main(int argc, char **argv, char **envp)
     obj->o_type = WEAPON;
     obj->o_which = ARROW;
     init_weapon(obj, ARROW);
-    obj->o_count = 25+rnd(15);
+    obj->o_count = 25 + rnd(15);
     obj->o_hplus = obj->o_dplus = 0;
     obj->o_flags |= ISKNOW;
     add_pack(item, TRUE);
@@ -230,8 +228,7 @@ long argtol(const char *arg, const long min, const long max)
  *	Exit the program abnormally.
  */
 
-void
-endit(int p)
+void endit(int p)
 {
     fatal("Ok, if you want to exit that badly, I'll have to allow it\n");
 }
@@ -241,11 +238,10 @@ endit(int p)
  *	Exit the program, printing a message.
  */
 
-void
-fatal(char *s)
+void fatal(char *s)
 {
     clear();
-    move(LINES-2, 0);
+    move(LINES - 2, 0);
     printw("%s", s);
     draw(stdscr);
     endwin();
@@ -257,8 +253,7 @@ fatal(char *s)
  *	Pick a very random number.
  */
 
-int
-rnd(int range)
+int rnd(int range)
 {
     return range == 0 ? 0 : abs(RN) % range;
 }
@@ -268,13 +263,12 @@ rnd(int range)
  *	roll a number of dice
  */
 
-int
-roll(int number, int sides)
+int roll(int number, int sides)
 {
     int dtotal = 0;
 
-    while(number--)
-	dtotal += rnd(sides)+1;
+    while (number--)
+        dtotal += rnd(sides) + 1;
     return dtotal;
 }
 
@@ -282,8 +276,7 @@ roll(int number, int sides)
  * handle stop and start signals
  */
 
-void
-tstp(int p)
+void tstp(int p)
 {
 #ifdef SIGTSTP
     signal(SIGTSTP, SIG_IGN);
@@ -301,11 +294,10 @@ tstp(int p)
     clearok(curscr, TRUE);
     touchwin(cw);
     draw(cw);
-    flush_type();	/* flush input */
+    flush_type();               /* flush input */
 }
 
-void
-setup(void)
+void setup(void)
 {
 #ifdef SIGHUP
     signal(SIGHUP, auto_save);
@@ -340,17 +332,16 @@ setup(void)
     signal(SIGTSTP, tstp);
 #endif
 
-    if (!author())
-    {
+    if (!author()) {
 #ifdef SIGALRM
-	signal(SIGALRM, checkout);
-	alarm(CHECKTIME * 60);
+        signal(SIGALRM, checkout);
+        alarm(CHECKTIME * 60);
 #endif
-	num_checks = 0;
+        num_checks = 0;
     }
 
-    crmode();				/* Cbreak mode */
-    noecho();				/* Echo off */
+    crmode();                   /* Cbreak mode */
+    noecho();                   /* Echo off */
 }
 
 /*
@@ -359,8 +350,7 @@ setup(void)
  * refreshing things and looking at the proper times.
  */
 
-void
-playit(void)
+void playit(void)
 {
     char *opts;
 
@@ -369,36 +359,34 @@ playit(void)
      */
 
 
-    if (baudrate() < 1200)
-    {
-	terse = TRUE;
-	jump = TRUE;
+    if (baudrate() < 1200) {
+        terse = TRUE;
+        jump = TRUE;
     }
 
     /*
      * parse environment declaration of options
      */
     if ((opts = getenv("ROGUEOPTS")) != NULL)
-	parse_opts(opts);
+        parse_opts(opts);
 
 
     oldpos = hero;
     oldrp = roomin(&hero);
     while (playing)
-	command();			/* Command execution */
+        command();              /* Command execution */
     endit(-1);
 }
 
 /*
  * see if the system is being used too much for this game
  */
-int
-too_much(void)
+int too_much(void)
 {
     double avec[3];
 
     if (md_getloadavg(avec) == 0)
-    	return (avec[2] > (MAXLOAD / 10.0));
+        return (avec[2] > (MAXLOAD / 10.0));
     else
         return (md_ucount() > MAXUSERS);
 }
@@ -406,49 +394,42 @@ too_much(void)
 /*
  * see if a user is an author of the program
  */
-int
-author(void)
+int author(void)
 {
-    switch (md_getuid())
-    {
-	case AUTHORUID:
-	    return TRUE;
-	default:
-	    return FALSE;
+    switch (md_getuid()) {
+    case AUTHORUID:
+        return TRUE;
+    default:
+        return FALSE;
     }
 }
 
-void
-checkout(int p)
+void checkout(int p)
 {
     static char *msgs[] = {
-	"The load is too high to be playing.  Please leave in %d minutes",
-	"Please save your game.  You have %d minutes",
-	"Last warning.  You have %d minutes to leave",
+        "The load is too high to be playing.  Please leave in %d minutes",
+        "Please save your game.  You have %d minutes",
+        "Last warning.  You have %d minutes to leave",
     };
     int checktime;
 #ifdef SIGALRM
     signal(SIGALRM, checkout);
 #endif
-    if (too_much())
-    {
-	if (num_checks == 3)
-	    fatal("Sorry.  You took too long.  You are dead\n");
-	checktime = CHECKTIME / (num_checks + 1);
-	chmsg(msgs[num_checks++], checktime);
+    if (too_much()) {
+        if (num_checks == 3)
+            fatal("Sorry.  You took too long.  You are dead\n");
+        checktime = CHECKTIME / (num_checks + 1);
+        chmsg(msgs[num_checks++], checktime);
 #ifdef SIGALRM
-	alarm(checktime * 60);
+        alarm(checktime * 60);
 #endif
-    }
-    else
-    {
-	if (num_checks)
-	{
-	    chmsg("The load has dropped back down.  You have a reprieve.");
-	    num_checks = 0;
-	}
+    } else {
+        if (num_checks) {
+            chmsg("The load has dropped back down.  You have a reprieve.");
+            num_checks = 0;
+        }
 #ifdef SIGALRM
-	alarm(CHECKTIME * 60);
+        alarm(CHECKTIME * 60);
 #endif
     }
 }
@@ -457,24 +438,20 @@ checkout(int p)
  * checkout()'s version of msg.  If we are in the middle of a shell, do a
  * printf instead of a msg to avoid the refresh.
  */
-void
-chmsg(char *fmt, ...)
+void chmsg(char *fmt, ...)
 {
     va_list args;
 
-    if (in_shell)
-    {
-	va_start(args, fmt);
-	vprintf(fmt, args);
-	va_end(args);
-	putchar('\n');
-	fflush(stdout);
-    }
-    else
-    {
+    if (in_shell) {
+        va_start(args, fmt);
+        vprintf(fmt, args);
+        va_end(args);
+        putchar('\n');
+        fflush(stdout);
+    } else {
         va_start(args, fmt);
         doadd(fmt, args);
         va_end(args);
-	endmsg();
+        endmsg();
     }
 }

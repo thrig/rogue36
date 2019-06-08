@@ -16,34 +16,31 @@
  *	The player wants to wear something, so let him/her put it on.
  */
 
-void
-wear(void)
+void wear(void)
 {
     struct linked_list *item;
     struct object *obj;
 
-    if (cur_armor != NULL)
-    {
-	addmsg("You are already wearing some");
-	if (!terse)
-	    addmsg(".  You'll have to take it off first");
-	endmsg();
-	after = FALSE;
-	return;
+    if (cur_armor != NULL) {
+        addmsg("You are already wearing some");
+        if (!terse)
+            addmsg(".  You'll have to take it off first");
+        endmsg();
+        after = FALSE;
+        return;
     }
     if ((item = get_item("wear", ARMOR)) == NULL)
-	return;
+        return;
     obj = (struct object *) ldata(item);
-    if (obj->o_type != ARMOR)
-    {
-	msg("You can't wear that.");
-	return;
+    if (obj->o_type != ARMOR) {
+        msg("You can't wear that.");
+        return;
     }
     waste_time();
     if (!terse)
-	addmsg("You are now w");
+        addmsg("You are now w");
     else
-	addmsg("W");
+        addmsg("W");
     msg("earing %s.", a_names[obj->o_which]);
     cur_armor = obj;
     obj->o_flags |= ISKNOW;
@@ -54,26 +51,24 @@ wear(void)
  *	Get the armor off of the players back
  */
 
-void
-take_off(void)
+void take_off(void)
 {
     struct object *obj;
 
-    if ((obj = cur_armor) == NULL)
-    {
-	if (terse)
-		msg("Not wearing armor");
-	else
-		msg("You aren't wearing any armor");
-	return;
+    if ((obj = cur_armor) == NULL) {
+        if (terse)
+            msg("Not wearing armor");
+        else
+            msg("You aren't wearing any armor");
+        return;
     }
     if (!dropcheck(cur_armor))
-	return;
+        return;
     cur_armor = NULL;
     if (terse)
-	addmsg("Was");
+        addmsg("Was");
     else
-	addmsg("You used to be ");
+        addmsg("You used to be ");
     msg(" wearing %c) %s", pack_char(obj), inv_name(obj, TRUE));
 }
 
@@ -82,8 +77,7 @@ take_off(void)
  *	Do nothing but let other things happen
  */
 
-void
-waste_time(void)
+void waste_time(void)
 {
     do_daemons(BEFORE);
     do_fuses(BEFORE);
