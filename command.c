@@ -18,7 +18,7 @@
 #include "rogue.h"
 
 /* make nojump do something on modern systems */
-struct timespec yawn = { 0, 25000000 };
+struct timespec rundelay = { 0, 25000000 };
 
 void call(void);
 void d_level(void);
@@ -55,7 +55,7 @@ void command(void)
         wmove(cw, hero.y, hero.x);
         if (!((running || count) && jump)) {
             draw(cw);           /* Draw screen */
-            nanosleep(&yawn, NULL);
+            nanosleep(&rundelay, NULL);
         }
         take = 0;
         after = TRUE;

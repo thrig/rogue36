@@ -66,7 +66,7 @@ void do_rooms(void)
             } while (rp->r_pos.y == 0 || rp->r_pos.y == LINES - 1);
             continue;
         }
-        if (rnd(10) < level - 1)
+        if (rnd(20) < level - 1)
             rp->r_flags |= ISDARK;
         /*
          * Find a place and size for a random room

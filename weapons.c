@@ -12,9 +12,13 @@
 
 #include <ctype.h>
 #include <string.h>
+#include <time.h>
 #include "rogue.h"
 
 #define NONE 100
+
+/* make do_motion show something on modern systems */
+struct timespec motiondelay = { 0, 15000000 };
 
 char *w_names[MAXWEAPONS] = {
     "mace",
@@ -130,6 +134,7 @@ void do_motion(struct object *obj, int ydelta, int xdelta)
             mvwinch(cw, obj->o_pos.y, obj->o_pos.x) != ' ')
             mvwaddch(cw, obj->o_pos.y, obj->o_pos.x,
                      show(obj->o_pos.y, obj->o_pos.x));
+        nanosleep(&motiondelay, NULL);
         /*
          * Get the new position
          */
