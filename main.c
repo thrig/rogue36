@@ -40,6 +40,13 @@ int main(int argc, char **argv, char **envp)
     int lowtime;
     time_t now;
 
+#ifdef __OpenBSD__
+    if (pledge("cpath getpw rpath stdio tty wpath", NULL) == -1) {
+        fputs("rogue: pledge failed", stderr);
+	exit(1);
+    }
+#endif
+
     md_init();
 
     /*

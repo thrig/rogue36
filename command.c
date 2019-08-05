@@ -158,9 +158,10 @@ void command(void)
             if (count && !running)
                 count--;
             switch (ch) {
-            case '!':
-                shell();
-                break;
+                /* disabled for better pledge control on OpenBSD */
+                //case '!':
+                //    shell();
+                //    break;
             case 'h':
                 do_move(0, -1);
                 break;
