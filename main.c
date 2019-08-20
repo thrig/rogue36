@@ -34,7 +34,7 @@ void tstp(int);
 
 int main(int argc, char **argv, char **envp)
 {
-    char *env;
+    char *env, *seedstr;
     struct linked_list *item;
     struct object *obj;
     int lowtime;
@@ -43,7 +43,7 @@ int main(int argc, char **argv, char **envp)
 #ifdef __OpenBSD__
     if (pledge("cpath getpw rpath stdio tty wpath", NULL) == -1) {
         fputs("rogue: pledge failed", stderr);
-	exit(1);
+        exit(1);
     }
 #endif
 
@@ -57,21 +57,32 @@ int main(int argc, char **argv, char **envp)
         score(0, -1, 0);
         exit(0);
     }
+    seedstr = getenv("SEED");
+    /* replay mode */
+    if (argc == 2 && strcmp(argv[1], "-r") == 0) {
+        if (seedstr == NULL) {
+            printf("Replay needs SEED set\n");
+            exit(1);
+        }
+        replay = TRUE;
+        argv++;
+        argc--;
+    }
     /*
      * Check to see if he is a wizard
      */
-    if (argc >= 2 && argv[1][0] == '\0')
+    if (argc >= 2 && argv[1][0] == '\0') {
         if (strcmp(PASSWD, xcrypt(md_getpass("Wizard's password: "), "mT")) ==
             0) {
             wizard = TRUE;
             argv++;
             argc--;
         }
-
+    }
     /*
      * get home and options from environment
      */
-    strncpy(home, md_gethomedir(), ROGUE_CHARBUF_MAX);
+    strncpy(home, md_getroguedir(), ROGUE_CHARBUF_MAX);
 
     strcpy(file_name, home);
     strcat(file_name, "/");
@@ -98,13 +109,18 @@ int main(int argc, char **argv, char **envp)
 
     time(&now);
     lowtime = (int) now;
-    dnum = (wizard && getenv("SEED") != NULL ?
-            (int) argtol(getenv("SEED"), (long) INT_MIN, (long) INT_MAX) :
+    dnum = ((replay || wizard) && seedstr != NULL ?
+            (int) argtol(seedstr, (long) INT_MIN, (long) INT_MAX) :
             lowtime + getpid());
-    if (wizard)
+    if (wizard) {
         printf("Hello %s, welcome to dungeon #%d", whoami, dnum);
-    else
+    } else if (replay) {
+        printf("Hello %s, let's see how that run went...", whoami);
+    } else {
+        if (getenv("ROGUELOG") != NULL)
+            init_keylog();
         printf("Hello %s, just a moment while I dig the dungeon...", whoami);
+    }
     fflush(stdout);
     seed = dnum;
     init_player();              /* Roll up the rogue */

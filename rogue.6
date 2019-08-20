@@ -1,4 +1,4 @@
-.Dd August  5 2019
+.Dd August 20 2019
 .Dt ROGUE 6
 .nh
 .Os
@@ -8,6 +8,8 @@
 .Sh SYNOPSIS
 .Bk -words
 .Nm
+.Nm
+.Fl r
 .Nm
 .Fl s
 .Nm
@@ -20,6 +22,11 @@ attacks of various monsters and get a lot of gold. To win the game you
 must locate the Amulet of Yendor which is somewhere below the 20th level
 of the dungeon and get it out.
 .Pp
+The
+.Fl r
+flag will replay a game from a particular
+.Ev SEED
+value; previous commands should be passed in via standard input.
 The
 .Fl s
 flag will show the high score list and then quit the game.
@@ -207,7 +214,7 @@ Cancel a command.
 .It Cm v
 Program version number.
 .It Cm S
-Save game.
+Save game. Disabled if key logging for replay is active.
 .It Cm Q
 Quit.
 .El
@@ -365,12 +372,16 @@ on if your are on a slow (under 1200 baud) terminal.
 .It Ev ROGUEHOME
 Directory that will be used for the score file,
 .Ev HOME
-by default otherwise if various other directories do not work out.
+by default if various other directories do not work out. Tilde expansion
+is not supported by this variable.
+.It Ev ROGUELOG
+If set enables key logging of the game for future replay. This disables
+the ability to save the game.
 .It Ev ROGUEOPTS
 A comma separated list of values for the various
 .Sx Options .
 .It Ev SEED
-Seed for wizard mode. Integer.
+Seed for replay or wizard mode. Integer.
 .El
 .Sh FILES
 .Bl -tag -width Ds
@@ -473,5 +484,8 @@ as repeated coinflips.
 .Pp
 Scrolls can be read while blind. Other roguelikes disallow this, but
 maybe the scrolls use braille?
+.Pp
+Some but not all environment values support tilde expansion of the home
+directory. Probably best to fully qualify all paths in advance.
 .Sh SECURITY CONSIDERATIONS
 An abundance of C code from the 1980s.

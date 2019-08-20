@@ -11,9 +11,26 @@
  */
 
 #include <ctype.h>
+#include <fcntl.h>
 #include <stdarg.h>
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "rogue.h"
+
+/*
+ * init_keylog:
+ *  Open a file descriptor to log keys to for replay.
+ */
+
+void init_keylog(void)
+{
+    char *path;
+    asprintf(&path, "%s/rrec.%d", home, dnum);
+    /* this assumes the same seed will not be replayed */
+    logfd = open(path, O_WRONLY|O_APPEND|O_CREAT|O_EXCL, 0666);
+    free(path);
+}
 
 /*
  * msg:
@@ -114,6 +131,8 @@ int readchar(WINDOW * win)
     int ch;
 
     ch = md_readchar(win);
+
+    if (logfd > 0) write(logfd, &ch, (size_t) 1);
 
     if ((ch == 3) || (ch == 0)) {
         quit(0);

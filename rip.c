@@ -110,7 +110,7 @@ void score(int amount, int flags, char monst)
      */
 
     /* Get default score file */
-    strcpy(score_file, md_getroguedir());
+    strcpy(score_file, home);
 
     if (*score_file)
         strcat(score_file, "/");

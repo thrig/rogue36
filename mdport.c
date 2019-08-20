@@ -251,6 +251,7 @@ char *md_getusername(int uid)
     return (login);
 }
 
+/* NOTE unused by rogue code directly, that uses md_getroguedir instead */
 char *md_gethomedir(void)
 {
     static char homedir[PATH_MAX];
@@ -386,11 +387,11 @@ int directory_exists(char *dirname)
 char *md_getroguedir(void)
 {
     static char path[1024];
-    char *end, *home;
+    char *end, *roguedir;
 
-    if ((home = getenv("ROGUEHOME")) != NULL) {
-        if (*home) {
-            strncpy(path, home, PATH_MAX - 20);
+    if ((roguedir = getenv("ROGUEHOME")) != NULL) {
+        if (*roguedir) {
+            strncpy(path, roguedir, PATH_MAX - 20);
 
             end = &path[strlen(path) - 1];
 
@@ -402,18 +403,9 @@ char *md_getroguedir(void)
         }
     }
 
-    if (directory_exists("/var/games/roguelike"))
-        return ("/var/games/roguelike");
-    if (directory_exists("/var/lib/roguelike"))
-        return ("/var/lib/roguelike");
-    if (directory_exists("/var/roguelike"))
-        return ("/var/roguelike");
-    if (directory_exists("/usr/games/lib"))
-        return ("/usr/games/lib");
-    if (directory_exists("/games/roguelik"))
-        return ("/games/roguelik");
     if (directory_exists(md_gethomedir()))
         return (md_gethomedir());
+
     return ("");
 }
 

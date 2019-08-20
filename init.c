@@ -16,7 +16,9 @@
 
 void badcheck(char *name, struct magic_item *magic, int bound);
 
-bool playing = TRUE, running = FALSE, wizard = FALSE;
+int logfd;
+
+bool playing = TRUE, replay = FALSE, running = FALSE, wizard = FALSE;
 bool notify = TRUE, fight_flush = FALSE, terse = FALSE, door_stop = FALSE;
 bool jump = FALSE, slow_invent = FALSE, firstmove = FALSE, askme = FALSE;
 bool amulet = FALSE, in_shell = FALSE;
@@ -422,7 +424,7 @@ void init_names(void)
 
     for (i = 0; i < MAXSCROLLS; i++) {
         cp = prbuf;
-        nwords = rnd(2) + 1;
+        nwords = rnd(4) + 2;
         while (nwords--) {
             nsyl = rnd(3) + 1;
             while (nsyl--) {

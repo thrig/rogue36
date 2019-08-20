@@ -432,6 +432,7 @@ extern struct magic_item p_magic[MAXPOTIONS];   /* Names and chances for potions
 extern struct magic_item r_magic[MAXRINGS];     /* Names and chances for rings */
 extern struct magic_item ws_magic[MAXSTICKS];   /* Names and chances for sticks */
 
+extern int logfd;               /* Descriptor for key logging */
 extern int level;               /* What level rogue is on */
 extern int purse;               /* How much gold the rogue has */
 extern int mpos;                /* Where cursor is on top line */
@@ -483,6 +484,7 @@ extern WINDOW *mw;              /* Used to store mosnters */
 
 extern bool running;            /* True if player is running */
 extern bool playing;            /* True until he quits */
+extern bool replay;             /* True if replaying a game */
 extern bool wizard;             /* True if allows wizard commands */
 extern bool after;              /* True if we want after daemons */
 extern bool notify;             /* True if player wants to know */
@@ -572,6 +574,7 @@ void init_stones(void);
 void init_things(void);
 
 /* io.c */
+void init_keylog(void);
 void addmsg(char *fmt, ...);
 void doadd(char *fmt, va_list ap);
 void endmsg(void);

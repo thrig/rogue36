@@ -237,6 +237,8 @@ void command(void)
             case 'r':
                 read_scroll();
                 break;
+            /* no I haven't been playing Angbands why do you ask */
+            case 'E':
             case 'e':
                 eat();
                 break;
@@ -303,6 +305,10 @@ void command(void)
                 break;
             case 'S':
                 after = FALSE;
+                if (replay || logfd > 0) {
+                    msg("Save not compatible with key logging");
+                    break;
+                }
                 if (save_game()) {
                     wmove(cw, LINES - 1, 0);
                     wclrtoeol(cw);

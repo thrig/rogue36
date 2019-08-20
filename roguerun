@@ -1,32 +1,21 @@
-#!/usr/bin/env expect
+#!/bin/sh
 #
-# a wee little rogue wrapper that finds a savefile, if any, and either
-# loads that or starts a new game, with logging for future review.
-# rogue(6) has details on the contents of ROGUEOPTS; the log_file bit
-# may need to be customized or disabled, as desired
+# roguerun - a rogue wrapper that uses an existing save file or starts
+# a new game. rogue(6) has details on what ROGUEOPTS may contain
+# ("askme" being important, unless you are good at memorizing random
+# scroll names)
 
-package require Tcl 8.5
+# avoid the default of rogue writing directly to ~/
+export ROGUEHOME="$HOME"/share/rogue
+export ROGUEOPTS="name=Null,askme,noflush,jump"
 
-set cmd rogue
+# if enable keylogging then there is no savefile support
+#export ROGUELOG=1
 
-set options [array get env ROGUEOPTS]
-set savefile ""
-if {[llength $options] == 2} {
-    foreach opt [split [lindex $options 1] ,] {
-        set fields [split $opt =]
-        if {[lindex $fields 0] eq "file"} {
-            set savefile [lindex $fields 1]
-            break
-        }
-    }
-}
-if {[string length $savefile] == 0} {
-    set savefile [file nativename ~/rogue36.sav]
-}
-if {[file exists $savefile]} { lappend cmd $savefile }
+# NOTE the save file could be in ROGUEOPTS or could defult to being
+# under ROGUEHOME or HOME, depending. this makes simplifying assumptions
+savefile=$ROGUEHOME/rogue36.sav
 
-file mkdir ~/share/rogue/rec
-log_file ~/share/rogue/rec/rogue.[clock seconds].log
+[ -e "$savefile" ] || savefile=
 
-spawn -noecho {*}$cmd
-interact
+exec rogue $savefile
