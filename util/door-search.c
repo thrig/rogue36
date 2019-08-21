@@ -38,7 +38,7 @@ int new_search(void)
 {
     int turns = 0;
     while (1) {
-        if (rnd(100) < 10 + 4 * turns++)
+        if (rnd(100) < 10 + 6 * turns++)
             break;
     }
     return turns;

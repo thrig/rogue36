@@ -21,7 +21,6 @@
  * Maximum number of different things
  */
 #define MAXROOMS 9
-#define MAXTHINGS 9
 #define MAXOBJ 9
 #define MAXPACK 23
 #define MAXTRAPS 10
