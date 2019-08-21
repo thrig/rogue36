@@ -69,7 +69,8 @@ void death(char monst)
     mvaddstr(18, 26, prbuf);
     move(LINES - 1, 0);
     draw(stdscr);
-    score(purse, 0, monst);
+    if (!replay)
+        score(purse, 0, monst);
     exit(1);
 }
 

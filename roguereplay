@@ -24,9 +24,12 @@ fconfigure $rogue -buffering none
 while {1} {
     set ch [read $logf 1]
     if {$ch eq ""} {
-        close $rogue
+        catch {close $rogue}
         exit 0
     }
-    puts -nonewline $rogue $ch
+    if {[catch {puts -nonewline $rogue $ch} msg]} {
+        puts stderr "rogue write failed: $msg"
+        exit 1
+    }
     sleep 0.5
 }
