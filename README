@@ -1,23 +1,116 @@
-rogue 3.6.3 + bugfixes + changes
-================================
-                                                               --+-----------
-   this began from a rogue3.6.3-src.tar.gz and is mostly for   |............|
-historical interest. the code has been updated to compile on   |............|
-modern systems without errors, plus bugfixes and other minor   |.........?..|
-tweaks where deemed necessary. the GNUisms have been removed   |........H...|
-from the Makefile                                              +............|
-                                                               |.....*...@..|
-    make                                                       --+-----------
-    ./rogue
+rogue 3.6.3 + bugfixes + changes + more changes
+===============================================
+                                                                  ------------
+this began from a rogue3.6.3-src.tar.gz that was found somewhere  |..........|
+on the Internet and is mostly for historical interest. this code  |.*.....T..|
+is more likely to compile on modern unix systems; various fixes   +N.........|
+and tweaks have been made where deemed necessary. to build rogue  |..........|
+on OpenBSD run                                                    |..........|
+                                                                  |.......@..|
+  make                                                            --------+---
 
-the documentation has been consolidated into rogue.6; copy this into a
-suitable MANPATH directory (e.g. /usr/local/share/man/man6) and then run
+other systems may require tweaks or magical compiler flags passed (see
+below). the documentation has been consolidated into rogue.6; copy this
+into a MANPATH directory (e.g. /usr/local/share/man/man6) and then run
 
-    man 6 rogue
+  man 6 rogue
 
-the wizard mode PASSWD can be changed via crypt(3); set this in rogue.h
+to read it
 
-    $ perl -E 'say crypt shift, "mT"' Hunter2
-    mT6wyq.jl007.
 
-Level: 1  Gold: 0      Hp: 12(12)  Str: 16  Ac: 6   Exp: 1/0
+portability
+===========
+
+various modern system calls are used, and it is assumed a DEV_RANDOM
+device exists to set the seed randomly from. rogue.h might be good to
+look at, for starters
+
+ * Centos 7 - try building with at least:
+
+  CFLAGS='-D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L' make
+
+   other Linux may or may not need similar?
+
+ * OpenBSD - at least version 6.4 is required for the pledge(2) and
+   unveil(2) calls used to prevent rogue access to the system
+
+
+rogue run
+=========
+
+there are at least three ways to run rogue; individually, multiuser, or
+via a shared account
+
+ 1. individual - if desired, compile in Wizard support. otherwise, a
+    wrapper script will allow options to be set without polluting the
+    environment, e.g.
+
+  $ make rogue
+  $ strip rogue
+  $ mkdir ~/libexec
+  $ cp rogue ~/libexec
+  $ mkdir -p ~/share/rogue
+  $ cat ~/usr/bin/rogue
+  #!/bin/sh
+  ROGUEHOME=~/share/rogue ROGUEOPTS=flush,jump \
+  exec ~/libexec/rogue -n Thrig "$@"
+
+ 2. multiuser - this will require an exec wrapper that sets ROGUEHOME to
+    a shared directory. a setgid bit will be required somewhere to run
+    rogue as a user with permissions to the ROGUEHOME directory. there
+    may be problems from malicious users who may be able to flock the
+    highscores file (DoS). rogue does not consult the passwd(5) database
+    so two different players will be able to use the same -n name so
+    there may need to be highscores improvements made
+
+ 3. shared - a script will need to be written that converts logins to
+    player names and runs rogue with a suitable -n argument for each
+    user. handle timeouts and multiple sessions for the same user
+    somehow. delays may need to be added to rogue so that bots cannot
+    issue commands too quickly. the highscores data might instead be
+    written to a database, ttyrec recordings made, etc
+
+
+the changes (of note)
+=====================
+
+ * "askme" defaults to being on, because who can remember what 'ox sun
+   asunmon seh seefaa' or whatever was. also removed various options
+ * better avoid a rare softlock when putting things onto the map
+ * eliminate the use of the ' ' command to rest, as that key is mainly
+   used to clear --More messages and giant ants don't need any help
+ * floating eyes have been buffed to avoid softlocks--two of them (via a
+   ring of aggravation) could trap the player in a hall. forever.
+ * generate more items and rework the item generation odds. to
+   compensate, do not start player with an already good weapon (and etc)
+   so they have to find stuff (as was the case in the original?)
+ * leather armour does not rust. studded leather may not rust
+ * less random player HP gain (1d8+2 instead of 1d10). also different
+   heal code on level up that is probably better for the player
+ * slow the game down so nojump moves and thrown weapons are actually
+   visible on modern systems
+ * less dark dungeon so ranged attacks remain viable for longer
+   (downside: more monsters may see you)
+ * pledge(2) and unveil(2) support for OpenBSD, and thus the removal of
+   the ! command to escape to the shell and various other system calls
+ * reworked searching (less likely to require many keypresses to find a
+   door, but may require at least a few presses holding still)
+ * various code bugfixes and modernizations (removed needless GNUisms
+   from the Makefile, removed unused loadaverage code, tossed most of
+   the DOS portability, etc)
+ * wizard mode has been made easier to get into (or to compile out of)
+
+
+wizardly things
+===============
+
+Wizard mode is not compiled in by default;
+
+    make clean; CFLAGS=-DWIZARD make
+
+would build that. this enables the -W flag or '&' command in game to
+enter wizard mode (there used to be a password for this that used the
+now weak DES encryption scheme). actual debugging may require additional
+flags such as
+
+    make clean; CFLAGS='-g -DWIZARD' make

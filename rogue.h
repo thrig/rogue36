@@ -11,11 +11,41 @@
  */
 
 #include <curses.h>
+#include <limits.h>
+#include <stdbool.h>
+
+/*
+ * Modern systems are too fast - slow things down with nanosleep(2).
+ */
+// animation speed for when "nojump" is set
+#ifndef JUMP_DELAY
+#define JUMP_DELAY  25000000
+#endif
+// animation speed for thrown weapons
+#ifndef THROW_DELAY
+#define THROW_DELAY 15000000
+#endif
+// keyboard reads
+#ifndef READ_DELAY
+#define READ_DELAY 10000000
+#endif
 
 /*
  * Used in various buffers
  */
 #define ROGUE_CHARBUF_MAX 80
+#define GETSTR_MAX 32
+/* this should give ample space for highscores or save filenames */
+#define ROGUEDIR_MAX PATH_MAX - 42
+
+/*
+ * Game is (now) only 80x24 though can be played on a larger terminal.
+ * Changing the game size will make the rooms larger or smaller and will
+ * make the same random see do different things. main.c has the check
+ * for the terminal size and associated error messages.
+ */
+#define ROCOLS 80
+#define ROLINES 24
 
 /*
  * Maximum number of different things
@@ -24,14 +54,14 @@
 #define MAXOBJ 9
 #define MAXPACK 23
 #define MAXTRAPS 10
-#define	NUMTHINGS 7             /* number of types of things (scrolls, rings, etc.) */
+#define NUMTHINGS 7             /* number of types of things (scrolls, rings, etc.) */
 
 /*
  * Return values for get functions
  */
-#define	NORM	0               /* normal exit */
-#define	QUIT	1               /* quit option setting */
-#define	MINUS	2               /* back up one option */
+#define NORM    0               /* normal exit */
+#define QUIT    1               /* quit option setting */
+#define MINUS   2               /* back up one option */
 
 /*
  * Coordinate data type
@@ -91,8 +121,8 @@ void _attach(struct linked_list **list, struct linked_list *item);
 void _detach(struct linked_list **list, struct linked_list *item);
 void _free_list(struct linked_list **ptr);
 void discard(struct linked_list *item);
-char *new(int size);
-struct linked_list *new_item(int size);
+char *new(size_t size);
+struct linked_list *new_item(size_t size);
 
 /*
  * All the fun defines
@@ -106,6 +136,9 @@ struct linked_list *new_item(int size);
 #define winat(y, x) (mvwinch(mw,y,x)==' '?mvwinch(stdscr,y,x):winch(mw))
 #define debug if (wizard) msg
 #define RN (((seed = seed*11109+13849) & 0x7fff) >> 1)
+#ifndef DEV_RANDOM
+#define DEV_RANDOM "/dev/urandom"
+#endif
 #define unc(cp) (cp).y, (cp).x
 #define cmov(xy) move((xy).y, (xy).x)
 #define DISTANCE(y1, x1, y2, x2) ((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1))
@@ -126,9 +159,7 @@ struct linked_list *new_item(int size);
 #define off(thing, flag) (((thing).t_flags & flag) == 0)
 #undef  CTRL
 #define CTRL(ch) (ch & 037)
-#define ALLOC(x) malloc((unsigned int) x)
-#define FREE(x) free((char *) x)
-#define	EQSTR(a, b, c)	(strncmp(a, b, c) == 0)
+#define EQSTR(a, b, c)  (strncmp(a, b, c) == 0)
 #define GOLDCALC (rnd(50 + 10 * level) + 2)
 #define ISRING(h,r) (cur_ring[h] != NULL && cur_ring[h]->o_which == r)
 #define ISWEARING(r) (ISRING(LEFT, r) || ISRING(RIGHT, r))
@@ -167,7 +198,7 @@ struct linked_list *new_item(int size);
 /*
  * Various constants
  */
-#define	PASSWD		"mTvVTJapOTSbg"
+#define PASSWD          "mTvVTJapOTSbg"
 #define BEARTIME 3
 #define SLEEPTIME 5
 #define HEALTIME 30
@@ -199,12 +230,12 @@ struct linked_list *new_item(int size);
 /*
  * Various flag bits
  */
-#define ISDARK	0000001
+#define ISDARK  0000001
 #define ISCURSED 000001
 #define ISBLIND 0000001
-#define ISGONE	0000002
+#define ISGONE  0000002
 #define ISKNOW  0000002
-#define ISRUN	0000004
+#define ISRUN   0000004
 #define ISFOUND 0000010
 #define ISINVIS 0000020
 #define ISMEAN  0000040
@@ -216,9 +247,9 @@ struct linked_list *new_item(int size);
 #define CANHUH  0004000
 #define CANSEE  0010000
 #define ISMISL  0020000
-#define ISCANC	0020000
+#define ISCANC  0020000
 #define ISMANY  0040000
-#define ISSLOW	0040000
+#define ISSLOW  0040000
 #define ISHASTE 0100000
 
 /*
@@ -260,6 +291,8 @@ struct linked_list *new_item(int size);
 #define S_NOP 14
 #define S_GENOCIDE 15
 #define MAXSCROLLS 16
+
+#define MAXSCROLLNAMELEN 32
 
 /*
  * Weapon types
@@ -328,6 +361,12 @@ struct linked_list *new_item(int size);
 #define WS_TELTO 12
 #define WS_CANCEL 13
 #define MAXSTICKS 14
+
+/*
+ * Magic number reduction act of 2019
+ */
+#define RATION 0
+#define MANGO 1
 
 /*
  * Now we define the structures and types
@@ -440,7 +479,6 @@ extern int no_move;             /* Number of turns held in place */
 extern int no_command;          /* Number of turns asleep */
 extern int inpack;              /* Number of things in pack */
 extern int max_hp;              /* Player's max hit points */
-extern int total;               /* Total dynamic memory bytes */
 extern int a_chances[MAXARMORS];        /* Probabilities for armor */
 extern int a_class[MAXARMORS];  /* Armor class for various armors */
 extern int lastscore;           /* Score before this turn */
@@ -466,24 +504,23 @@ extern char *w_names[MAXWEAPONS];       /* Names of the various weapons */
 extern char *a_names[MAXARMORS];        /* Names of armor types */
 extern char *ws_made[MAXSTICKS];        /* What sticks are made of */
 extern char *release;           /* Release number of rogue */
-extern char whoami[ROGUE_CHARBUF_MAX];  /* Name of player */
-extern char fruit[ROGUE_CHARBUF_MAX];   /* Favorite fruit */
+#define WHOAMI_LEN 18           /* To fit on the tombstone */
+extern char whoami[WHOAMI_LEN + 1];     /* Name of player */
+extern char *fruit;             /* Favorite fruit */
 extern char huh[ROGUE_CHARBUF_MAX];     /* The last message printed */
 extern char *s_guess[MAXSCROLLS];       /* Players guess at what scroll is */
 extern char *p_guess[MAXPOTIONS];       /* Players guess at what potion is */
 extern char *r_guess[MAXRINGS]; /* Players guess at what ring is */
 extern char *ws_guess[MAXSTICKS];       /* Players guess at what wand is */
 extern char *ws_type[MAXSTICKS];        /* Is it a wand or a staff */
-extern char file_name[ROGUE_CHARBUF_MAX];       /* Save file name */
-extern char home[ROGUE_CHARBUF_MAX];    /* User's home directory */
+extern char roguedir[PATH_MAX]; /* where rogue files reside */
+extern char save_file[PATH_MAX];        /* Save file name */
 
 extern WINDOW *cw;              /* Window that the player sees */
 extern WINDOW *hw;              /* Used for the help command */
 extern WINDOW *mw;              /* Used to store mosnters */
 
 extern bool running;            /* True if player is running */
-extern bool playing;            /* True until he quits */
-extern bool replay;             /* True if replaying a game */
 extern bool wizard;             /* True if allows wizard commands */
 extern bool after;              /* True if we want after daemons */
 extern bool notify;             /* True if player wants to know */
@@ -493,14 +530,12 @@ extern bool door_stop;          /* Stop running when we pass a door */
 extern bool jump;               /* Show running as series of jumps */
 extern bool slow_invent;        /* Inventory one line at a time */
 extern bool firstmove;          /* First move after setting door_stop */
-extern bool waswizard;          /* Was a wizard sometime */
 extern bool askme;              /* Ask about unidentified things */
 extern bool s_know[MAXSCROLLS]; /* Does he know what a scroll does */
 extern bool p_know[MAXPOTIONS]; /* Does he know what a potion does */
 extern bool r_know[MAXRINGS];   /* Does he know what a ring does */
 extern bool ws_know[MAXSTICKS]; /* Does he know what a stick does */
 extern bool amulet;             /* He found the amulet */
-extern bool in_shell;           /* True if executing a shell */
 
 extern coord oldpos;            /* Position before last look() call */
 extern coord delta;             /* Change indicated to get_dir() */
@@ -509,7 +544,6 @@ extern coord ch_ret;
 extern char countch, direction, newcount;
 extern struct delayed_action d_list[20];
 extern int between;
-extern int num_checks;
 extern char lvl_mons[27], wand_mons[27];
 extern coord nh;
 
@@ -590,17 +624,10 @@ void fatal(char *s);
 void playit(void);
 int rnd(int range);
 int roll(int number, int sides);
-void setup(void);
+void setup_sigs(void);
 
 /* mdport.c */
-int md_erasechar(void);
-int md_getloadavg(double *avg);
-int md_getuid(void);
-int md_killchar(void);
 int md_readchar(WINDOW * win);
-int md_shellescape(void);
-int md_ucount(void);
-int md_unlink_open_file(char *file, int inf);
 
 /* misc.c */
 void add_haste(bool potion);
@@ -663,7 +690,7 @@ void ring_on(void);
 
 /* rip.c */
 void death(char monst);
-void score(int amount, int flags, char monst);
+void score(int type, int amount, char monst);
 void total_winner(void);
 
 /* rooms.c */
@@ -677,7 +704,7 @@ void read_scroll(void);
 void auto_save(int p);
 int encread(void *starta, unsigned int size, int inf);
 unsigned int encwrite(void *starta, unsigned int size, FILE * outf);
-int restore(char *file, char **envp);
+void restore(void);
 int save_game(void);
 
 /* state.c */
@@ -708,7 +735,6 @@ void wield(void);
 
 /* wizard.c */
 void create_obj(void);
-int passwd(void);
 int teleport(void);
 void whatis(void);
 
@@ -723,3 +749,6 @@ extern const int cNCOLORS;
 extern const int cNSTONES;
 extern const int cNWOOD;
 extern const int cNMETAL;
+
+enum { SCORE_VIEW = -1, SCORE_DEATH, SCORE_QUIT, SCORE_WIN };
+#define MAX_SCORES 10

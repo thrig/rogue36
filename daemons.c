@@ -87,7 +87,7 @@ int unconfuse(void)
 
 /*
  * unsee:
- *	He lost his see invisible power
+ *	They lost their see invisible power
  */
 
 int unsee(void)
@@ -98,7 +98,7 @@ int unsee(void)
 
 /*
  * sight:
- *	He gets his sight back
+ *	They got their sight back
  */
 
 int sight(void)

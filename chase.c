@@ -69,7 +69,7 @@ int do_chase(struct thing *th)
      * than we are and we ar not in a corridor, run to the
      * door nearest to our goal.
      */
-    if (rer != NULL && rer != ree)
+    if (rer != NULL && rer != ree) {
         for (i = 0; i < rer->r_nexits; i++) {   /* loop through doors */
             dist = DISTANCE(th->t_dest->y, th->t_dest->x,
                             rer->r_exit[i].y, rer->r_exit[i].x);
@@ -78,6 +78,7 @@ int do_chase(struct thing *th)
                 mindist = dist;
             }
         }
+    }
     /*
      * this now contains what we want to run to this time
      * so we run to it.  If we hit it we either want to fight it
@@ -85,11 +86,12 @@ int do_chase(struct thing *th)
      */
     if (!chase(th, &this)) {
         if (ce(this, hero)) {
-            return (attack(th));
+            return attack(th);
         } else if (th->t_type != 'F')
             stoprun = TRUE;
-    } else if (th->t_type == 'F')
-        return (0);
+    } else if (th->t_type == 'F') {
+        return 0;
+    }
     mvwaddch(cw, th->t_pos.y, th->t_pos.x, th->t_oldch);
     sch = (char) mvwinch(cw, ch_ret.y, ch_ret.x);
     if (rer != NULL && (rer->r_flags & ISDARK) && sch == FLOOR
@@ -110,7 +112,7 @@ int do_chase(struct thing *th)
     if (stoprun && ce(th->t_pos, *(th->t_dest)))
         th->t_flags &= ~ISRUN;
 
-    return (0);
+    return 0;
 }
 
 /*
@@ -125,7 +127,7 @@ void runto(coord * runner, coord * spot)
     struct thing *tp;
 
     /*
-     * If we couldn't find him, something is funny
+     * If we couldn't find the player, something is wrong
      */
     if ((item = find_mons(runner->y, runner->x)) == NULL) {
         msg("CHASER '%s'", unctrl(winat(runner->y, runner->x)));
@@ -190,7 +192,7 @@ int chase(struct thing *tp, coord * ee)
 
         ey = er->y + 1;
         ex = er->x + 1;
-        for (x = er->x - 1; x <= ex; x++)
+        for (x = er->x - 1; x <= ex; x++) {
             for (y = er->y - 1; y <= ey; y++) {
                 coord tryp;
 
@@ -224,8 +226,9 @@ int chase(struct thing *tp, coord * ee)
                     }
                 }
             }
+        }
     }
-    return (dist != 0);
+    return dist != 0;
 }
 
 /*
@@ -238,9 +241,10 @@ struct room *roomin(coord * cp)
 {
     struct room *rp;
 
-    for (rp = rooms; rp <= &rooms[MAXROOMS - 1]; rp++)
+    for (rp = rooms; rp <= &rooms[MAXROOMS - 1]; rp++) {
         if (inroom(rp, cp))
             return rp;
+    }
     return NULL;
 }
 
@@ -271,8 +275,8 @@ int diag_ok(coord * sp, coord * ep)
 {
     if (ep->x == sp->x || ep->y == sp->y)
         return TRUE;
-    return (step_ok((char) mvinch(ep->y, sp->x))
-            && step_ok((char) mvinch(sp->y, ep->x)));
+    return step_ok((char) mvinch(ep->y, sp->x))
+        && step_ok((char) mvinch(sp->y, ep->x));
 }
 
 /*

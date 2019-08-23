@@ -29,8 +29,9 @@ void add_pack(struct linked_list *item, bool silent)
         from_floor = TRUE;
         if ((item = find_obj(hero.y, hero.x)) == NULL)
             return;
-    } else
+    } else {
         from_floor = FALSE;
+    }
     obj = (struct object *) ldata(item);
     /*
      * Link it into the pack.  Search the pack for a object of similar type
@@ -76,8 +77,9 @@ void add_pack(struct linked_list *item, bool silent)
             detach(lvl_obj, item);
             mvaddch(hero.y, hero.x, FLOOR);
             return;
-        } else
+        } else {
             obj->o_flags |= ISFOUND;
+        }
     }
     inpack++;
     if (from_floor) {
@@ -122,9 +124,9 @@ void add_pack(struct linked_list *item, bool silent)
         /*
          * Didn't find an exact match, just stick it here
          */
-        if (pack == NULL)
+        if (pack == NULL) {
             pack = item;
-        else {
+        } else {
             lp->l_next = item;
             item->l_prev = lp;
             item->l_next = NULL;
@@ -224,7 +226,7 @@ int inventory(struct linked_list *list, int type)
         return TRUE;
     }
     if (!slow_invent) {
-        mvwaddstr(hw, LINES - 1, 0, "--Press space to continue--");
+        mvwaddstr(hw, ROLINES - 1, 0, "--Press space to continue--");
         draw(hw);
         wait_for(hw, ' ');
         clearok(cw, TRUE);
@@ -268,23 +270,24 @@ void picky_inven(void)
     struct linked_list *item;
     char ch, mch;
 
-    if (pack == NULL)
+    if (pack == NULL) {
         msg("You aren't carrying anything");
-    else if (next(pack) == NULL)
+    } else if (next(pack) == NULL) {
         msg("a) %s", inv_name((struct object *) ldata(pack), FALSE));
-    else {
+    } else {
         msg(terse ? "Item: " : "Which item do you wish to inventory: ");
         mpos = 0;
         if ((mch = readchar(cw)) == ESCAPE) {
             msg("");
             return;
         }
-        for (ch = 'a', item = pack; item != NULL; item = next(item), ch++)
+        for (ch = 'a', item = pack; item != NULL; item = next(item), ch++) {
             if (ch == mch) {
                 msg("%c) %s", ch,
                     inv_name((struct object *) ldata(item), FALSE));
                 return;
             }
+        }
         if (!terse)
             msg("'%s' not in pack", unctrl(mch));
         msg("Range is 'a' to '%c'", --ch);
@@ -300,10 +303,10 @@ struct linked_list *get_item(char *purpose, int type)
     struct linked_list *obj;
     char ch, och;
 
-    if (pack == NULL)
+    if (pack == NULL) {
         msg("You aren't carrying anything.");
-    else {
-        for (;;) {
+    } else {
+        while (1) {
             if (!terse)
                 addmsg("Which object do you want to ");
             addmsg(purpose);
@@ -328,14 +331,16 @@ struct linked_list *get_item(char *purpose, int type)
                 }
                 continue;
             }
-            for (obj = pack, och = 'a'; obj != NULL; obj = next(obj), och++)
+            for (obj = pack, och = 'a'; obj != NULL; obj = next(obj), och++) {
                 if (ch == och)
                     break;
+            }
             if (obj == NULL) {
                 msg("Please specify a letter between 'a' and '%c'", och - 1);
                 continue;
-            } else
+            } else {
                 return obj;
+            }
         }
     }
     return NULL;
@@ -347,10 +352,11 @@ char pack_char(struct object *obj)
     char c;
 
     c = 'a';
-    for (item = pack; item != NULL; item = next(item))
+    for (item = pack; item != NULL; item = next(item)) {
         if ((struct object *) ldata(item) == obj)
             return c;
         else
             c++;
+    }
     return 'z';
 }

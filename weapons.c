@@ -17,8 +17,7 @@
 
 #define NONE 100
 
-/* make do_motion show something on modern systems */
-struct timespec motiondelay = { 0, 15000000 };
+struct timespec throwdelay = { 0, THROW_DELAY };
 
 char *w_names[MAXWEAPONS] = {
     "mace",
@@ -124,7 +123,7 @@ void do_motion(struct object *obj, int ydelta, int xdelta)
      * Come fly with us ...
      */
     obj->o_pos = hero;
-    for (;;) {
+    while (1) {
         int ch;
 
         /*
@@ -134,7 +133,7 @@ void do_motion(struct object *obj, int ydelta, int xdelta)
             mvwinch(cw, obj->o_pos.y, obj->o_pos.x) != ' ')
             mvwaddch(cw, obj->o_pos.y, obj->o_pos.x,
                      show(obj->o_pos.y, obj->o_pos.x));
-        nanosleep(&motiondelay, NULL);
+        nanosleep(&throwdelay, NULL);
         /*
          * Get the new position
          */
@@ -205,8 +204,9 @@ void init_weapon(struct object *weap, char type)
     if (weap->o_flags & ISMANY) {
         weap->o_count = rnd(8) + 8;
         weap->o_group = newgrp();
-    } else
+    } else {
         weap->o_count = 1;
+    }
 }
 
 /*
@@ -258,18 +258,18 @@ void wield(void)
     }
     cur_weapon = oweapon;
     if ((item = get_item("wield", WEAPON)) == NULL) {
-      bad:
+      BADWIELD:
         after = FALSE;
         return;
     }
 
     obj = (struct object *) ldata(item);
     if (obj->o_type == ARMOR) {
-        msg("You can't wield armor");
-        goto bad;
+        msg("You can't wield armor!");
+        goto BADWIELD;
     }
     if (is_current(obj))
-        goto bad;
+        goto BADWIELD;
 
     if (terse)
         addmsg("W");
@@ -287,12 +287,12 @@ int fallpos(coord * pos, coord * newpos, bool passages)
     int y, x, cnt, ch;
 
     cnt = 0;
-    for (y = pos->y - 1; y <= pos->y + 1; y++)
+    for (y = pos->y - 1; y <= pos->y + 1; y++) {
         for (x = pos->x - 1; x <= pos->x + 1; x++) {
             /*
              * check to make certain the spot is empty, if it is,
              * put the object there, set it in the level list
-             * and re-draw the room if he can see it
+             * and re-draw the room if they can see it
              */
             if (y == hero.y && x == hero.x)
                 continue;
@@ -302,5 +302,6 @@ int fallpos(coord * pos, coord * newpos, bool passages)
                 newpos->x = x;
             }
         }
-    return (cnt != 0);
+    }
+    return cnt != 0;
 }

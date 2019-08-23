@@ -10,68 +10,36 @@
  * See the LICENSE file for full copyright and licensing information.
  */
 
-#include <sys/stat.h>
-#include <sys/types.h>
-
 #include <ctype.h>
+#include <err.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "rogue.h"
-#include "machdep.h"
 
-typedef struct stat STAT;
+#include "rogue.h"
 
 extern char version[], encstr[];
 
-STAT sbuf;
-
-int save_file(FILE * savef);
+int dosave(FILE * savef);
 
 int save_game(void)
 {
     FILE *savef;
-    int c;
-    char buf[ROGUE_CHARBUF_MAX];
 
-    /*
-     * get file name
-     */
-    mpos = 0;
-    if (file_name[0] != '\0') {
-        msg("Save file (%s)? ", file_name);
-        do {
-            c = readchar(cw);
-        } while (c != 'n' && c != 'N' && c != 'y' && c != 'Y');
-        mpos = 0;
-        if (c == 'y' || c == 'Y') {
-            msg("File name: %s", file_name);
-            goto gotfile;
-        }
-    }
+    mvwaddstr(cw, 0, 0, "Save game?");
+    draw(cw);
+    if (readchar(cw) != 'Y')
+        return FALSE;
 
-    do {
-        msg("File name: ");
-        mpos = 0;
-        buf[0] = '\0';
-        if (get_str(buf, cw) == QUIT) {
-            msg("");
-            return FALSE;
-        }
-        strcpy(file_name, buf);
-      gotfile:
-        if ((savef = fopen(file_name, "w")) == NULL)
-            msg(strerror(errno));       /* fake perror() */
-    } while (savef == NULL);
+    msg("Be seeing you...");
 
-    /*
-     * write out encrpyted file (after a stat)
-     * The fwrite is to force allocation of the buffer before the write
-     */
-    if (save_file(savef) != 0) {
+    if ((savef = fopen(save_file, "w")) == NULL)
+        msg(strerror(errno));   /* fake perror() */
+
+    if (dosave(savef) != 0) {
         msg("Save game failed!");
         return FALSE;
     }
@@ -85,12 +53,11 @@ int save_game(void)
 void auto_save(int p)
 {
     FILE *savef;
-    int i;
 
-    for (i = 0; i < NSIG; i++)
+    for (int i = 0; i < NSIG; i++)
         signal(i, SIG_IGN);
-    if (file_name[0] != '\0' && (savef = fopen(file_name, "w")) != NULL)
-        save_file(savef);
+    if ((savef = fopen(save_file, "w")) != NULL)
+        dosave(savef);
     endwin();
     exit(1);
 }
@@ -98,130 +65,68 @@ void auto_save(int p)
 /*
  * write the saved game on the file
  */
-int save_file(FILE * savef)
+int dosave(FILE * savef)
 {
     char buf[ROGUE_CHARBUF_MAX];
     int ret;
 
-    wmove(cw, LINES - 1, 0);
+    wmove(cw, ROLINES - 1, 0);
     draw(cw);
-    fseek(savef, 0L, 0);
 
-    memset(buf, 0, 80);
+    memset(buf, 0, ROGUE_CHARBUF_MAX);
     strcpy(buf, version);
-    encwrite(buf, 80, savef);
-    memset(buf, 0, 80);
-    strcpy(buf, "R36 3\n");
-    encwrite(buf, 80, savef);
-    memset(buf, 0, 80);
-    sprintf(buf, "%d x %d\n", LINES, COLS);
-    encwrite(buf, 80, savef);
+    encwrite(buf, ROGUE_CHARBUF_MAX, savef);
+    memset(buf, 0, ROGUE_CHARBUF_MAX);
+    strcpy(buf, "R36 4\n");
+    encwrite(buf, ROGUE_CHARBUF_MAX, savef);
+    memset(buf, 0, ROGUE_CHARBUF_MAX);
 
     ret = rs_save_file(savef);
-
     fclose(savef);
-
-    return (ret);
+    return ret;
 }
 
-int restore(char *file, char **envp)
+inline void restore(void)
 {
     int inf;
-    extern char **environ;
     char buf[ROGUE_CHARBUF_MAX];
-    int slines, scols;
     int rogue_version = 0, savefile_version = 0;
 
-    if (strcmp(file, "-r") == 0)
-        file = file_name;
-    if ((inf = open(file, 0)) < 0) {
-        perror(file);
-        return FALSE;
+    if ((inf = open(save_file, O_RDONLY)) < 0) {
+        endwin();
+        err(1, "open failed");
     }
 
-    fflush(stdout);
-    encread(buf, 80, inf);
+    encread(buf, ROGUE_CHARBUF_MAX, inf);
 
     if (strcmp(buf, version) != 0) {
+        endwin();
         printf("Sorry, saved game is out of date.\n");
-        return FALSE;
+        exit(1);
     }
 
-    encread(buf, 80, inf);
+    encread(buf, ROGUE_CHARBUF_MAX, inf);
     sscanf(buf, "R%d %d\n", &rogue_version, &savefile_version);
 
-    if ((rogue_version != 36) && (savefile_version != 3)) {
+    if ((rogue_version != 36) && (savefile_version != 4)) {
+        endwin();
         printf("Sorry, saved game format is out of date.\n");
-        return FALSE;
+        exit(1);
     }
-
-    encread(buf, 80, inf);
-    sscanf(buf, "%d x %d\n", &slines, &scols);
-
-    /*
-     * we do not close the file so that we will have a hold of the
-     * inode for as long as possible
-     */
-
-    initscr();
-
-    if (slines > LINES) {
-        endwin();
-        printf("Sorry, original game was played on a screen with %d lines.\n",
-               slines);
-        printf("Current screen only has %d lines. Unable to restore game\n",
-               LINES);
-        return (FALSE);
-    }
-
-    if (scols > COLS) {
-        endwin();
-        printf("Sorry, original game was played on a screen with %d columns.\n",
-               scols);
-        printf("Current screen only has %d columns. Unable to restore game\n",
-               COLS);
-        return (FALSE);
-    }
-
-    cw = newwin(LINES, COLS, 0, 0);
-    mw = newwin(LINES, COLS, 0, 0);
-    hw = newwin(LINES, COLS, 0, 0);
-    nocrmode();
-    keypad(cw, 1);
-    mpos = 0;
-    mvwprintw(cw, 0, 0, "%s", file);
 
     if (rs_restore_file(inf) != 0) {
         endwin();
-        printf("Cannot restore file\n");
-        return (FALSE);
+        errx(1, "cannot restore savefile");
     }
 
-    if (!wizard && (md_unlink_open_file(file, inf) < 0)) {
+    if (!wizard && (unlink(save_file) < 0)) {
         endwin();
-        printf("Cannot unlink file\n");
-        return FALSE;
+        err(1, "unlink failed");
     }
-
-    environ = envp;
-    strcpy(file_name, file);
-    setup();
-    clearok(curscr, TRUE);
-    touchwin(cw);
-/* would have to look up when this was added to OpenBSD; should be fine
- * in OpenBSD 6.3+ */
-#ifdef __OpenBSD__
-    srand_deterministic(getpid());
-#else
-    srand(getpid());
-#endif
-    status();
-    playit();
-     /*NOTREACHED*/ return (0);
 }
 
 /*
- * perform an encrypted write
+ * perform an "encrypted" write
  */
 unsigned int encwrite(void *starta, unsigned int size, FILE * outf)
 {
@@ -232,13 +137,13 @@ unsigned int encwrite(void *starta, unsigned int size, FILE * outf)
 
     while (size) {
         if (putc(*start++ ^ *ep++, outf) == EOF)
-            return (o_size - size);
+            return o_size - size;
         if (*ep == '\0')
             ep = encstr;
         size--;
     }
 
-    return (o_size - size);
+    return o_size - size;
 }
 
 /*

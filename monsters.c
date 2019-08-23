@@ -39,6 +39,7 @@ int randmonster(bool wander)
         if (d > 26)
             d = rnd(5) + 22;
     } while (mons[--d] == ' ');
+
     return mons[d];
 }
 
@@ -73,9 +74,9 @@ void new_monster(struct linked_list *item, char type, coord * cp)
     if (type == 'M') {
         char mch = GOLD;
 
-        if (tp->t_pack != NULL)
+        if (tp->t_pack != NULL) {
             mch = ((struct object *) ldata(tp->t_pack))->o_type;
-        else
+        } else {
             switch (rnd(level > 25 ? 9 : 8)) {
             case 0:
                 mch = GOLD;
@@ -104,6 +105,7 @@ void new_monster(struct linked_list *item, char type, coord * cp)
             case 8:
                 mch = AMULET;
             }
+        }
         tp->t_disguise = mch;
     }
 }
@@ -134,6 +136,7 @@ void wanderer(void)
             return;
         }
     } while (hr == rp || !step_ok(ch));
+
     new_monster(item, randmonster(TRUE), &cp);
     tp = (struct thing *) ldata(item);
     tp->t_flags |= ISRUN;
@@ -158,7 +161,7 @@ struct linked_list *wake_monster(int y, int x)
     tp = (struct thing *) ldata(it);
     ch = tp->t_type;
     /*
-     * Every time he sees mean monster, it might start chasing him
+     * Every time they see a mean monster, it might start chasing them
      */
     if (rnd(100) > 33 && on(*tp, ISMEAN) && off(*tp, ISHELD)
         && !ISWEARING(R_STEALTH)) {
@@ -213,9 +216,9 @@ void genocide(void)
         addmsg(" do you wish to wipe out");
     msg("? ");
     while (!isalpha(c = readchar(cw)))
-        if (c == ESCAPE)
+        if (c == ESCAPE) {
             return;
-        else {
+        } else {
             mpos = 0;
             msg("Please specify a letter between 'A' and 'Z'");
         }
@@ -227,10 +230,11 @@ void genocide(void)
         if (mp->t_type == c)
             remove_monster(&mp->t_pos, ip);
     }
-    for (i = 0; i < 26; i++)
+    for (i = 0; i < 26; i++) {
         if (lvl_mons[i] == c) {
             lvl_mons[i] = ' ';
             wand_mons[i] = ' ';
             break;
         }
+    }
 }

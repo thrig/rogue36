@@ -13,7 +13,7 @@
 
 /*
  * wear:
- *	The player wants to wear something, so let him/her put it on.
+ *	The player wants to wear something, so let them put it on.
  */
 
 void wear(void)

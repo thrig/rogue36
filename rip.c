@@ -11,14 +11,17 @@
  * See the LICENSE file for full copyright and licensing information.
  */
 
+#include <sys/file.h>
 #include <sys/types.h>
 
+#include <err.h>
 #include <ctype.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "machdep.h"
+
 #include "rogue.h"
 
 static char *rip[] = {
@@ -42,7 +45,7 @@ char *killname(char monst);
 
 /*
  * death:
- *	Do something really fun when he dies
+ *	Do something really fun when they die
  */
 
 void death(char monst)
@@ -67,10 +70,9 @@ void death(char monst)
     mvaddstr(16, 33, vowelstr(killer));
     sprintf(prbuf, "%4d", 1900 + lt->tm_year);
     mvaddstr(18, 26, prbuf);
-    move(LINES - 1, 0);
+    move(ROLINES - 1, 0);
     draw(stdscr);
-    if (!replay)
-        score(purse, 0, monst);
+    score(SCORE_DEATH, purse, monst);
     exit(1);
 }
 
@@ -78,24 +80,21 @@ void death(char monst)
  * score -- figure score and post it.
  */
 
-/* VARARGS2 */
-void score(int amount, int flags, char monst)
+void score(int type, int amount, char monst)
 {
     static struct sc_ent {
         int sc_score;
-        char sc_name[ROGUE_CHARBUF_MAX];
-        int sc_flags;
+        char sc_name[WHOAMI_LEN + 1];
+        int sc_type;
         int sc_level;
-        char sc_login[8];
         unsigned char sc_monster;
-    } top_ten[10];
+    } scores[MAX_SCORES];
     struct sc_ent *scp;
     int i;
     unsigned int sc_monster_i;
     struct sc_ent *sc2;
     FILE *outf;
     char *killer;
-    int prflags = 0;
     int fd;
     static char *reason[] = {
         "killed",
@@ -106,95 +105,82 @@ void score(int amount, int flags, char monst)
     char score_file[PATH_MAX];
     int rogue_ver = 0, scorefile_ver = 0;
 
-    /*
-     * Open file and read list
-     */
+    snprintf(score_file, PATH_MAX, "%s/highscores", roguedir);
 
-    /* Get default score file */
-    strcpy(score_file, home);
+    if ((fd = open(score_file, O_RDWR | O_CREAT, 0666)) < 0) {
+        if (type != SCORE_VIEW && type != SCORE_QUIT)
+            endwin();
+        err(1, "could not open score file");
+    }
+    flock(fd, LOCK_SH);
+    outf = fdopen(fd, "w");
 
-    if (*score_file)
-        strcat(score_file, "/");
-
-    strcat(score_file, "rogue36.scr");
-
-    if ((fd = open(score_file, O_RDWR | O_CREAT, 0666)) < 0)
-        return;
-
-    outf = (FILE *) fdopen(fd, "w");
-
-    for (scp = top_ten; scp <= &top_ten[9]; scp++) {
+    for (scp = scores; scp < &scores[MAX_SCORES]; scp++) {
         scp->sc_score = 0;
-        for (i = 0; i < 80; i++)
+        for (i = 0; i < WHOAMI_LEN + 1; i++)
             scp->sc_name[i] = rnd(255);
-        scp->sc_flags = RN;
+        scp->sc_type = RN;
         scp->sc_level = RN;
         scp->sc_monster = RN;
-        scp->sc_login[0] = '\0';
     }
 
     signal(SIGINT, SIG_DFL);
-    if ((flags != -1) && (flags != 1)) {
-        mvaddstr(LINES - 1, 0, "[Press return to continue]");
+
+// TODO does this get a message from player or is it only collecting return?
+    if (type != SCORE_VIEW && type != SCORE_QUIT) {
+        mvaddstr(ROLINES - 1, 0, "[Press return to continue]");
         draw(stdscr);
         prbuf[0] = 0;
         get_str(prbuf, stdscr);
         endwin();
     }
-    if (wizard) {
-        if (strcmp(prbuf, "names") == 0)
-            prflags = 1;
-        else if (strcmp(prbuf, "edit") == 0)
-            prflags = 2;
-    }
 
     encread((char *) scoreline, 100, fd);
     sscanf(scoreline, "R%d %d\n", &rogue_ver, &scorefile_ver);
 
-    if ((rogue_ver == 36) && (scorefile_ver == 2))
-        for (i = 0; i < 10; i++) {
-            encread((char *) &top_ten[i].sc_name, 80, fd);
-            encread((char *) &top_ten[i].sc_login, 8, fd);
+    if (rogue_ver == 36 && scorefile_ver == 4) {
+        for (i = 0; i < MAX_SCORES; i++) {
+            encread((char *) &scores[i].sc_name, WHOAMI_LEN + 1, fd);
             encread((char *) scoreline, 100, fd);
             sscanf(scoreline, " %d %d %d %u \n",
-                   &top_ten[i].sc_score, &top_ten[i].sc_flags,
-                   &top_ten[i].sc_level, &sc_monster_i);
-            top_ten[i].sc_monster = (unsigned char) sc_monster_i;
+                   &scores[i].sc_score, &scores[i].sc_type,
+                   &scores[i].sc_level, &sc_monster_i);
+            scores[i].sc_monster = (unsigned char) sc_monster_i;
         }
+    }
 
     /*
-     * Insert her in list if need be
+     * Insert them in the list if need be
      */
-    if (!waswizard) {
-        for (scp = top_ten; scp <= &top_ten[9]; scp++)
+    if (type != SCORE_VIEW && !wizard) {
+        for (scp = scores; scp < &scores[MAX_SCORES]; scp++) {
             if (amount > scp->sc_score)
                 break;
-        if (scp <= &top_ten[9]) {
-            for (sc2 = &top_ten[9]; sc2 > scp; sc2--)
+        }
+        if (scp < &scores[MAX_SCORES]) {
+            for (sc2 = &scores[MAX_SCORES - 1]; sc2 > scp; sc2--)
                 *sc2 = *(sc2 - 1);
             scp->sc_score = amount;
-            strcpy(scp->sc_name, whoami);
-            scp->sc_flags = flags;
-            if (flags == 2)
+            strncpy(scp->sc_name, whoami, WHOAMI_LEN);
+            scp->sc_type = type;
+            if (type == SCORE_WIN)
                 scp->sc_level = max_level;
             else
                 scp->sc_level = level;
             scp->sc_monster = monst;
-            strncpy(scp->sc_login, md_getusername(), 8);
         }
     }
-    /*
-     * Print the list
-     */
-    if (flags != -1)
+
+    if (type != SCORE_VIEW)
         printf("\n\n\n");
+
     printf("Top Ten Adventurers:\nRank\tScore\tName\n");
-    for (scp = top_ten; scp <= &top_ten[9]; scp++) {
+    for (scp = scores; scp < &scores[MAX_SCORES]; scp++) {
         if (scp->sc_score) {
-            printf("%ld\t%d\t%s: %s on level %d", (long) (scp - top_ten + 1),
-                   scp->sc_score, scp->sc_name, reason[scp->sc_flags],
+            printf("%ld\t%d\t%s: %s on level %d", (long) (scp - scores + 1),
+                   scp->sc_score, scp->sc_name, reason[scp->sc_type],
                    scp->sc_level);
-            if (scp->sc_flags == 0) {
+            if (scp->sc_type == SCORE_DEATH) {
                 printf(" by a");
                 killer = killname(scp->sc_monster);
                 if (*killer == 'a' || *killer == 'e' || *killer == 'i' ||
@@ -202,42 +188,28 @@ void score(int amount, int flags, char monst)
                     putchar('n');
                 printf(" %s", killer);
             }
-            if (prflags == 1) {
-                printf(" (%s)", scp->sc_login);
-                putchar('\n');
-            } else if (prflags == 2) {
-                fflush(stdout);
-                fgets(prbuf, 80, stdin);
-                if (prbuf[0] == 'd') {
-                    for (sc2 = scp; sc2 < &top_ten[9]; sc2++)
-                        *sc2 = *(sc2 + 1);
-                    top_ten[9].sc_score = 0;
-                    for (i = 0; i < 80; i++)
-                        top_ten[9].sc_name[i] = rnd(255);
-                    top_ten[9].sc_flags = RN;
-                    top_ten[9].sc_level = RN;
-                    top_ten[9].sc_monster = RN;
-                    scp--;
-                }
-            } else
-                printf(".\n");
+            printf(".\n");
         }
     }
-    fseek(outf, 0L, 0);
-    /*
-     * Update the list file
-     */
-    strcpy(scoreline, "R36 2\n");
+    if (type == SCORE_VIEW || wizard) {
+        fclose(outf);
+        flock(fd, LOCK_UN);
+        return;
+    }
+
+    flock(fd, LOCK_EX);
+    fseek(outf, 0L, SEEK_SET);
+    strcpy(scoreline, "R36 4\n");
     encwrite(scoreline, 100, outf);
-    for (i = 0; i < 10; i++) {
-        encwrite((char *) &top_ten[i].sc_name, 80, outf);
-        encwrite((char *) &top_ten[i].sc_login, 8, outf);
+    for (i = 0; i < MAX_SCORES; i++) {
+        encwrite((char *) &scores[i].sc_name, WHOAMI_LEN + 1, outf);
         sprintf(scoreline, " %d %d %d %d \n",
-                top_ten[i].sc_score, top_ten[i].sc_flags,
-                top_ten[i].sc_level, top_ten[i].sc_monster);
+                scores[i].sc_score, scores[i].sc_type,
+                scores[i].sc_level, scores[i].sc_monster);
         encwrite((char *) scoreline, 100, outf);
     }
     fclose(outf);
+    flock(fd, LOCK_UN);
 }
 
 void total_winner(void)
@@ -265,7 +237,7 @@ void total_winner(void)
     addstr
         ("Dungeons of Doom alive.  You journey home and sell all your loot at\n");
     addstr("a great profit and are admitted to the fighters guild.\n");
-    mvaddstr(LINES - 1, 0, "--Press space to continue--");
+    mvaddstr(ROLINES - 1, 0, "--Press space to continue--");
     refresh();
     wait_for(cw, ' ');
     clear();
@@ -390,8 +362,9 @@ void total_winner(void)
     }
     mvprintw(c - 'a' + 1, 0, "   %5d  Gold Peices          ", oldpurse);
     refresh();
-    score(purse, 2, 0);
-    exit(0);
+    score(SCORE_WIN, purse, '\0');
+
+    exit(EXIT_SUCCESS);
 }
 
 char *killname(char monst)
@@ -407,5 +380,5 @@ char *killname(char monst)
         case 'b':
             return "bolt";
         }
-    return ("");
+    return "";
 }

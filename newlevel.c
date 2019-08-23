@@ -88,7 +88,7 @@ void new_level(void)
     }
     while (winat(hero.y, hero.x) != FLOOR);
     light(&hero);
-    wmove(cw, hero.y, hero.x);
+    wmove(cw, unc(hero));
     waddch(cw, PLAYER);
 }
 
@@ -116,33 +116,27 @@ void put_things(void)
     int i;
     struct linked_list *item;
     struct object *cur;
-    int rm;
+    int objodds, rm;
     coord tp;
 
-    /*
-     * Throw away stuff left on the previous level (if anything)
-     */
     free_list(lvl_obj);
+
     /*
      * Once you have found the amulet, the only way to get new stuff is
      * go down into the dungeon.
      */
     if (amulet && level < max_level)
         return;
-    /*
-     * Do MAXOBJ attempts to put things on a level
-     */
-    for (i = 0; i < MAXOBJ; i++)
-        if (rnd(100) < 50) {
-            /*
-             * Pick a new object and link it in the list
-             */
+
+    objodds = 90 - level * 5;
+    if (objodds < 35)
+        objodds = 35;
+    for (i = 0; i < MAXOBJ; i++) {
+        if (rnd(100) < objodds) {
             item = new_thing();
             attach(lvl_obj, item);
             cur = (struct object *) ldata(item);
-            /*
-             * Put it somewhere
-             */
+
             do {
                 rm = rnd_room();
                 rnd_pos(&rooms[rm], &tp);
@@ -150,9 +144,11 @@ void put_things(void)
             mvaddch(tp.y, tp.x, cur->o_type);
             cur->o_pos = tp;
         }
+    }
+
     /*
-     * If he is really deep in the dungeon and he hasn't found the
-     * amulet yet, put it somewhere on the ground
+     * If they are really deep in the dungeon and have not found the
+     * amulet yet, put it somewhere on the ground.
      */
     if (level > 25 && !amulet) {
         item = new_item(sizeof *cur);

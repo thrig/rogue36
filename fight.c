@@ -43,7 +43,7 @@ bool fight(coord * mp, char mn, struct object *weap, bool thrown)
      */
     if ((item = find_mons(mp->y, mp->x)) == NULL) {
         debug("Fight what @ %d,%d", mp->y, mp->x);
-        return (0);
+        return 0;
     }
     tp = (struct thing *) ldata(item);
     /*
@@ -53,7 +53,7 @@ bool fight(coord * mp, char mn, struct object *weap, bool thrown)
     quiet = 0;
     runto(mp, &hero);
     /*
-     * Let him know it was really a mimic (if it was one).
+     * Let them know it was really a mimic (if it was one).
      */
     if (tp->t_type == 'M' && tp->t_disguise != 'M' && off(player, ISBLIND)) {
         msg("Wait! That's a mimic!");
@@ -82,10 +82,11 @@ bool fight(coord * mp, char mn, struct object *weap, bool thrown)
             }
             if (tp->t_stats.s_hpt <= 0)
                 killed(item, TRUE);
-        } else if (thrown)
+        } else if (thrown) {
             bounce(weap, mname);
-        else
+        } else {
             miss(NULL, mname);
+        }
     }
     count = 0;
     return did_hit;
@@ -117,14 +118,16 @@ int attack(struct thing *mp)
             hit(mname, NULL);
         if (pstats.s_hpt <= 0)
             death(mp->t_type);  /* Bye bye life ... */
-        if (off(*mp, ISCANC))
+        if (off(*mp, ISCANC)) {
             switch (mp->t_type) {
             case 'R':
                 /*
-                 * If a rust monster hits, you lose armor
+                 * If a rust monster hits, you lose armor (maybe)
                  */
                 if (cur_armor != NULL && cur_armor->o_which != LEATHER
                     && cur_armor->o_ac < 9) {
+                    if (cur_armor->o_which == STUDDED_LEATHER && rnd(100) < 80)
+                        break;
                     if (!terse)
                         msg("Your armor appears to be weaker now. Oh my!");
                     else
@@ -134,8 +137,8 @@ int attack(struct thing *mp)
                 break;
             case 'E':
                 /*
-                 * The gaze of the floating eye hypnotizes you (and then
-                 * somehow hurts you, to avoid softlocks)
+                 * The gaze of the floating eye hypnotizes you (and then,
+                 * somehow, hurts you (this is to avoid softlocks))
                  */
                 if (on(player, ISBLIND))
                     break;
@@ -250,10 +253,10 @@ int attack(struct thing *mp)
 
                             oc = obj->o_count;
                             obj->o_count = 1;
-                            msg("She stole %s!", inv_name(obj, TRUE));
+                            msg("The nymph stole %s!", inv_name(obj, TRUE));
                             obj->o_count = oc - 1;
                         } else {
-                            msg("She stole %s!", inv_name(obj, TRUE));
+                            msg("The nymph stole %s!", inv_name(obj, TRUE));
                             detach(pack, steal);
                             discard(steal);
                         }
@@ -264,6 +267,7 @@ int attack(struct thing *mp)
             default:
                 break;
             }
+        }
     } else if (mp->t_type != 'E') {
         if (mp->t_type == 'F') {
             pstats.s_hpt -= fung_hit;
@@ -278,16 +282,15 @@ int attack(struct thing *mp)
      */
     if ((mp != NULL) && (on(*mp, ISREGEN) && rnd(100) < 33))
         mp->t_stats.s_hpt++;
-    if (fight_flush) {
+    if (fight_flush)
         flush_type();           /* flush typeahead */
-    }
     count = 0;
     status();
 
     if (mp == NULL)
-        return (-1);
+        return -1;
     else
-        return (0);
+        return 0;
 }
 
 /*
@@ -300,7 +303,7 @@ int swing(int at_lvl, int op_arm, int wplus)
     int res = rnd(20) + 1;
     int need = (21 - at_lvl) - op_arm;
 
-    return (res + wplus >= need);
+    return res + wplus >= need;
 }
 
 /*
@@ -310,19 +313,26 @@ int swing(int at_lvl, int op_arm, int wplus)
 
 void check_level(void)
 {
-    int i, add;
+    int i;
 
-    for (i = 0; e_levels[i] != 0; i++)
+    for (i = 0; e_levels[i] != 0; i++) {
         if (e_levels[i] > pstats.s_exp)
             break;
+    }
     i++;
     if (i > pstats.s_lvl) {
-        add = 2 * (i - pstats.s_lvl) + roll(i - pstats.s_lvl, 8);
-        max_hp += add;
-        if ((pstats.s_hpt += add) > max_hp)
-            pstats.s_hpt = max_hp;
+        max_hp += 2 * (i - pstats.s_lvl) + roll(i - pstats.s_lvl, 8);
+
+        int heal = max_hp * 2 / 3;
+        heal += rnd(max_hp - heal);
+        if (heal > max_hp)
+            heal = max_hp;
+        if (heal > pstats.s_hpt)
+            pstats.s_hpt = heal;
+
         msg("Welcome to level %d", i);
     }
+
     pstats.s_lvl = i;
 }
 
@@ -340,17 +350,18 @@ roll_em(struct stats *att, struct stats *def, struct object *weap, bool hurl)
     int prop_hplus, prop_dplus;
 
     prop_hplus = prop_dplus = 0;
-    if (weap == NULL)
+    if (weap == NULL) {
         cp = att->s_dmg;
-    else if (hurl)
+    } else if (hurl) {
         if ((weap->o_flags & ISMISL) && cur_weapon != NULL &&
             cur_weapon->o_which == weap->o_launch) {
             cp = weap->o_hurldmg;
             prop_hplus = cur_weapon->o_hplus;
             prop_dplus = cur_weapon->o_dplus;
-        } else
+        } else {
             cp = (weap->o_flags & ISMISL ? weap->o_damage : weap->o_hurldmg);
-    else {
+        }
+    } else {
         cp = weap->o_damage;
         /*
          * Drain a staff of striking
@@ -361,7 +372,7 @@ roll_em(struct stats *att, struct stats *def, struct object *weap, bool hurl)
             weap->o_hplus = weap->o_dplus = 0;
         }
     }
-    for (;;) {
+    while (1) {
         int damage;
         int hplus = prop_hplus + (weap == NULL ? 0 : weap->o_hplus);
         int dplus = prop_dplus + (weap == NULL ? 0 : weap->o_dplus);
@@ -389,8 +400,9 @@ roll_em(struct stats *att, struct stats *def, struct object *weap, bool hurl)
                 def_arm -= cur_ring[LEFT]->o_ac;
             else if (ISRING(RIGHT, R_PROTECT))
                 def_arm -= cur_ring[RIGHT]->o_ac;
-        } else
+        } else {
             def_arm = def->s_arm;
+        }
         if (swing(att->s_lvl, def_arm, hplus + str_plus(&att->s_str))) {
             int proll;
 
@@ -418,11 +430,11 @@ char *prname(char *who, bool upper)
     static char tbuf[ROGUE_CHARBUF_MAX];
 
     *tbuf = '\0';
-    if (who == 0)
+    if (who == 0) {
         strcpy(tbuf, "you");
-    else if (on(player, ISBLIND))
+    } else if (on(player, ISBLIND)) {
         strcpy(tbuf, "it");
-    else {
+    } else {
         strcpy(tbuf, "the ");
         strcat(tbuf, who);
     }
@@ -441,9 +453,9 @@ void hit(char *er, char *ee)
     char *s = NULL;
 
     addmsg(prname(er, TRUE));
-    if (terse)
+    if (terse) {
         s = " hit.";
-    else
+    } else {
         switch (rnd(4)) {
         case 0:
             s = " scored an excellent hit on ";
@@ -457,6 +469,7 @@ void hit(char *er, char *ee)
         case 3:
             s = (er == 0 ? " swing and hit " : " swings and hits ");
         }
+    }
     addmsg(s);
     if (!terse)
         addmsg(prname(ee, FALSE));
@@ -502,12 +515,12 @@ int save_throw(int which, struct thing *tp)
     int need;
 
     need = 14 + which - tp->t_stats.s_lvl / 2;
-    return (roll(1, 20) >= need);
+    return roll(1, 20) >= need;
 }
 
 /*
  * save:
- *	See if he saves against various nasty things
+ *	See if they save against various nasty things
  */
 
 int save(int which)
@@ -578,6 +591,7 @@ void raise_level(void)
 
 void thunk(struct object *weap, char *mname)
 {
+// TODO hide name if monster is not visible to player (information leak)
     if (weap->o_type == WEAPON)
         msg("The %s hits the %s", w_names[weap->o_which], mname);
     else
@@ -645,9 +659,9 @@ void killed(struct linked_list *item, bool pr)
     tp = (struct thing *) ldata(item);
     if (pr) {
         addmsg(terse ? "Defeated " : "You have defeated ");
-        if (on(player, ISBLIND))
+        if (on(player, ISBLIND)) {
             msg("it.");
-        else {
+        } else {
             if (!terse)
                 addmsg("the ");
             msg("%s.", monsters[tp->t_type - 'A'].m_name);
@@ -655,11 +669,11 @@ void killed(struct linked_list *item, bool pr)
     }
     pstats.s_exp += tp->t_stats.s_exp;
     /*
-     * Do adjustments if he went up a level
+     * Do adjustments if they went up a level
      */
     check_level();
     /*
-     * If the monster was a violet fungi, un-hold him
+     * If the monster was a violet fungi, un-hold the player
      */
     switch (tp->t_type) {
     case 'F':

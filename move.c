@@ -52,19 +52,19 @@ void do_move(int dy, int dx)
     /*
      * Do a confused move (maybe)
      */
-    if (rnd(100) < 80 && on(player, ISHUH))
+    if (rnd(100) < 80 && on(player, ISHUH)) {
         nh = *rndmove(&player);
-    else {
+    } else {
         nh.y = hero.y + dy;
         nh.x = hero.x + dx;
     }
     search_repeat = 0;
 
     /*
-     * Check if he tried to move off the screen or make an illegal
-     * diagonal move, and stop him if he did.
+     * Check if they tried to move off the screen or make an illegal
+     * diagonal move, and stop them if they did.
      */
-    if (nh.x < 0 || nh.x > COLS - 1 || nh.y < 0 || nh.y > LINES - 1
+    if (nh.x < 0 || nh.x > ROCOLS - 1 || nh.y < 0 || nh.y > ROLINES - 1
         || !diag_ok(&hero, &nh)) {
         after = FALSE;
         running = FALSE;
@@ -88,7 +88,7 @@ void do_move(int dy, int dx)
         ch = be_trapped(&nh);
         if (ch == TRAPDOOR || ch == TELTRAP)
             return;
-        goto move_stuff;
+        goto MOVE_STUFF;
     case GOLD:
     case POTION:
     case SCROLL:
@@ -101,16 +101,16 @@ void do_move(int dy, int dx)
         running = FALSE;
         take = ch;
     default:
-      move_stuff:
-        if (ch == PASSAGE && winat(hero.y, hero.x) == DOOR)
+      MOVE_STUFF:
+        if (ch == PASSAGE && winat(hero.y, hero.x) == DOOR) {
             light(&hero);
-        else if (ch == DOOR) {
+        } else if (ch == DOOR) {
             running = FALSE;
             if (winat(hero.y, hero.x) == PASSAGE)
                 light(&nh);
-        } else if (ch == STAIRS)
+        } else if (ch == STAIRS) {
             running = FALSE;
-        else if (isupper(ch)) {
+        } else if (isupper(ch)) {
             running = FALSE;
             fight(&nh, ch, cur_weapon, FALSE);
             return;
@@ -198,26 +198,27 @@ char show(int y, int x)
     struct linked_list *it;
     struct thing *tp;
 
-    if (ch == TRAP)
+    if (ch == TRAP) {
         return (trap_at(y, x)->tr_flags & ISFOUND) ? TRAP : FLOOR;
-    else if (ch == 'M' || ch == 'I') {
+    } else if (ch == 'M' || ch == 'I') {
         if ((it = find_mons(y, x)) == NULL)
             fatal("Can't find monster in show");
         tp = (struct thing *) ldata(it);
-        if (ch == 'M')
+        if (ch == 'M') {
             ch = tp->t_disguise;
-        /*
-         * Hide invisible monsters
-         */
-        else if (off(player, CANSEE))
+            /*
+             * Hide invisible monsters
+             */
+        } else if (off(player, CANSEE)) {
             ch = (char) mvwinch(stdscr, y, x);
+        }
     }
     return ch;
 }
 
 /*
  * be_trapped:
- *	The guy stepped on a trap.... Make him pay.
+ *	Stepped on a trap: make them pay.
  */
 
 char be_trapped(coord * tc)
@@ -278,11 +279,12 @@ char be_trapped(coord * tc)
             }
             if (!ISWEARING(R_SUSTSTR))
                 chg_str(-1);
-        } else
+        } else {
             msg("A small dart whizzes by your ear and vanishes.");
+        }
     }
     flush_type();               /* flush typeahead */
-    return (ch);
+    return ch;
 }
 
 /*
@@ -295,9 +297,10 @@ struct trap *trap_at(int y, int x)
     struct trap *tp, *ep;
 
     ep = &traps[ntraps];
-    for (tp = traps; tp < ep; tp++)
+    for (tp = traps; tp < ep; tp++) {
         if (tp->tr_pos.y == y && tp->tr_pos.x == x)
             break;
+    }
     if (tp == ep) {
         sprintf(prbuf, "Trap at %d,%d not in array", y, x);
         fatal(prbuf);
@@ -328,10 +331,10 @@ coord *rndmove(struct thing * who)
      */
     ey = ret.y + 1;
     ex = ret.x + 1;
-    for (y = who->t_pos.y - 1; y <= ey; y++)
-        if (y >= 0 && y < LINES)
+    for (y = who->t_pos.y - 1; y <= ey; y++) {
+        if (y >= 0 && y < ROLINES) {
             for (x = who->t_pos.x - 1; x <= ex; x++) {
-                if (x < 0 || x >= COLS)
+                if (x < 0 || x >= ROCOLS)
                     continue;
                 ch = (char) winat(y, x);
                 if (step_ok(ch)) {
@@ -353,5 +356,7 @@ coord *rndmove(struct thing * who)
                         ret = dest;
                 }
             }
+        }
+    }
     return &ret;
 }

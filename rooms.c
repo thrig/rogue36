@@ -31,8 +31,8 @@ void do_rooms(void)
     /*
      * bsze is the maximum room size
      */
-    bsze.x = COLS / 3;
-    bsze.y = LINES / 3;
+    bsze.x = ROCOLS / 3;
+    bsze.y = ROLINES / 3;
     /*
      * Clear things for a new level
      */
@@ -61,9 +61,9 @@ void do_rooms(void)
             do {
                 rp->r_pos.x = top.x + rnd(bsze.x - 2) + 1;
                 rp->r_pos.y = top.y + rnd(bsze.y - 2) + 1;
-                rp->r_max.x = -COLS;
-                rp->r_max.y = -LINES;
-            } while (rp->r_pos.y == 0 || rp->r_pos.y == LINES - 1);
+                rp->r_max.x = -ROCOLS;
+                rp->r_max.y = -ROLINES;
+            } while (rp->r_pos.y == 0 || rp->r_pos.y == ROLINES - 1);
             continue;
         }
         if (rnd(20) < level - 1)

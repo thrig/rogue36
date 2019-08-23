@@ -8,7 +8,12 @@
  * See the LICENSE file for full copyright and licensing information.
  */
 
+#include <sys/stat.h>
+
+#include <err.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <getopt.h>
 #include <limits.h>
 #include <signal.h>
 #include <stdarg.h>
@@ -16,219 +21,106 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include "machdep.h"
+
 #include "rogue.h"
 
-int num_checks;                 /* times we've gone over in checkout() */
+int have_seed;
+
 WINDOW *cw;                     /* Window that the player sees */
 WINDOW *hw;                     /* Used for the help command */
 WINDOW *mw;                     /* Used to store mosnters */
 
 long argtol(const char *arg, const long min, const long max);
-int author(void);
-void checkout(int);
-void chmsg(char *fmt, ...);
 void endit(int p);
-int too_much(void);
+char *getroguedir(void);
+int load_savefile(void);
+void new_game(void);
+void seed_rng(void);
 void tstp(int);
 
-int main(int argc, char **argv, char **envp)
+int main(int argc, char *argv[])
 {
-    char *env, *seedstr;
-    struct linked_list *item;
-    struct object *obj;
-    int lowtime;
-    time_t now;
+    int ch, show_score = 0;
 
 #ifdef __OpenBSD__
-    if (pledge("cpath getpw rpath stdio tty wpath", NULL) == -1) {
-        fputs("rogue: pledge failed", stderr);
-        exit(1);
+    if (pledge("cpath flock rpath stdio tty unveil wpath", NULL) == -1)
+        err(1, "pledge failed");
+#endif
+
+    while ((ch = getopt(argc, argv, "h?Wd:n:s")) != -1) {
+        switch (ch) {
+        case 'W':
+#ifdef WIZARD
+            wizard = TRUE;
+#else
+            errx(1, "there are no Wizards");
+#endif
+            break;
+        case 'd':
+            dnum = (int) argtol(optarg, (long) INT_MIN, (long) INT_MAX);
+            have_seed = 1;
+            break;
+        case 'n':
+            strncpy(whoami, optarg, WHOAMI_LEN);
+            break;
+        case 's':
+            show_score = 1;
+            break;
+        case 'h':
+        case '?':
+        default:
+            fputs("Usage: rogue [-d seed] [-n name] [-s]\n", stderr);
+            exit(1);
+        }
+    }
+    argc -= optind;
+    argv += optind;
+
+    strcpy(roguedir, getroguedir());
+
+    initscr();
+    if (COLS < ROCOLS)
+        fatal("Terminal must be at least 80 columns wide.\n");
+    if (LINES < ROLINES)
+        fatal("Terminal must have at least 24 rows.\n");
+
+#ifdef __OpenBSD__
+    if (unveil(roguedir, "crw") == -1) {
+        endwin();
+        err(1, "unveil failed");
+    }
+    if (unveil(NULL, NULL) == -1) {
+        endwin();
+        err(1, "unveil failed");
     }
 #endif
 
-    md_init();
-
-    /*
-     * check for print-score option
-     */
-    if (argc == 2 && strcmp(argv[1], "-s") == 0) {
-        waswizard = TRUE;
-        score(0, -1, 0);
-        exit(0);
-    }
-    seedstr = getenv("SEED");
-    /* replay mode */
-    if (argc == 2 && strcmp(argv[1], "-r") == 0) {
-        if (seedstr == NULL) {
-            printf("Replay needs SEED set\n");
-            exit(1);
-        }
-        replay = TRUE;
-        argv++;
-        argc--;
-    }
-    /*
-     * Check to see if he is a wizard
-     */
-    if (argc >= 2 && argv[1][0] == '\0') {
-        if (strcmp(PASSWD, xcrypt(md_getpass("Wizard's password: "), "mT")) ==
-            0) {
-            wizard = TRUE;
-            argv++;
-            argc--;
-        }
-    }
-    /*
-     * get home and options from environment
-     */
-    strncpy(home, md_getroguedir(), ROGUE_CHARBUF_MAX);
-
-    strcpy(file_name, home);
-    strcat(file_name, "/");
-    strcat(file_name, "rogue36.sav");
-
-    if ((env = getenv("ROGUEOPTS")) != NULL)
-        parse_opts(env);
-    if (env == NULL || whoami[0] == '\0')
-        strucpy(whoami, md_getusername(md_getuid()),
-                strlen(md_getusername(md_getuid())));
-    if (env == NULL || fruit[0] == '\0')
-        strcpy(fruit, "snozzcumber");
-
-    if (too_much() && !wizard && !author()) {
-        printf("Sorry, %s, but the system is too loaded now.\n", whoami);
-        printf("Try again later.  Meanwhile, why not enjoy a%s %s?\n",
-               vowelstr(fruit), fruit);
-        exit(1);
-    }
-
-    if (argc == 2)
-        if (!restore(argv[1], envp))    /* Note: restore will never return */
-            exit(1);
-
-    time(&now);
-    lowtime = (int) now;
-    dnum = ((replay || wizard) && seedstr != NULL ?
-            (int) argtol(seedstr, (long) INT_MIN, (long) INT_MAX) :
-            lowtime + getpid());
-    if (wizard) {
-        printf("Hello %s, welcome to dungeon #%d", whoami, dnum);
-    } else if (replay) {
-        printf("Hello %s, let's see how that run went...", whoami);
-    } else {
-        if (getenv("ROGUELOG") != NULL)
-            init_keylog();
-        printf("Hello %s, just a moment while I dig the dungeon...", whoami);
-    }
-    fflush(stdout);
-    seed = dnum;
-    init_player();              /* Roll up the rogue */
-    init_things();              /* Set up probabilities of things */
-    init_names();               /* Set up names of scrolls */
-    init_colors();              /* Set up colors of potions */
-    init_stones();              /* Set up stone settings of rings */
-    init_materials();           /* Set up materials of wands */
-    initscr();                  /* Start up cursor package */
-
-    if (COLS < 70) {
+    if (show_score) {
         endwin();
-        printf("\n\nSorry, %s, but your terminal window has too few columns.\n",
-               whoami);
-        printf("Your terminal has %d columns, needs 70.\n", COLS);
-        exit(1);
-    }
-    if (LINES < 22) {
-        endwin();
-        printf("\n\nSorry, %s, but your terminal window has too few lines.\n",
-               whoami);
-        printf("Your terminal has %d lines, needs 22.\n", LINES);
+        score(SCORE_VIEW, 0, '\0');
         exit(1);
     }
 
-    setup();
-    /*
-     * Set up windows
-     */
-    cw = newwin(LINES, COLS, 0, 0);
-    mw = newwin(LINES, COLS, 0, 0);
-    hw = newwin(LINES, COLS, 0, 0);
+    raw();
+    cbreak();
+    noecho();
+    setup_sigs();
+    cw = newwin(ROLINES, ROCOLS, 0, 0);
+    mw = newwin(ROLINES, ROCOLS, 0, 0);
+    hw = newwin(ROLINES, ROCOLS, 0, 0);
     keypad(cw, 1);
-    waswizard = wizard;
-    new_level();                /* Draw current level */
-    /*
-     * Start up daemons and fuses
-     */
-    start_daemon(doctor, 0, AFTER);
-    fuse(swander, 0, WANDERTIME, AFTER);
-    start_daemon(stomach, 0, AFTER);
-    start_daemon(runners, 0, AFTER);
-    /*
-     * Give the rogue his weaponry.  First a mace.
-     */
-    item = new_item(sizeof *obj);
-    obj = (struct object *) ldata(item);
-    obj->o_type = WEAPON;
-    obj->o_which = MACE;
-    init_weapon(obj, MACE);
-    obj->o_hplus = 1;
-    obj->o_dplus = 1;
-    obj->o_flags |= ISKNOW;
-    add_pack(item, TRUE);
-    cur_weapon = obj;
-    /*
-     * Now a +1 bow
-     */
-    item = new_item(sizeof *obj);
-    obj = (struct object *) ldata(item);
-    obj->o_type = WEAPON;
-    obj->o_which = BOW;
-    init_weapon(obj, BOW);
-    obj->o_hplus = 1;
-    obj->o_dplus = 0;
-    obj->o_flags |= ISKNOW;
-    add_pack(item, TRUE);
-    /*
-     * Now some arrows
-     */
-    item = new_item(sizeof *obj);
-    obj = (struct object *) ldata(item);
-    obj->o_type = WEAPON;
-    obj->o_which = ARROW;
-    init_weapon(obj, ARROW);
-    obj->o_count = 25 + rnd(15);
-    obj->o_hplus = obj->o_dplus = 0;
-    obj->o_flags |= ISKNOW;
-    add_pack(item, TRUE);
-    /*
-     * And his suit of armor
-     */
-    item = new_item(sizeof *obj);
-    obj = (struct object *) ldata(item);
-    obj->o_type = ARMOR;
-    obj->o_which = RING_MAIL;
-    obj->o_ac = a_class[RING_MAIL] - 1;
-    obj->o_flags |= ISKNOW;
-    cur_armor = obj;
-    add_pack(item, TRUE);
-    /*
-     * Give him some food too
-     */
-    item = new_item(sizeof *obj);
-    obj = (struct object *) ldata(item);
-    obj->o_type = FOOD;
-    obj->o_count = 1;
-    obj->o_which = 0;
-    add_pack(item, TRUE);
-    /* modern systems are far too fast at the above steps */
-    sleep(1);
+    clearok(cw, TRUE);
+
+    if (load_savefile())
+        restore();
+    else
+        new_game();
+
     playit();
+
     exit(1);                    /* NOTREACHED */
 }
 
-/*
- * What kind of wizard uses atoi to accept user input?!
- */
 long argtol(const char *arg, const long min, const long max)
 {
     char *ep;
@@ -236,44 +128,153 @@ long argtol(const char *arg, const long min, const long max)
     errno = 0;
     val = strtol(arg, &ep, 0);
     if (arg[0] == '\0' || *ep != '\0')
-        fatal("strtol failed");
+        err(1, "strtol failed");
     if (errno == ERANGE && (val == LONG_MIN || val == LONG_MAX))
-        fatal("argument outside range of long");
+        err(1, "strtol failed");
     if (min != LONG_MIN && val < min)
-        fatal("value is below minimum");
+        errx(1, "value is below minimum %ld", min);
     if (max != LONG_MAX && val > max)
-        fatal("value is above maximum");
+        errx(1, "value is above maximum %ld", max);
     return val;
 }
 
 /*
  * endit:
- *	Exit the program abnormally.
+ *      Exit the program abnormally.
  */
 
 void endit(int p)
 {
-    fatal("Ok, if you want to exit that badly, I'll have to allow it\n");
+    fatal("O, I am slain!\n");
 }
 
 /*
  * fatal:
- *	Exit the program, printing a message.
+ *      Exit the program, printing a message.
  */
 
 void fatal(char *s)
 {
     clear();
-    move(LINES - 2, 0);
+    move(ROLINES - 2, 0);
     printw("%s", s);
     draw(stdscr);
     endwin();
     exit(1);
 }
 
+inline char *getroguedir(void)
+{
+    char *dir;
+    struct stat sb;
+
+    if ((dir = getenv("ROGUEHOME")) != NULL) {
+        if (*dir) {
+            if (strnlen(dir, ROGUEDIR_MAX + 1) > ROGUEDIR_MAX)
+                errx(1, "ROGUEHOME is too long");
+            if (stat(dir, &sb) == -1)
+                err(1, "could not stat ROGUEHOME");
+            if (S_ISDIR(sb.st_mode))
+                return dir;
+            else
+                errx(1, "ROGUEHOME must be a directory");
+        }
+    }
+
+    return ".";
+}
+
+/*
+ * This should allow multiple savefiles per account, minus those where
+ * the player name contains reserved characters.
+ */
+
+inline int load_savefile(void)
+{
+    struct stat sb;
+    char fname[WHOAMI_LEN + 1], *fp, *wp;
+    if (!*whoami)
+        strncpy(whoami, "Nobody", 7);
+    wp = whoami;
+    fp = fname;
+    while (*wp) {
+        *fp = *wp;
+        if (*fp == '/' || *fp == '.')
+            *fp = '_';
+        wp++;
+        fp++;
+    }
+    *fp = '\0';
+    snprintf(save_file, PATH_MAX, "%s/sav.%x.%s", roguedir, getuid(), fname);
+    if (stat(save_file, &sb) == -1)
+        return 0;
+    if (S_ISREG(sb.st_mode))
+        return 1;
+    else
+        return 0;
+}
+
+inline void new_game(void)
+{
+    char *ropts;
+
+    if ((ropts = getenv("ROGUEOPTS")) != NULL)
+        parse_opts(ropts);
+
+    seed_rng();
+    seed = dnum;
+
+    init_player();
+    init_things();              /* Set up probabilities of things */
+    init_names();               /* Set up names of scrolls */
+    init_colors();              /* Set up colors of potions */
+    init_stones();              /* Set up stone settings of rings */
+    init_materials();           /* Set up materials of wands */
+
+    new_level();
+
+    start_daemon(doctor, 0, AFTER);
+    fuse(swander, 0, WANDERTIME, AFTER);
+    start_daemon(stomach, 0, AFTER);
+    start_daemon(runners, 0, AFTER);
+
+    if (wizard)
+        msg("Welcome to dungeon %d, Wizard", dnum);
+    else
+        msg("Welcome to the Dungeons of Doom! --Press any key--");
+    draw(cw);
+    readchar(cw);
+    wmove(cw, 0, 0);
+    wclrtoeol(cw);
+    draw(cw);
+}
+
+/*
+ * playit:
+ *      The main loop of the program.  Loop until the game is over,
+ * refreshing things and looking at the proper times.
+ */
+
+inline void playit(void)
+{
+    if (baudrate() < 1200) {
+        terse = TRUE;
+        jump = TRUE;
+    }
+
+    oldpos = hero;
+    oldrp = roomin(&hero);
+
+    while (1)
+        command();
+
+    /* NOTREACHED */
+    endit(-1);
+}
+
 /*
  * rnd:
- *	Pick a very random number.
+ *      Pick a very random number. (Nope, not very random.)
  */
 
 int rnd(int range)
@@ -283,7 +284,7 @@ int rnd(int range)
 
 /*
  * roll:
- *	roll a number of dice
+ *      roll a number of dice
  */
 
 int roll(int number, int sides)
@@ -295,32 +296,23 @@ int roll(int number, int sides)
     return dtotal;
 }
 
-/*
- * handle stop and start signals
- */
-
-void tstp(int p)
+inline void seed_rng(void)
 {
-#ifdef SIGTSTP
-    signal(SIGTSTP, SIG_IGN);
+    if (!have_seed) {
+#ifdef __OpenBSD__
+        dnum = (int) arc4random();
+#else
+        int fd = open(DEV_RANDOM, O_RDONLY);
+        if (fd == -1)
+            err(1, "open failed %s", DEV_RANDOM);
+        if (read(fd, &dnum, sizeof(dnum)) != sizeof(dnum))
+            err(1, "read failed %s", DEV_RANDOM);
+        close(fd);
 #endif
-    mvcur(0, COLS - 1, LINES - 1, 0);
-    endwin();
-    fflush(stdout);
-#ifdef SIGTSTP
-    signal(SIGTSTP, SIG_DFL);
-    kill(0, SIGTSTP);
-    signal(SIGTSTP, tstp);
-#endif
-    crmode();
-    noecho();
-    clearok(curscr, TRUE);
-    touchwin(cw);
-    draw(cw);
-    flush_type();               /* flush input */
+    }
 }
 
-void setup(void)
+inline void setup_sigs(void)
 {
 #ifdef SIGHUP
     signal(SIGHUP, auto_save);
@@ -348,133 +340,37 @@ void setup(void)
 #endif
     signal(SIGTERM, auto_save);
     signal(SIGINT, quit);
+    /* disabled so can try to get core files when some goes awry
 #ifdef SIGQUIT
     signal(SIGQUIT, endit);
 #endif
+     */
 #ifdef SIGTSTP
     signal(SIGTSTP, tstp);
 #endif
-
-    if (!author()) {
-#ifdef SIGALRM
-        signal(SIGALRM, checkout);
-        alarm(CHECKTIME * 60);
-#endif
-        num_checks = 0;
-    }
-
-    crmode();                   /* Cbreak mode */
-    noecho();                   /* Echo off */
 }
 
 /*
- * playit:
- *	The main loop of the program.  Loop until the game is over,
- * refreshing things and looking at the proper times.
+ * handle stop and start signals
  */
 
-void playit(void)
+void tstp(int p)
 {
-    char *opts;
-
-    /*
-     * set up defaults for slow terminals
-     */
-
-
-    if (baudrate() < 1200) {
-        terse = TRUE;
-        jump = TRUE;
-    }
-
-    /*
-     * parse environment declaration of options
-     */
-    if ((opts = getenv("ROGUEOPTS")) != NULL)
-        parse_opts(opts);
-
-
-    oldpos = hero;
-    oldrp = roomin(&hero);
-    while (playing)
-        command();              /* Command execution */
-    endit(-1);
-}
-
-/*
- * see if the system is being used too much for this game
- */
-int too_much(void)
-{
-    double avec[3];
-
-    if (md_getloadavg(avec) == 0)
-        return (avec[2] > (MAXLOAD / 10.0));
-    else
-        return (md_ucount() > MAXUSERS);
-}
-
-/*
- * see if a user is an author of the program
- */
-int author(void)
-{
-    switch (md_getuid()) {
-    case AUTHORUID:
-        return TRUE;
-    default:
-        return FALSE;
-    }
-}
-
-void checkout(int p)
-{
-    static char *msgs[] = {
-        "The load is too high to be playing.  Please leave in %d minutes",
-        "Please save your game.  You have %d minutes",
-        "Last warning.  You have %d minutes to leave",
-    };
-    int checktime;
-#ifdef SIGALRM
-    signal(SIGALRM, checkout);
+#ifdef SIGTSTP
+    signal(SIGTSTP, SIG_IGN);
 #endif
-    if (too_much()) {
-        if (num_checks == 3)
-            fatal("Sorry.  You took too long.  You are dead\n");
-        checktime = CHECKTIME / (num_checks + 1);
-        chmsg(msgs[num_checks++], checktime);
-#ifdef SIGALRM
-        alarm(checktime * 60);
+    mvcur(0, ROCOLS - 1, ROLINES - 1, 0);
+    endwin();
+    fflush(stdout);
+#ifdef SIGTSTP
+    signal(SIGTSTP, SIG_DFL);
+    kill(0, SIGTSTP);
+    signal(SIGTSTP, tstp);
 #endif
-    } else {
-        if (num_checks) {
-            chmsg("The load has dropped back down.  You have a reprieve.");
-            num_checks = 0;
-        }
-#ifdef SIGALRM
-        alarm(CHECKTIME * 60);
-#endif
-    }
-}
-
-/*
- * checkout()'s version of msg.  If we are in the middle of a shell, do a
- * printf instead of a msg to avoid the refresh.
- */
-void chmsg(char *fmt, ...)
-{
-    va_list args;
-
-    if (in_shell) {
-        va_start(args, fmt);
-        vprintf(fmt, args);
-        va_end(args);
-        putchar('\n');
-        fflush(stdout);
-    } else {
-        va_start(args, fmt);
-        doadd(fmt, args);
-        va_end(args);
-        endmsg();
-    }
+    cbreak();
+    noecho();
+    clearok(curscr, TRUE);
+    touchwin(cw);
+    draw(cw);
+    flush_type();               /* flush input */
 }

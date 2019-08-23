@@ -15,22 +15,12 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
+
 #include "rogue.h"
 
-/*
- * init_keylog:
- *  Open a file descriptor to log keys to for replay.
- */
-
-void init_keylog(void)
-{
-    char *path;
-    asprintf(&path, "%s/rrec.%d", home, dnum);
-    /* this assumes the same seed will not be replayed */
-    logfd = open(path, O_WRONLY|O_APPEND|O_CREAT|O_EXCL, 0666);
-    free(path);
-}
+struct timespec readdelay = { 0, READ_DELAY };
 
 /*
  * msg:
@@ -40,7 +30,6 @@ void init_keylog(void)
 static char msgbuf[BUFSIZ];
 static int newpos = 0;
 
-/*VARARGS1*/
 void msg(char *fmt, ...)
 {
     va_list ap;
@@ -75,12 +64,12 @@ void addmsg(char *fmt, ...)
 }
 
 /*
- * Display a new msg (giving him a chance to see the previous one if it
+ * Display a new msg (giving them a chance to see the previous one if it
  * is up there with the --More--)
  */
 void endmsg(void)
 {
-    strncpy(huh, msgbuf, 80);
+    strncpy(huh, msgbuf, ROGUE_CHARBUF_MAX);
     huh[79] = 0;
 
     if (mpos) {
@@ -104,7 +93,7 @@ void doadd(char *fmt, va_list ap)
 
 /*
  * step_ok:
- *	returns true if it is ok to step on ch
+ *      returns true if it is ok to step on ch
  */
 
 int step_ok(char ch)
@@ -116,14 +105,14 @@ int step_ok(char ch)
     case SECRETDOOR:
         return FALSE;
     default:
-        return (!isalpha(ch));
+        return !isalpha(ch);
     }
 }
 
 /*
  * readchar:
- *	flushes stdout so that screen is up to date and then returns
- *	getchar.
+ *      flushes stdout so that screen is up to date and then returns
+ *      getchar.
  */
 
 int readchar(WINDOW * win)
@@ -132,19 +121,19 @@ int readchar(WINDOW * win)
 
     ch = md_readchar(win);
 
-    if (logfd > 0) write(logfd, &ch, (size_t) 1);
+    nanosleep(&readdelay, NULL);
 
     if ((ch == 3) || (ch == 0)) {
         quit(0);
-        return (27);
+        return 27;
     }
 
-    return (ch);
+    return ch;
 }
 
 /*
  * status:
- *	Display the important stats line.  Keep the cursor where it was.
+ *      Display the important stats line.  Keep the cursor where it was.
  */
 
 void status(void)
@@ -193,7 +182,7 @@ void status(void)
     s_add = pstats.s_str.st_add;
     s_exp = pstats.s_exp;
     s_ac = (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm);
-    mvwaddstr(cw, LINES - 1, 0, buf);
+    mvwaddstr(cw, ROLINES - 1, 0, buf);
     switch (hungry_state) {
     case 0:;
         break;
@@ -213,31 +202,32 @@ void status(void)
 
 /*
  * wait_for
- *	Sit around until the guy types the right key
+ *      Sit around until the guy types the right key
  */
 
 void wait_for(WINDOW * win, char ch)
 {
     char c;
 
-    if (ch == '\n')
+    if (ch == '\n') {
         while ((c = readchar(win)) != '\n' && c != '\r')
             continue;
-    else
+    } else {
         while (readchar(win) != ch)
             continue;
+    }
 }
 
 /*
  * show_win:
- *	function used to display a window and wait before returning
+ *      function used to display a window and wait before returning
  */
 
 void show_win(WINDOW * scr, char *message)
 {
     mvwaddstr(scr, 0, 0, message);
     touchwin(scr);
-    wmove(scr, hero.y, hero.x);
+    wmove(scr, unc(hero));
     draw(scr);
     wait_for(scr, ' ');
     clearok(cw, TRUE);

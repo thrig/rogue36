@@ -33,7 +33,6 @@ typedef struct optstruct OPTION;
 
 int put_bool(bool * b);
 int get_bool(bool * bp, WINDOW * win);
-int put_str(char *str);
 
 OPTION optlist[] = {
     {"terse", "Terse output: ",
@@ -45,13 +44,7 @@ OPTION optlist[] = {
     {"step", "Do inventories one line at a time: ",
      (int *) &slow_invent, put_bool, get_bool},
     {"askme", "Ask me about unidentified things: ",
-     (int *) &askme, put_bool, get_bool},
-    {"name", "Name: ",
-     (int *) whoami, put_str, get_str},
-    {"fruit", "Fruit: ",
-     (int *) fruit, put_str, get_str},
-    {"file", "Save file: ",
-     (int *) file_name, put_str, get_str}
+     (int *) &askme, put_bool, get_bool}
 };
 
 /*
@@ -79,13 +72,12 @@ void option(void)
     for (op = optlist; op <= &optlist[NUM_OPTS - 1]; op++) {
         waddstr(hw, op->o_prompt);
         if ((retval = (*op->o_getfunc) (op->o_opt, hw))) {
-            if (retval == QUIT)
+            if (retval == QUIT) {
                 break;
-            else if (op > optlist) {    /* MINUS */
+            } else if (op > optlist) {  /* MINUS */
                 wmove(hw, (op - optlist) - 1, 0);
                 op -= 2;
             } else {            /* trying to back up beyond the top */
-
                 beep();
                 wmove(hw, 0, 0);
                 op--;
@@ -95,7 +87,7 @@ void option(void)
     /*
      * Switch back to original screen
      */
-    mvwaddstr(hw, LINES - 1, 0, "--Press space to continue--");
+    mvwaddstr(hw, ROLINES - 1, 0, "--Press space to continue--");
     draw(hw);
     wait_for(hw, ' ');
     clearok(cw, TRUE);
@@ -108,16 +100,7 @@ void option(void)
  */
 int put_bool(bool * b)
 {
-    waddstr(hw, *b ? "True" : "False");
-    return 0;
-}
-
-/*
- * put out a string
- */
-int put_str(char *str)
-{
-    waddstr(hw, str);
+    waddstr(hw, *b ? "Yes" : "No");
     return 0;
 }
 
@@ -132,18 +115,22 @@ int get_bool(bool * bp, WINDOW * win)
 
     op_bad = TRUE;
     getyx(win, oy, ox);
-    waddstr(win, *bp ? "True" : "False");
+    waddstr(win, *bp ? "Yes" : "No");
     while (op_bad) {
         wmove(win, oy, ox);
         draw(win);
         switch (readchar(win)) {
         case 't':
         case 'T':
+        case 'y':
+        case 'Y':
             *bp = TRUE;
             op_bad = FALSE;
             break;
         case 'f':
         case 'F':
+        case 'n':
+        case 'N':
             *bp = FALSE;
             op_bad = FALSE;
             break;
@@ -157,35 +144,38 @@ int get_bool(bool * bp, WINDOW * win)
         case '-':
             return MINUS;
         default:
-            mvwaddstr(win, oy, ox + 10, "(T or F)");
+            mvwaddstr(win, oy, ox + 10, "(Y or N)");
         }
     }
     wmove(win, oy, ox);
-    waddstr(win, *bp ? "True" : "False");
+    waddstr(win, *bp ? "Yes" : "No");
     waddch(win, '\n');
     return NORM;
 }
 
 /*
- * set a string option
+ * set a string option -- only used by other calls now as the string
+ * options have all been removed
  */
 int get_str(char *opt, WINDOW * win)
 {
     char *sp;
     int c, oy, ox;
-    char buf[ROGUE_CHARBUF_MAX];
+    char buf[GETSTR_MAX];
 
     draw(win);
     getyx(win, oy, ox);
+    // TODO does ncurses have a better routine for this (that does not
+    // have security issues?
     /*
      * loop reading in the string, and put it in a temporary buffer
      */
     for (sp = buf;
          (c = readchar(win)) != '\n' && c != '\r' && c != '\033' && c != '\007';
          wclrtoeol(win), draw(win)) {
-        if (c == -1)
+        if (c == -1) {
             continue;
-        else if (c == md_erasechar()) { /* process erase character */
+        } else if (c == erasechar()) {
             if (sp > buf) {
                 int i;
                 int myx, myy;
@@ -198,33 +188,29 @@ int get_str(char *opt, WINDOW * win)
                         wmove(win, myy - 1, getmaxx(win) - 1);
                         waddch(win, ' ');
                         wmove(win, myy - 1, getmaxx(win) - 1);
-                    } else
+                    } else {
                         waddch(win, '\b');
+                    }
                 }
             }
             continue;
-        } else if (c == md_killchar()) {        /* process kill character */
+        } else if (c == killchar()) {
             sp = buf;
             wmove(win, oy, ox);
             continue;
         } else if (sp == buf) {
-            if (c == '-')
+            if (c == '-') {
                 break;
-            else if (c == '~') {
-                strcpy(buf, home);
-                waddstr(win, home);
-                sp += strlen(home);
-                continue;
             }
         }
-
-        if ((sp - buf) < 78) {  /* Avoid overflow */
+        if ((sp - buf) < GETSTR_MAX) {  /* Avoid overflow */
             *sp++ = c;
             waddstr(win, unctrl(c));
         }
     }
     *sp = '\0';
-    if (sp > buf)               /* only change option if something has been typed */
+    /* only change option if something has been typed */
+    if (sp > buf)
         strucpy(opt, buf, strlen(buf));
     wmove(win, oy, ox);
     waddstr(win, opt);
@@ -264,43 +250,22 @@ void parse_opts(char *str)
         /*
          * Look it up and deal with it
          */
-        for (op = optlist; op <= &optlist[NUM_OPTS - 1]; op++)
+        for (op = optlist; op <= &optlist[NUM_OPTS - 1]; op++) {
             if (EQSTR(str, op->o_name, len)) {
-                if (op->o_putfunc == put_bool)  /* if option is a boolean */
+                if (op->o_putfunc == put_bool) {
                     *(bool *) op->o_opt = TRUE;
-                else {          /* string option */
-
-                    char *start;
-                    /*
-                     * Skip to start of string value
-                     */
-                    for (str = sp + 1; *str == '='; str++)
-                        continue;
-                    if (*str == '~') {
-                        strcpy((char *) op->o_opt, home);
-                        start = (char *) op->o_opt + strlen(home);
-                        while (*++str == '/')
-                            continue;
-                    } else
-                        start = (char *) op->o_opt;
-                    /*
-                     * Skip to end of string value
-                     */
-                    for (sp = str + 1; *sp && *sp != ','; sp++)
-                        continue;
-                    strucpy(start, str, sp - str);
                 }
                 break;
             }
-        /*
-         * check for "noname" for booleans
-         */
-            else if (op->o_putfunc == put_bool
-                     && EQSTR(str, "no", 2)
+            /*
+             * check for "noname" for booleans
+             */
+            else if (op->o_putfunc == put_bool && EQSTR(str, "no", 2)
                      && EQSTR(str + 2, op->o_name, len - 2)) {
                 *(bool *) op->o_opt = FALSE;
                 break;
             }
+        }
 
         /*
          * skip to start of next option name

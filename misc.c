@@ -74,10 +74,10 @@ void look(bool wakeup)
     inpass = ((rp = roomin(&hero)) == NULL);
     ey = hero.y + 1;
     ex = hero.x + 1;
-    for (x = hero.x - 1; x <= ex; x++)
-        if (x >= 0 && x < COLS)
+    for (x = hero.x - 1; x <= ex; x++) {
+        if (x >= 0 && x < ROCOLS) {
             for (y = hero.y - 1; y <= ey; y++) {
-                if (y <= 0 || y >= LINES - 1)
+                if (y <= 0 || y >= ROLINES - 1)
                     continue;
                 if (isupper(mvwinch(mw, y, x))) {
                     struct linked_list *it;
@@ -101,14 +101,15 @@ void look(bool wakeup)
                 if ((ch = show(y, x)) == SECRETDOOR)
                     ch = secretdoor(y, x);
                 /*
-                 * Don't show room walls if he is in a passage
+                 * Don't show room walls if they are in a passage
                  */
                 if (off(player, ISBLIND)) {
                     if ((y == hero.y && x == hero.x)
                         || (inpass && (ch == '-' || ch == '|')))
                         continue;
-                } else if (y != hero.y || x != hero.x)
+                } else if (y != hero.y || x != hero.x) {
                     continue;
+                }
                 wmove(cw, y, x);
                 waddch(cw, ch);
                 if (door_stop && !firstmove && running) {
@@ -165,6 +166,8 @@ void look(bool wakeup)
                     }
                 }
             }
+        }
+    }
     if (door_stop && !firstmove && passcount > 1)
         running = FALSE;
     mvwaddch(cw, hero.y, hero.x, PLAYER);
@@ -188,15 +191,15 @@ char secretdoor(int y, int x)
     cp.y = y;
     cp.x = x;
     cpp = &cp;
-    for (rp = rooms, i = 0; i < MAXROOMS; rp++, i++)
+    for (rp = rooms, i = 0; i < MAXROOMS; rp++, i++) {
         if (inroom(rp, cpp)) {
             if (y == rp->r_pos.y || y == rp->r_pos.y + rp->r_max.y - 1)
-                return ('-');
+                return '-';
             else
-                return ('|');
+                return '|';
         }
-
-    return ('p');
+    }
+    return 'p';
 }
 
 /*
@@ -221,7 +224,7 @@ struct linked_list *find_obj(int y, int x)
 
 /*
  * eat:
- *	She wants to eat something, so let her try
+ *	They want to eat something, so let them try
  */
 
 void eat(void)
@@ -240,14 +243,15 @@ void eat(void)
         return;
     }
     inpack--;
-    if (obj->o_which == 1)
+    if (obj->o_which == MANGO) {
         msg("My, that was a yummy %s", fruit);
-    else if (rnd(100) > 70) {
+    } else if (rnd(100) > 70) {
         msg("Yuk, this food tastes awful");
         pstats.s_exp++;
         check_level();
-    } else
+    } else {
         msg("Yum, that tasted good");
+    }
     if ((food_left += HUNGERTIME + rnd(400) - 200) > STOMACHSIZE)
         food_left = STOMACHSIZE;
     hungry_state = 0;
@@ -382,6 +386,7 @@ int get_dir(void)
         msg(prompt = "Which direction? ");
     else
         prompt = "Direction: ";
+
     do {
         gotit = TRUE;
         switch (readchar(cw)) {
@@ -434,11 +439,14 @@ int get_dir(void)
             gotit = FALSE;
         }
     } while (!gotit);
-    if (on(player, ISHUH) && rnd(100) > 80)
+
+    if (on(player, ISHUH) && rnd(100) > 80) {
         do {
             delta.y = rnd(3) - 1;
             delta.x = rnd(3) - 1;
         } while (delta.y == 0 && delta.x == 0);
+    }
+
     mpos = 0;
     return TRUE;
 }

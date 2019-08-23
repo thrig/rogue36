@@ -72,17 +72,18 @@ void do_passages(void)
          * find a room to connect with
          */
         j = 0;
-        for (i = 0; i < MAXROOMS; i++)
+        for (i = 0; i < MAXROOMS; i++) {
             if (r1->conn[i] && !rdes[i].ingraph && rnd(++j) == 0)
                 r2 = &rdes[i];
+        }
         /*
          * if no adjacent rooms are outside the graph, pick a new room
          * to look from
          */
         if (j == 0) {
-            do
+            do {
                 r1 = &rdes[rnd(MAXROOMS)];
-            while (!r1->ingraph);
+            } while (!r1->ingraph);
         }
         /*
          * otherwise, connect new room to the graph, and draw a tunnel
@@ -109,9 +110,10 @@ void do_passages(void)
          * find an adjacent room not already connected
          */
         j = 0;
-        for (i = 0; i < MAXROOMS; i++)
+        for (i = 0; i < MAXROOMS; i++) {
             if (r1->conn[i] && !r1->isconn[i] && rnd(++j) == 0)
                 r2 = &rdes[i];
+        }
         /*
          * if there is one, connect it and look for the next added
          * passage
@@ -198,21 +200,22 @@ void conn(int r1, int r2)
         turn_delta.x = 0;
         turn_distance = abs(spos.y - epos.y);
         turn_spot = rnd(distance - 1) + 1;
-    } else
+    } else {
         fatal("error in connection tables");
+    }
     /*
      * Draw in the doors on either side of the passage or just put #'s
      * if the rooms are gone.
      */
-    if (!(rpf->r_flags & ISGONE))
+    if (!(rpf->r_flags & ISGONE)) {
         door(rpf, &spos);
-    else {
+    } else {
         cmov(spos);
         addch('#');
     }
-    if (!(rpt->r_flags & ISGONE))
+    if (!(rpt->r_flags & ISGONE)) {
         door(rpt, &epos);
-    else {
+    } else {
         cmov(epos);
         addch('#');
     }
@@ -230,13 +233,14 @@ void conn(int r1, int r2)
         /*
          * Check if we are at the turn place, if so do the turn
          */
-        if (distance == turn_spot && turn_distance > 0)
+        if (distance == turn_spot && turn_distance > 0) {
             while (turn_distance--) {
                 cmov(curr);
                 addch(PASSAGE);
                 curr.x += turn_delta.x;
                 curr.y += turn_delta.y;
             }
+        }
         /*
          * Continue digging along
          */
@@ -262,6 +266,7 @@ void door(struct room *rm, coord * cp)
     rm->r_exit[rm->r_nexits++] = *cp;
 }
 
+#ifdef WIZARD
 /*
  * add_pass:
  *	add the passages to the current window (wizard command)
@@ -271,9 +276,11 @@ void add_pass(void)
 {
     int y, x, ch;
 
-    for (y = 1; y < LINES - 2; y++)
-        for (x = 0; x < COLS; x++)
+    for (y = 1; y < ROLINES - 2; y++) {
+        for (x = 0; x < ROCOLS; x++)
             if ((ch = mvinch(y, x)) == PASSAGE || ch == DOOR
                 || ch == SECRETDOOR)
                 mvwaddch(cw, y, x, ch);
+    }
 }
+#endif

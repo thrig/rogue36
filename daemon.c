@@ -33,9 +33,10 @@ struct delayed_action *d_slot(void)
     int i;
     struct delayed_action *dev;
 
-    for (i = 0, dev = d_list; i < MAXDAEMONS; i++, dev++)
+    for (i = 0, dev = d_list; i < MAXDAEMONS; i++, dev++) {
         if (dev->d_type == EMPTY)
             return dev;
+    }
     debug("Ran out of fuse slots");
     return NULL;
 }
@@ -50,9 +51,10 @@ struct delayed_action *find_slot(int (*func) ())
     int i;
     struct delayed_action *dev;
 
-    for (i = 0, dev = d_list; i < MAXDAEMONS; i++, dev++)
+    for (i = 0, dev = d_list; i < MAXDAEMONS; i++, dev++) {
         if (dev->d_type != EMPTY && func == dev->d_func)
             return dev;
+    }
     return NULL;
 }
 
@@ -105,12 +107,13 @@ void do_daemons(int flag)
     /*
      * Loop through the devil list
      */
-    for (dev = d_list; dev <= &d_list[MAXDAEMONS - 1]; dev++)
+    for (dev = d_list; dev <= &d_list[MAXDAEMONS - 1]; dev++) {
         /*
          * Executing each one, giving it the proper arguments
          */
         if (dev->d_type == flag && dev->d_time == DAEMON)
             (*dev->d_func) (dev->d_arg);
+    }
 }
 
 /*

@@ -17,23 +17,24 @@
 #include <time.h>
 #include "rogue.h"
 
-/* make nojump do something on modern systems */
-struct timespec rundelay = { 0, 25000000 };
+struct timespec jumpdelay = { 0, JUMP_DELAY };
 
 void call(void);
 void d_level(void);
 void help(void);
 void identify(void);
 void search(void);
-void shell(void);
 void u_level(void);
+#ifdef WIZARD
+void wiz_command(int ch);
+#endif
 
 /*
  * command:
  *	Process the user commands
  */
 
-void command(void)
+inline void command(void)
 {
     char ch;
     int ntimes = 1;             /* Number of player moves */
@@ -52,30 +53,33 @@ void command(void)
             door_stop = FALSE;
         status();
         lastscore = purse;
-        wmove(cw, hero.y, hero.x);
+        wmove(cw, unc(hero));
         if (!((running || count) && jump)) {
             draw(cw);           /* Draw screen */
-            nanosleep(&rundelay, NULL);
+            nanosleep(&jumpdelay, NULL);
         }
         take = 0;
         after = TRUE;
         /*
          * Read command or continue run
          */
-        if (wizard)
-            waswizard = TRUE;
         if (!no_command) {
-            if (running)
+            if (running) {
                 ch = runch;
-            else if (count)
+            } else if (count) {
                 ch = countch;
-            else {
+            } else {
                 ch = readchar(cw);
-                if (mpos != 0 && !running)      /* Erase message if its there */
+                /* Erase message if its there */
+                if (mpos != 0 && !running) {
                     msg("");
+                    /* bounce back to hero if (maybe) entering digits */
+                    wmove(cw, unc(hero));
+                }
             }
-        } else
+        } else {
             ch = ' ';
+        }
         if (no_command) {
             if (--no_command == 0)
                 msg("You can move again.");
@@ -158,10 +162,6 @@ void command(void)
             if (count && !running)
                 count--;
             switch (ch) {
-                /* disabled for better pledge control on OpenBSD */
-                //case '!':
-                //    shell();
-                //    break;
             case 'h':
                 do_move(0, -1);
                 break;
@@ -237,7 +237,7 @@ void command(void)
             case 'r':
                 read_scroll();
                 break;
-            /* no I haven't been playing Angbands why do you ask */
+                /* no I haven't been playing Angbands why do you ask */
             case 'E':
             case 'e':
                 eat();
@@ -292,7 +292,7 @@ void command(void)
                     after = FALSE;
                 break;
             case 'v':
-                msg("Rogue version %s. (mctesq was here)", release);
+                msg("Rogue version %s + bugfixes + changes.", release);
                 break;
             case CTRL('L'):
                 after = FALSE;
@@ -305,127 +305,39 @@ void command(void)
                 break;
             case 'S':
                 after = FALSE;
-                if (replay || logfd > 0) {
-                    msg("Save not compatible with key logging");
-                    break;
-                }
                 if (save_game()) {
-                    wmove(cw, LINES - 1, 0);
+                    wmove(cw, ROLINES - 1, 0);
                     wclrtoeol(cw);
                     draw(cw);
                     endwin();
-                    exit(0);
+                    exit(1);
                 }
                 break;
-            case '.':;         /* Rest command */
+            case '.':          /* Rest command (used to be space) */
                 break;
-            case CTRL('P'):
+#ifdef WIZARD
+            case '&':
                 after = FALSE;
-                if (wizard) {
-                    wizard = FALSE;
-                    msg("Not wizard any more");
-                } else {
-                    if (passwd()) {
-                        msg("You are suddenly as smart as Ken Arnold in dungeon #%d", dnum);
-                        wizard = TRUE;
-                        waswizard = TRUE;
-                    } else
-                        msg("Sorry");
+                if (!wizard) {
+                    msg("You are suddenly as smart as Ken Arnold in dungeon %d",
+                        dnum);
+                    wizard = TRUE;
                 }
                 break;
-            case ESCAPE:       /* Escape */
+#endif
+            case ESCAPE:
                 door_stop = FALSE;
                 count = 0;
                 after = FALSE;
                 break;
             default:
                 after = FALSE;
-                if (wizard)
-                    switch (ch) {
-                    case '@':
-                        msg("@ %d,%d (window %d,%d)", hero.y, hero.x,
-                            LINES, COLS);
-                        break;
-                    case 'C':
-                        create_obj();
-                        break;
-                    case CTRL('I'):
-                        inventory(lvl_obj, 0);
-                        break;
-                    case CTRL('W'):
-                        whatis();
-                        break;
-                    case CTRL('D'):
-                        level++;
-                        new_level();
-                        break;
-                    case CTRL('U'):
-                        level--;
-                        new_level();
-                        break;
-                    case CTRL('F'):
-                        show_win(stdscr, "--More (level map)--");
-                        break;
-                    case CTRL('X'):
-                        show_win(mw, "--More (monsters)--");
-                        break;
-                    case CTRL('T'):
-                        teleport();
-                        break;
-                    case CTRL('E'):
-                        msg("food left: %d", food_left);
-                        break;
-                    case CTRL('A'):
-                        msg("%d things in your pack", inpack);
-                        break;
-                    case CTRL('C'):
-                        add_pass();
-                        break;
-                    case CTRL('N'):
-                        {
-                            struct linked_list *item;
-
-                            if ((item = get_item("charge", STICK)) != NULL)
-                                ((struct object *) ldata(item))->o_charges
-                                    = 10000;
-                        }
-                        break;
-                    case CTRL('H'):
-                        {
-                            int i;
-                            struct linked_list *item;
-                            struct object *obj;
-
-                            for (i = 0; i < 9; i++)
-                                raise_level();
-                            /*
-                             * Give the rogue a sword (+1,+1)
-                             */
-                            item = new_item(sizeof *obj);
-                            obj = (struct object *) ldata(item);
-                            obj->o_type = WEAPON;
-                            obj->o_which = TWOSWORD;
-                            init_weapon(obj, SWORD);
-                            obj->o_hplus = 1;
-                            obj->o_dplus = 1;
-                            add_pack(item, TRUE);
-                            cur_weapon = obj;
-                            /*
-                             * And his suit of armor
-                             */
-                            item = new_item(sizeof *obj);
-                            obj = (struct object *) ldata(item);
-                            obj->o_type = ARMOR;
-                            obj->o_which = PLATE_MAIL;
-                            obj->o_ac = -5;
-                            obj->o_flags |= ISKNOW;
-                            cur_armor = obj;
-                            add_pack(item, TRUE);
-                        }
-                        break;
-                    default:
-                        msg("Illegal command '%s'.", unctrl(ch));
-                        count = 0;
+                if (wizard) {
+#ifdef WIZARD
+                    wiz_command(ch);
+#else
+                    ;
+#endif
                 } else {
                     msg("Illegal command '%s'.", unctrl(ch));
                     count = 0;
@@ -438,7 +350,7 @@ void command(void)
                 door_stop = FALSE;
         }
         /*
-         * If he ran into something to take, let him pick it up.
+         * If they ran into something, let them pick it up.
          */
         if (take != 0)
             pick_up(take);
@@ -452,10 +364,12 @@ void command(void)
         look(FALSE);
         do_daemons(AFTER);
         do_fuses(AFTER);
+
         if (ISRING(LEFT, R_SEARCH))
             search();
         else if (ISRING(LEFT, R_TELEPORT) && rnd(100) < 2)
             teleport();
+
         if (ISRING(RIGHT, R_SEARCH))
             search();
         else if (ISRING(RIGHT, R_TELEPORT) && rnd(100) < 2)
@@ -477,13 +391,13 @@ void quit(int p)
         mpos = 0;
     msg("Really quit?");
     draw(cw);
-    if (readchar(cw) == 'y') {
+    if (readchar(cw) == 'Y') {
         clear();
-        move(LINES - 1, 0);
+        move(ROLINES - 1, 0);
         draw(stdscr);
         endwin();
-        score(purse, 1, 0);
-        exit(0);
+        score(SCORE_QUIT, purse, '\0');
+        exit(1);
     } else {
         signal(SIGINT, quit);
         wmove(cw, 0, 0);
@@ -497,7 +411,7 @@ void quit(int p)
 
 /*
  * search:
- *	Player gropes about him to find hidden things.
+ *	Player gropes around to find hidden things.
  */
 
 void search(void)
@@ -505,13 +419,13 @@ void search(void)
     int x, y;
     char ch;
 
-    /*
-     * Look all around the hero, if there is something hidden there,
-     * give him a chance to find it.  If its found, display it.
-     */
     if (on(player, ISBLIND))
         return;
-    for (x = hero.x - 1; x <= hero.x + 1; x++)
+    /*
+     * Look all around the hero, if there is something hidden there,
+     * give them a chance to find it.  If its found, display it.
+     */
+    for (x = hero.x - 1; x <= hero.x + 1; x++) {
         for (y = hero.y - 1; y <= hero.y + 1; y++) {
             ch = (char) winat(y, x);
             switch (ch) {
@@ -539,11 +453,12 @@ void search(void)
                 }
             }
         }
+    }
 }
 
 /*
  * help:
- *	Give single character help, or the whole mess if he wants it
+ *	Give single character help, or the whole mess
  */
 
 void help(void)
@@ -556,8 +471,8 @@ void help(void)
     helpch = readchar(cw);
     mpos = 0;
     /*
-     * If its not a *, print the right help string
-     * or an error if he typed a funny character.
+     * If its not a *, print the right help string or an error if they
+     * typed a funny character.
      */
     if (helpch != '*') {
         wmove(cw, 0, 0);
@@ -584,7 +499,7 @@ void help(void)
         cnt++;
         strp++;
     }
-    wmove(hw, LINES - 1, 0);
+    wmove(hw, ROLINES - 1, 0);
     wprintw(hw, "--Press space to continue--");
     draw(hw);
     wait_for(hw, ' ');
@@ -612,9 +527,9 @@ void identify(void)
         msg("");
         return;
     }
-    if (isalpha(ch) && isupper(ch))
+    if (isalpha(ch) && isupper(ch)) {
         str = monsters[ch - 'A'].m_name;
-    else
+    } else {
         switch (ch) {
         case '|':
         case '-':
@@ -671,71 +586,8 @@ void identify(void)
         default:
             str = "unknown character";
         }
+    }
     msg("'%s' : %s", unctrl(ch), str);
-}
-
-/*
- * d_level:
- *	He wants to go down a level
- */
-
-void d_level(void)
-{
-    if (winat(hero.y, hero.x) != STAIRS)
-        msg("I see no way down.");
-    else {
-        level++;
-        new_level();
-    }
-}
-
-/*
- * u_level:
- *	He wants to go up a level
- */
-
-void u_level(void)
-{
-    if (winat(hero.y, hero.x) == STAIRS) {
-        if (amulet) {
-            level--;
-            if (level == 0)
-                total_winner();
-            new_level();
-            msg("You feel a wrenching sensation in your gut.");
-            return;
-        }
-    }
-    msg("I see no way up.");
-}
-
-/*
- * Let him escape for a while
- */
-
-void shell(void)
-{
-    /*
-     * Set the terminal back to original mode
-     */
-    wclear(hw);
-    wmove(hw, LINES - 1, 0);
-    draw(hw);
-    endwin();
-    in_shell = TRUE;
-    fflush(stdout);
-
-    md_shellescape();
-
-    printf("\n[Press return to continue]");
-    fflush(stdout);
-    noecho();
-    crmode();
-    in_shell = FALSE;
-    wait_for(cw, '\n');
-    clearok(cw, TRUE);
-    touchwin(cw);
-    draw(cw);
 }
 
 /*
@@ -806,3 +658,132 @@ void call(void)
             strcpy(guess[obj->o_which], prbuf);
     }
 }
+
+/*
+ * d_level:
+ *	They want to go down a level
+ */
+
+void d_level(void)
+{
+    if (winat(hero.y, hero.x) != STAIRS) {
+        msg("I see no way down.");
+    } else {
+        level++;
+        new_level();
+    }
+}
+
+/*
+ * u_level:
+ *	They want to go up a level
+ */
+
+void u_level(void)
+{
+    if (winat(hero.y, hero.x) == STAIRS) {
+        if (amulet) {
+            level--;
+            if (level == 0)
+                total_winner();
+            new_level();
+            msg("You feel a wrenching sensation in your gut.");
+            return;
+        }
+    }
+    msg("I see no way up.");
+}
+
+#ifdef WIZARD
+/*
+ * wiz_command:
+ *  Meddles with the keyboard input of a Wizard
+ */
+
+inline void wiz_command(int ch)
+{
+    switch (ch) {
+    case '@':
+        msg("@ %d,%d (window %d,%d)", hero.y, hero.x, ROLINES, ROCOLS);
+        break;
+    case 'C':
+        create_obj();
+        break;
+    case CTRL('I'):
+        inventory(lvl_obj, 0);
+        break;
+    case CTRL('W'):
+        whatis();
+        break;
+    case CTRL('D'):
+        level++;
+        new_level();
+        break;
+    case CTRL('U'):
+        level--;
+        new_level();
+        break;
+    case CTRL('F'):
+        show_win(stdscr, "--More (level map)--");
+        break;
+    case CTRL('X'):
+        show_win(mw, "--More (monsters)--");
+        break;
+    case CTRL('T'):
+        teleport();
+        break;
+    case CTRL('E'):
+        msg("food left: %d", food_left);
+        break;
+    case CTRL('A'):
+        msg("%d things in your pack", inpack);
+        break;
+    case CTRL('C'):
+        add_pass();
+        break;
+    case CTRL('N'):
+        {
+            struct linked_list *item;
+
+            if ((item = get_item("charge", STICK)) != NULL)
+                ((struct object *) ldata(item))->o_charges = 10000;
+        }
+        break;
+    case CTRL('H'):
+        {
+            struct linked_list *item;
+            struct object *obj;
+
+            for (int i = 0; i < 9; i++)
+                raise_level();
+            /*
+             * Give the rogue a sword (+1,+1)
+             */
+            item = new_item(sizeof *obj);
+            obj = (struct object *) ldata(item);
+            obj->o_type = WEAPON;
+            obj->o_which = TWOSWORD;
+            init_weapon(obj, SWORD);
+            obj->o_hplus = 1;
+            obj->o_dplus = 1;
+            add_pack(item, TRUE);
+            cur_weapon = obj;
+            /*
+             * And his suit of armor
+             */
+            item = new_item(sizeof *obj);
+            obj = (struct object *) ldata(item);
+            obj->o_type = ARMOR;
+            obj->o_which = PLATE_MAIL;
+            obj->o_ac = -5;
+            obj->o_flags |= ISKNOW;
+            cur_armor = obj;
+            add_pack(item, TRUE);
+        }
+        break;
+    default:
+        msg("Illegal command '%s'.", unctrl(ch));
+        count = 0;
+    }
+}
+#endif

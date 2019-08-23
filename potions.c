@@ -57,8 +57,9 @@ void quaff(void)
         if (!ISWEARING(R_SUSTSTR)) {
             chg_str(-(rnd(3) + 1));
             msg("You feel very sick now.");
-        } else
+        } else {
             msg("You feel momentarily sick");
+        }
         p_know[P_POISON] = TRUE;
         break;
     case P_HEALING:
@@ -83,8 +84,9 @@ void quaff(void)
             show_win(hw,
                      "You begin to sense the presence of monsters.--More--");
             p_know[P_MFIND] = TRUE;
-        } else
+        } else {
             msg("You have a strange feeling for a moment, then it passes.");
+        }
         break;
     case P_TFIND:
         /*
@@ -195,9 +197,9 @@ void quaff(void)
      * Throw the item away
      */
     inpack--;
-    if (obj->o_count > 1)
+    if (obj->o_count > 1) {
         obj->o_count--;
-    else {
+    } else {
         detach(pack, item);
         discard(item);
     }

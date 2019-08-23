@@ -73,9 +73,8 @@ void _free_list(struct linked_list **ptr)
 
 void discard(struct linked_list *item)
 {
-    total -= 2;
-    FREE(item->l_data);
-    FREE(item);
+    free(item->l_data);
+    free(item);
 }
 
 /*
@@ -83,27 +82,23 @@ void discard(struct linked_list *item)
  *	get a new item with a specified size
  */
 
-struct linked_list *new_item(int size)
+struct linked_list *new_item(size_t size)
 {
     struct linked_list *item;
 
-    if ((item = (struct linked_list *) new(sizeof *item)) == NULL)
-        msg("Ran out of memory for header after %d items", total);
-    if ((item->l_data = new(size)) == NULL)
-        msg("Ran out of memory for data after %d items", total);
+    item = (struct linked_list *) new(sizeof *item);
+    item->l_data = new(size);
     item->l_next = item->l_prev = NULL;
     memset(item->l_data, 0, size);
     return item;
 }
 
-char *new(int size)
+char *new(size_t size)
 {
-    char *space = ALLOC(size);
+    char *space = malloc(size);
 
-    if (space == NULL) {
-        sprintf(prbuf, "Rogue ran out of memory.  Fatal error!");
-        fatal(prbuf);
-    }
-    total++;
+    /* the xterm(1) running rogue is bigger than rogue, these days... */
+    if (space == NULL)
+        fatal("Rogue ran out of memory.  Fatal error!");
     return space;
 }

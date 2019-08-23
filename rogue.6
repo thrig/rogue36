@@ -1,4 +1,4 @@
-.Dd August 20 2019
+.Dd August 23 2019
 .Dt ROGUE 6
 .nh
 .Os
@@ -8,12 +8,10 @@
 .Sh SYNOPSIS
 .Bk -words
 .Nm
-.Nm
-.Fl r
+.Op Fl d Ar seed
+.Op Fl n Ar name
 .Nm
 .Fl s
-.Nm
-.Ar savefile
 .Ek
 .Sh DESCRIPTION
 .Nm
@@ -22,16 +20,21 @@ attacks of various monsters and get a lot of gold. To win the game you
 must locate the Amulet of Yendor which is somewhere below the 20th level
 of the dungeon and get it out.
 .Pp
-The
-.Fl r
-flag will replay a game from a particular
-.Ev SEED
-value; previous commands should be passed in via standard input.
-The
-.Fl s
-flag will show the high score list and then quit the game.
-.Ar savefile
-will attempt to load a previous game.
+Options:
+.Bl -tag -width Ds
+.It Fl d Ar seed
+sets the random number seed to the given value. 32-bit integer. If not
+supplied, a random seed will be used for a new game.
+.It Fl n Ar name
+sets the player's name. Restricted to 18 bytes to fit on your
+tombstone. Use the same name to restore from a saved game.
+.It Fl s
+shows the high score list and then quits the game.
+.El
+.Pp
+There may be other options depending on how
+.Nm
+was compiled.
 .Ss \&An Overview of the Dungeon
 What do all these things on the screen mean?
 .Bd -literal -offset indent
@@ -79,8 +82,9 @@ is used for the lit floor of rooms and
 for the floor in corridors. Stairs, unlike in various modern roguelikes,
 are represented by
 .Qq %
-and are one-way. Note that doors cannot be entered on the diagonal, nor
-can monsters attack you on the diagonal if you stand on a door.
+and are one-way, unless you happen to be carrying the amulet. Note that
+doors cannot be entered on the diagonal, nor can monsters attack you on
+the diagonal if you stand on a door.
 .Pp
 Messages will be printed at the top of the screen, sometimes with a
 .Qq --More--
@@ -170,7 +174,7 @@ to find these. Multiple attempts without moving increases the odds that
 a secret door will be found.
 .It Cm \&.
 Rest. A numeric prefix will rest for longer though will allow wandering
-monsters a free hit should they pathfind to you.
+monsters a free hit should they find you.
 .It Cm Space
 Used to be the traditional command to rest, though is now only
 used to clear
@@ -184,8 +188,12 @@ Display the given inventory item.
 Quaff a potion.
 .It Cm r
 Read a paper.
-.It Cm e
-Eat food.
+.It Cm e Cm E
+Eat food. (Uppercase 
+.Cm E
+is due to an
+.Nm Angband
+habit.)
 .It Cm w
 Wield a weapon. To fire an arrow first wield the bow.
 .It Cm W
@@ -201,7 +209,10 @@ Drop an object.
 .It Cm c
 Call an object (rename it to something else). See also the
 .Cm askme
-option.
+option. The length of a name is limited to 32 characters.
+The
+.Dv -
+key at the beginning will preserve the existing name.
 .It Cm o
 Examine or set
 .Sx Options .
@@ -214,9 +225,16 @@ Cancel a command.
 .It Cm v
 Program version number.
 .It Cm S
-Save game. Disabled if key logging for replay is active.
+Save game and exit from
+.Nm . Confirm with
+.Cm Y .
+A saved game should be restored if the same
+.Fl n
+flag is given to
+.Nm .
 .It Cm Q
-Quit.
+Quit the current game. Confirm with
+.Cm Y .
 .El
 .Pp
 As in
@@ -234,20 +252,25 @@ Pick these up by moving over them.
 .It !
 A flask containing a magic potion.
 .It %
-Not an item; this is a one-way staircase to the next level.
+Not an item! This is a one-way staircase to the next level.
 .It )
-A weapon of some sort.
+A weapon to wield.
 .It *
 A pile or pot of gold.
+.It /
+A stick or wand of some sort.
 .It :
 A piece of food.
+.It =
+A ring to put on.
 .It ?
 A piece of paper, usually a magic scroll.
 .It ]
-A piece of armor.
+A piece of armor to wear.
 .El
 .Ss Monsters
-There are twenty-six different monsters.
+There are twenty-six different monsters. Some are hostile, and some
+start to wander about the level.
 .Bl -tag -width Ds
 .It A
 Giant ant.
@@ -325,86 +348,51 @@ for false. For string options, type the new value followed by a RETURN.
 After reading a scroll or quaffing a potion that does not self identify
 upon use,
 .Nm
-will ask you what to name it so you can recognize it in the future.
-.It Cm file Ns = Ns Ar filename
-Where the game should be saved to.
-.Nm
-may automatically save the game in this file under certain conditions.
-The file name may contain the special character "~" which expands to
-your home directory.
+will ask you what to name it so you can recognize it in the future. On
+by default.
 .It Cm flush , Cm noflush
 If flush is set, all typeahead is thrown away after each round of
 battle. This is useful for those who type way ahead and watch to their
-dismay as a Kobold kills them.
-.It Cm fruit Ns = Ns Ar fruit-name
-This should hold the name of a fruit that you enjoy eating, such as a
-snozzcumber. Snozzcumbers are a critical part of the dungeon
-ecology and are not some
-.Qq whimsy
-as claimed by previous authors.
+dismay as a Kobold kills them. Off by default.
 .It Cm jump , Cm nojump
 If this option is set, running moves will not be displayed until you
 reach the end of the move. This saves considerable CPU time and display
-time. This option defaults to on if you are using a slow terminal.
-.Pp
-.Xr nanosleep 2
-calls have been added to make
-.Cm nojump
-slow enough to be seen on modern systems.
-.It Cm name Ns = Ns Ar character-name
-This is the name of your character. It is used if you get on the top ten
-list. It must be less than 80 characters long.
+time. This option defaults to on if you are using a slow terminal,
+otherwise it is off by default.
 .It Cm step , Cm nostep
-When set lists of things, like inventories or
-.Qq *
-responses to
-.Qq Which item do you wish to xxxx?
-questions, are displayed one item at a time on the top of the screen,
-rather than clearing the screen, displaying the list, then re-displaying
-the dungeon level.
+When this is set, lists of things are displayed one item at a time on
+the top of the screen, rather than clearing the screen, displaying the
+list, then re-displaying the dungeon level.
 .It Cm terse , Cm noterse
 Useful for those who are tired of the sometimes lengthy messages. This
 is a useful option for those on slow terminals. This option defaults to
-on if your are on a slow (under 1200 baud) terminal.
+on if you are using a slow terminal, otherwise it is off by default.
 .El
 .Sh ENVIRONMENT
 .Bl -tag -width Ds
 .It Ev ROGUEHOME
-Directory that will be used for the score file,
-.Ev HOME
-by default if various other directories do not work out. Tilde expansion
-is not supported by this variable.
-.It Ev ROGUELOG
-If set enables key logging of the game for future replay. This disables
-the ability to save the game.
+Directory that will be used for the score and save files. The current
+working directory is used if this is not set.
 .It Ev ROGUEOPTS
 A comma separated list of values for the various
 .Sx Options .
-.It Ev SEED
-Seed for replay or wizard mode. Integer.
-.El
-.Sh FILES
-.Bl -tag -width Ds
-.It Pa rogue36.scr
-Score file.
-.It Pa ~/rogue36.sav
-Default save file. An automatic save will be attempted in response to
-various signals such as
-.Dv SIGHUP .
+These are only read for new games.
 .El
 .Sh EXIT STATUS
-.Ex -std
+.Nm
+exits with a 0 on victory, and >0 in every other case.
 .Sh SEE ALSO
+.Nm Angband ,
 .Nm Brogue ,
 .Nm crawl ,
-.Xr ncurses 3 ,
-.Xr vi 1
+.Nm POWDER ,
+.Nm Sil
 .Sh HISTORY
 This version began from a
 .Pa rogue3.6.3-src.tar.gz
 file found somewhere on the Internet and has been updated to compile on
-modern unix systems, plus a few other changes, hopefully without
-introducing too many new bugs.
+modern unix systems, plus a bunch of other changes and cleanups,
+hopefully without introducing too many new bugs.
 .Sh AUTHORS
 .An Ken Arnold ,
 .An Michael Toy ,
@@ -413,10 +401,6 @@ introducing too many new bugs.
 Machine Dependent Code for Porting Unix/Curses games:
 .Pp
 .An Nicholas J. Kisseberth
-.Pp
-FreeSec: libcrypt:
-.Pp
-.An David Burren
 .Ss Acknowledgements
 Rogue was originally conceived of by Glenn Wichman and Michael Toy. The
 help of Ken Arnold in making the program easier to use and putting the
@@ -458,34 +442,21 @@ design goal.
 .Sh BUGS
 .Qq Probably infinite.
 .Pp
-In particular
-.Nm
-does not change
-.Dv LINES
-nor
-.Dv COLS
-when the terminal is resized; this may lead to corrupted maps where
-vertical walls are shown as runs of
-.Qq || .
-So do not resize the terminal after starting the game. The minimum
-required terminal size is 70x22.
+Soft locks involving floating eyes have been worked around by making
+floating eyes more lethal. You're welcome.
 .Pp
+The RNG is bad and exhibits non-random results from inputs such as
+repeated coinflips.
+.Pp
+Scrolls can be read while blind. Other roguelikes disallow this, but
+maybe the scrolls use braille? Also throwing things can pass along
+confuse and somehow identify monsters.
+.Ss Known Issues
 If
 .Nm
 goes to 100% CPU try sending the process a
 .Dv HUP
-signal then restoring from the save game file.
-.Pp
-Soft locks involving floating eyes have been worked around by making
-floating eyes more lethal.
-.Pp
-The RNG is really bad and exhibits non-random results from inputs such
-as repeated coinflips.
-.Pp
-Scrolls can be read while blind. Other roguelikes disallow this, but
-maybe the scrolls use braille?
-.Pp
-Some but not all environment values support tilde expansion of the home
-directory. Probably best to fully qualify all paths in advance.
+signal then restoring from the save game file. Wizard mode or more
+likely a debug build will be necessary to trace down the issue.
 .Sh SECURITY CONSIDERATIONS
 An abundance of C code from the 1980s.

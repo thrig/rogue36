@@ -1,4 +1,3 @@
-
 /*
  * Read a scroll and let it happen
  *
@@ -46,16 +45,16 @@ void read_scroll(void)
     switch (obj->o_which) {
     case S_CONFUSE:
         /*
-         * Scroll of monster confusion.  Give him that power.
+         * Scroll of monster confusion.  Give them that power.
          */
         msg("Your hands begin to glow red");
         player.t_flags |= CANHUH;
         break;
     case S_LIGHT:
         s_know[S_LIGHT] = TRUE;
-        if ((rp = roomin(&hero)) == NULL)
+        if ((rp = roomin(&hero)) == NULL) {
             msg("The corridor glows and then fades");
-        else {
+        } else {
             addmsg("The room is lit");
             if (!terse)
                 addmsg(" by a shimmering blue light.");
@@ -84,9 +83,9 @@ void read_scroll(void)
             int x, y;
             struct linked_list *mon;
 
-            for (x = hero.x - 2; x <= hero.x + 2; x++)
-                for (y = hero.y - 2; y <= hero.y + 2; y++)
-                    if (y > 0 && x > 0 && isupper(mvwinch(mw, y, x)))
+            for (x = hero.x - 2; x <= hero.x + 2; x++) {
+                for (y = hero.y - 2; y <= hero.y + 2; y++) {
+                    if (y > 0 && x > 0 && isupper(mvwinch(mw, y, x))) {
                         if ((mon = find_mons(y, x)) != NULL) {
                             struct thing *th;
 
@@ -94,6 +93,9 @@ void read_scroll(void)
                             th->t_flags &= ~ISRUN;
                             th->t_flags |= ISHELD;
                         }
+                    }
+                }
+            }
         }
         break;
     case S_SLEEP:
@@ -107,7 +109,7 @@ void read_scroll(void)
     case S_CREATE:
         /*
          * Create a monster
-         * First look in a circle around him, next try his room
+         * First look in a circle around the player, next try the room,
          * otherwise give up
          */
         {
@@ -118,7 +120,7 @@ void read_scroll(void)
             /*
              * Search for an open place
              */
-            for (y = hero.y - 1; y <= hero.y + 1; y++)
+            for (y = hero.y - 1; y <= hero.y + 1; y++) {
                 for (x = hero.x - 1; x <= hero.x + 1; x++) {
                     /*
                      * Don't put a monster in top of the player.
@@ -135,11 +137,13 @@ void read_scroll(void)
                         }
                     }
                 }
+            }
             if (appear) {
                 titem = new_item(sizeof(struct thing));
                 new_monster(titem, randmonster(FALSE), &mp);
-            } else
+            } else {
                 msg("You hear a faint cry of anguish in the distance.");
+            }
         }
         break;
     case S_IDENT:
@@ -160,8 +164,8 @@ void read_scroll(void)
         /*
          * Take all the things we want to keep hidden out of the window
          */
-        for (i = 0; i < LINES; i++)
-            for (j = 0; j < COLS; j++) {
+        for (i = 0; i < ROLINES; i++) {
+            for (j = 0; j < ROCOLS; j++) {
                 switch (nch = ch = (char) mvwinch(hw, i, j)) {
                 case SECRETDOOR:
                     nch = DOOR;
@@ -186,8 +190,9 @@ void read_scroll(void)
                 if (nch != ch)
                     waddch(hw, nch);
             }
+        }
         /*
-         * Copy in what he has discovered
+         * Copy in what they have discovered
          */
         overlay(cw, hw);
         /*
@@ -214,14 +219,19 @@ void read_scroll(void)
                 s_know[S_GFIND] = TRUE;
                 show_win(hw,
                          "You begin to feel greedy and you sense gold.--More--");
-            } else
+            } else {
                 msg("You begin to feel a pull downward");
+            }
         }
         break;
     case S_TELEP:
         /*
          * Scroll of teleportation:
-         * Make him dissapear and reappear
+         *  Some hold that this makes the player vanish and reappear
+         *  somewhere else. Another--perhaps heretical--claim is that
+         *  the "similarity of two different locations" may be increased
+         *  to the point that "the source location becomes the
+         *  destination location". Regardless, this is how it happens.
          */
         {
             int rm;
@@ -235,9 +245,9 @@ void read_scroll(void)
         }
         break;
     case S_ENCH:
-        if (cur_weapon == NULL)
-            msg("You feel a strange sense of loss.");
-        else {
+        if (cur_weapon == NULL) {
+            msg("Your hands glow blue for moment. Oops.");
+        } else {
             cur_weapon->o_flags &= ~ISCURSED;
             if (rnd(100) > 50)
                 cur_weapon->o_hplus++;
@@ -303,9 +313,9 @@ void read_scroll(void)
      * Get rid of the thing
      */
     inpack--;
-    if (obj->o_count > 1)
+    if (obj->o_count > 1) {
         obj->o_count--;
-    else {
+    } else {
         detach(pack, item);
         discard(item);
     }

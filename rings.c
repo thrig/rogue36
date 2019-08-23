@@ -48,11 +48,11 @@ void ring_on(void)
     if (cur_ring[LEFT] == NULL && cur_ring[RIGHT] == NULL) {
         if ((ring = gethand()) < 0)
             return;
-    } else if (cur_ring[LEFT] == NULL)
+    } else if (cur_ring[LEFT] == NULL) {
         ring = LEFT;
-    else if (cur_ring[RIGHT] == NULL)
+    } else if (cur_ring[RIGHT] == NULL) {
         ring = RIGHT;
-    else {
+    } else {
         if (!terse)
             msg("You already have a ring on each hand");
         else
@@ -106,12 +106,13 @@ void ring_off(void)
         else
             msg("You aren't wearing any rings");
         return;
-    } else if (cur_ring[LEFT] == NULL)
+    } else if (cur_ring[LEFT] == NULL) {
         ring = RIGHT;
-    else if (cur_ring[RIGHT] == NULL)
+    } else if (cur_ring[RIGHT] == NULL) {
         ring = LEFT;
-    else if ((ring = gethand()) < 0)
+    } else if ((ring = gethand()) < 0) {
         return;
+    }
     mpos = 0;
     obj = cur_ring[ring];
     if (obj == NULL) {
@@ -126,7 +127,7 @@ int gethand(void)
 {
     int c;
 
-    for (;;) {
+    while (1) {
         if (terse)
             msg("Left or Right ring? ");
         else
@@ -158,7 +159,7 @@ int ring_eat(int hand)
     case R_SUSTSTR:
         return 1;
     case R_SEARCH:
-        return (rnd(100) < 33);
+        return rnd(100) < 33;
     case R_DIGEST:
         return -(rnd(100) < 50);
     default:

@@ -10,9 +10,9 @@ long argtol(const char *arg, const long min, const long max)
     errno = 0;
     val = strtol(arg, &ep, 0);
     if (arg[0] == '\0' || *ep != '\0')
-        errx(1, "strtol failed");
+        err(1, "strtol failed");
     if (errno == ERANGE && (val == LONG_MIN || val == LONG_MAX))
-        errx(1, "argument outside range of long");
+        err(1, "argument outside range of long");
     if (min != LONG_MIN && val < min)
         errx(1, "value is below minimum");
     if (max != LONG_MAX && val > max)

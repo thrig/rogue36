@@ -16,60 +16,10 @@
 #include <string.h>
 #include "rogue.h"
 
-/*
- * whatis:
- *	What a certin object is
- */
-
-void whatis(void)
-{
-    struct object *obj;
-    struct linked_list *item;
-
-    if ((item = get_item("identify", 0)) == NULL)
-        return;
-    obj = (struct object *) ldata(item);
-    switch (obj->o_type) {
-    case SCROLL:
-        s_know[obj->o_which] = TRUE;
-        if (s_guess[obj->o_which]) {
-            free(s_guess[obj->o_which]);
-            s_guess[obj->o_which] = NULL;
-        }
-        break;
-    case POTION:
-        p_know[obj->o_which] = TRUE;
-        if (p_guess[obj->o_which]) {
-            free(p_guess[obj->o_which]);
-            p_guess[obj->o_which] = NULL;
-        }
-        break;
-    case STICK:
-        ws_know[obj->o_which] = TRUE;
-        obj->o_flags |= ISKNOW;
-        if (ws_guess[obj->o_which]) {
-            free(ws_guess[obj->o_which]);
-            ws_guess[obj->o_which] = NULL;
-        }
-        break;
-    case WEAPON:
-    case ARMOR:
-        obj->o_flags |= ISKNOW;
-        break;
-    case RING:
-        r_know[obj->o_which] = TRUE;
-        obj->o_flags |= ISKNOW;
-        if (r_guess[obj->o_which]) {
-            free(r_guess[obj->o_which]);
-            r_guess[obj->o_which] = NULL;
-        }
-    }
-    msg(inv_name(obj, FALSE));
-}
-
+#ifdef WIZARD
 /*
  * create_obj:
- *	Wizard command for getting anything he wants
+ *	Wizard command for getting anything they want
  */
 
 void create_obj(void)
@@ -125,10 +75,11 @@ void create_obj(void)
         fix_stick(obj);
     add_pack(item, FALSE);
 }
+#endif
 
 /*
  * telport:
- *	Bamf the hero someplace else
+ *	Bamf the hero someplace else (used by various !wizard code)
  */
 
 int teleport(void)
@@ -161,27 +112,53 @@ int teleport(void)
 }
 
 /*
- * passwd:
- *	see if user knows password
+ * whatis:
+ *	What a certin object is
  */
 
-int passwd(void)
+void whatis(void)
 {
-    char *sp, c;
-    char buf[ROGUE_CHARBUF_MAX], *xcrypt();
+    struct object *obj;
+    struct linked_list *item;
 
-    msg("Wizard's Password:");
-    mpos = 0;
-    sp = buf;
-    while ((c = readchar(cw)) != '\n' && c != '\r' && c != '\033')
-        if (c == md_killchar())
-            sp = buf;
-        else if (c == md_erasechar() && sp > buf)
-            sp--;
-        else
-            *sp++ = c;
-    if (sp == buf)
-        return FALSE;
-    *sp = '\0';
-    return (strcmp(PASSWD, xcrypt(buf, "mT")) == 0);
+    if ((item = get_item("identify", 0)) == NULL)
+        return;
+    obj = (struct object *) ldata(item);
+    switch (obj->o_type) {
+    case SCROLL:
+        s_know[obj->o_which] = TRUE;
+        if (s_guess[obj->o_which]) {
+            free(s_guess[obj->o_which]);
+            s_guess[obj->o_which] = NULL;
+        }
+        break;
+    case POTION:
+        p_know[obj->o_which] = TRUE;
+        if (p_guess[obj->o_which]) {
+            free(p_guess[obj->o_which]);
+            p_guess[obj->o_which] = NULL;
+        }
+        break;
+    case STICK:
+        ws_know[obj->o_which] = TRUE;
+        obj->o_flags |= ISKNOW;
+        if (ws_guess[obj->o_which]) {
+            free(ws_guess[obj->o_which]);
+            ws_guess[obj->o_which] = NULL;
+        }
+        break;
+    case WEAPON:
+    case ARMOR:
+        obj->o_flags |= ISKNOW;
+        break;
+    case RING:
+        r_know[obj->o_which] = TRUE;
+        obj->o_flags |= ISKNOW;
+        if (r_guess[obj->o_which]) {
+            free(r_guess[obj->o_which]);
+            r_guess[obj->o_which] = NULL;
+        }
+    }
+    msg(inv_name(obj, FALSE));
 }
+

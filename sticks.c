@@ -57,20 +57,21 @@ void do_zap(bool gotdir)
         msg("Nothing happens.");
         return;
     }
-    if (!gotdir)
+    if (!gotdir) {
         do {
             delta.y = rnd(3) - 1;
             delta.x = rnd(3) - 1;
         } while (delta.y == 0 && delta.x == 0);
+    }
     switch (obj->o_which) {
     case WS_LIGHT:
         /*
          * Reddy Kilowat wand.  Light up the room
          */
         ws_know[WS_LIGHT] = TRUE;
-        if ((rp = roomin(&hero)) == NULL)
+        if ((rp = roomin(&hero)) == NULL) {
             msg("The corridor glows and then fades");
-        else {
+        } else {
             addmsg("The room is lit");
             if (!terse)
                 addmsg(" by a shimmering blue light.");
@@ -87,16 +88,17 @@ void do_zap(bool gotdir)
         /*
          * Take away 1/2 of hero's hit points, then take it away
          * evenly from the monsters in the room (or next to hero
-         * if he is in a passage)
+         * if they are in a passage)
          */
         if (pstats.s_hpt < 2) {
             msg("You are too weak to use it.");
             return;
-        } else if ((rp = roomin(&hero)) == NULL)
+        } else if ((rp = roomin(&hero)) == NULL) {
             drain(hero.y - 1, hero.y + 1, hero.x - 1, hero.x + 1);
-        else
+        } else {
             drain(rp->r_pos.y, rp->r_pos.y + rp->r_max.y,
                   rp->r_pos.x, rp->r_pos.x + rp->r_max.x);
+        }
         break;
     case WS_POLYMORPH:
     case WS_TELAWAY:
@@ -165,8 +167,7 @@ void do_zap(bool gotdir)
 
             do_motion(&bolt, delta.y, delta.x);
             if (isupper(mvwinch(mw, bolt.o_pos.y, bolt.o_pos.x))
-                && !save_throw(VS_MAGIC,
-                               (struct thing *)
+                && !save_throw(VS_MAGIC, (struct thing *)
                                ldata(find_mons(unc(bolt.o_pos)))))
                 hit_monster(unc(bolt.o_pos), &bolt);
             else if (terse)
@@ -235,7 +236,6 @@ void do_zap(bool gotdir)
                 '*', {0, 0}, 0, "", "6d6", 0, 0, 100, 0, 0, 0, 0
             };
 
-
             switch (delta.y + delta.x) {
             case 0:
                 dirch = '/';
@@ -298,8 +298,9 @@ void do_zap(bool gotdir)
                             if ((pstats.s_hpt -= roll(6, 6)) <= 0)
                                 death('b');
                             used = TRUE;
-                        } else
+                        } else {
                             msg("The %s whizzes by you", name);
+                        }
                     }
                     mvwaddch(cw, pos.y, pos.x, dirch);
                     draw(cw);
@@ -307,9 +308,10 @@ void do_zap(bool gotdir)
                 pos.y += delta.y;
                 pos.x += delta.x;
             }
-            for (x = 0; x < y; x++)
+            for (x = 0; x < y; x++) {
                 mvwaddch(cw, spotpos[x].y, spotpos[x].x,
                          show(spotpos[x].y, spotpos[x].x));
+            }
             ws_know[obj->o_which] = TRUE;
         }
         break;
@@ -334,10 +336,11 @@ void drain(int ymin, int ymax, int xmin, int xmax)
      * First count how many things we need to spread the hit points among
      */
     count = 0;
-    for (i = ymin; i <= ymax; i++)
+    for (i = ymin; i <= ymax; i++) {
         for (j = xmin; j <= xmax; j++)
             if (isupper(mvwinch(mw, i, j)))
                 count++;
+    }
     if (count == 0) {
         msg("You have a tingling feeling");
         return;
@@ -347,18 +350,20 @@ void drain(int ymin, int ymax, int xmin, int xmax)
     /*
      * Now zot all of the monsters
      */
-    for (i = ymin; i <= ymax; i++)
-        for (j = xmin; j <= xmax; j++)
+    for (i = ymin; i <= ymax; i++) {
+        for (j = xmin; j <= xmax; j++) {
             if (isupper(mvwinch(mw, i, j)) &&
                 ((item = find_mons(i, j)) != NULL)) {
                 ick = (struct thing *) ldata(item);
                 if ((ick->t_stats.s_hpt -= count) < 1)
                     killed(item, cansee(i, j) && !on(*ick, ISINVIS));
             }
+        }
+    }
 }
 
 /*
- * charge a wand for wizards.
+ * show charges on a stick
  */
 char *charge_str(struct object *obj)
 {

@@ -1,4 +1,6 @@
 *.core
 *.dSYM
 *.o
+highscores
 rogue
+sav.*
