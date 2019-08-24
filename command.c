@@ -17,6 +17,8 @@
 
 #include "rogue.h"
 
+extern int revision_num;
+
 struct timespec jumpdelay = { 0, JUMP_DELAY };
 
 void call(void);
@@ -292,7 +294,7 @@ inline void command(void)
                     after = FALSE;
                 break;
             case 'v':
-                msg("Rogue version %s + bugfixes + changes.", release);
+                msg("Rogue 3.6.3 + bugfixes + changes (%d)", revision_num);
                 break;
             case CTRL('L'):
                 after = FALSE;

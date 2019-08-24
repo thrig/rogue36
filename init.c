@@ -82,16 +82,16 @@ struct trap traps[MAXTRAPS];
 struct monster monsters[26] = {
 /* Name          CARRY  FLAG    str,  exp, lvl, amr, hpt, dmg */
 { "giant ant",   0,     ISMEAN, { _x,  10,   2,   3, ___, "1d6" } },
-{ "bat",         0,     0,      { _x,   1,   1,   3, ___, "1d2" } },
+{ "bat",         0,     0,      { _x,   2,   1,   3, ___, "1d2" } },
 { "centaur",     30,    0,      { _x,  15,   4,   4, ___, "1d6/1d6" } },
 { "dragon",      100,   ISGREED,{ _x,9000,  10,  -1, ___, "1d8/1d8/3d10" } },
 { "floating eye",0,     0,      { _x,   5,   1,   7, ___, "0d0" } },
 { "violet fungi",0,     ISMEAN, { _x,  85,   8,   3, ___, "000d0" } },
-{ "gnome",       20,    0,      { _x,   8,   1,   5, ___, "1d6" } },
-{ "hobgoblin",   10,    ISMEAN, { _x,   3,   1,   5, ___, "1d8" } },
+{ "gnome",       20,    0,      { _x,   8,   1,   4, ___, "1d6" } },
+{ "hobgoblin",   10,    ISMEAN, { _x,   4,   1,   5, ___, "1d4" } },
 { "invisible stalker",0,ISINVIS,{ _x, 120,   8,   3, ___, "4d4" } },
-{ "jackal",      0,     ISMEAN, { _x,   2,   1,   7, ___, "1d2" } },
-{ "kobold",      5,     ISMEAN, { _x,   1,   1,   7, ___, "1d4" } },
+{ "jackal",      0,     ISMEAN, { _x,   2,   1,   6, ___, "1d2" } },
+{ "kobold",      5,     ISMEAN, { _x,   2,   1,   7, ___, "1d4" } },
 { "leprechaun",  0,     0,      { _x,  10,   3,   8, ___, "1d1" } },
 { "mimic",       60,    0,      { _x, 140,   7,   7, ___, "3d4" } },
 { "nymph",       100,   0,      { _x,  40,   3,   9, ___, "0d0" } },
@@ -148,6 +148,15 @@ void init_player(void)
     obj->o_flags |= ISKNOW;
     add_pack(item, TRUE);
     cur_weapon = obj;
+
+    item = new_item(sizeof *obj);
+    obj = (struct object *) ldata(item);
+    obj->o_type = ARMOR;
+    obj->o_which = LEATHER;
+    obj->o_ac = a_class[LEATHER];
+    obj->o_flags |= ISKNOW;
+    cur_armor = obj;
+    add_pack(item, TRUE);
 
     item = new_item(sizeof *obj);
     obj = (struct object *) ldata(item);

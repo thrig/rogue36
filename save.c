@@ -22,6 +22,7 @@
 #include "rogue.h"
 
 extern char version[], encstr[];
+extern int version_num, revision_num;
 
 int dosave(FILE * savef);
 
@@ -77,7 +78,7 @@ int dosave(FILE * savef)
     strcpy(buf, version);
     encwrite(buf, ROGUE_CHARBUF_MAX, savef);
     memset(buf, 0, ROGUE_CHARBUF_MAX);
-    strcpy(buf, "R36 4\n");
+    sprintf(buf, "R%d %d\n", version_num, revision_num);
     encwrite(buf, ROGUE_CHARBUF_MAX, savef);
     memset(buf, 0, ROGUE_CHARBUF_MAX);
 
@@ -108,7 +109,7 @@ inline void restore(void)
     encread(buf, ROGUE_CHARBUF_MAX, inf);
     sscanf(buf, "R%d %d\n", &rogue_version, &savefile_version);
 
-    if ((rogue_version != 36) && (savefile_version != 4)) {
+    if ((rogue_version != version_num) && (savefile_version != revision_num)) {
         endwin();
         printf("Sorry, saved game format is out of date.\n");
         exit(1);

@@ -23,6 +23,8 @@
 
 #include "rogue.h"
 
+extern int version_num, revision_num;
+
 static char *rip[] = {
     "                       __________",
     "                      /          \\",
@@ -138,7 +140,7 @@ void score(int type, int amount, char monst)
     encread((char *) scoreline, 100, fd);
     sscanf(scoreline, "R%d %d\n", &rogue_ver, &scorefile_ver);
 
-    if (rogue_ver == 36 && scorefile_ver == 4) {
+    if (rogue_ver == version_num && scorefile_ver == revision_num) {
         for (i = 0; i < MAX_SCORES; i++) {
             encread((char *) &scores[i].sc_name, WHOAMI_LEN + 1, fd);
             encread((char *) scoreline, 100, fd);
@@ -199,7 +201,7 @@ void score(int type, int amount, char monst)
 
     flock(fd, LOCK_EX);
     fseek(outf, 0L, SEEK_SET);
-    strcpy(scoreline, "R36 4\n");
+    sprintf(scoreline, "R%d %d\n", version_num, revision_num);
     encwrite(scoreline, 100, outf);
     for (i = 0; i < MAX_SCORES; i++) {
         encwrite((char *) &scores[i].sc_name, WHOAMI_LEN + 1, outf);
