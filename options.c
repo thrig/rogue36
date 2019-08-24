@@ -14,6 +14,7 @@
 
 #include <ctype.h>
 #include <string.h>
+
 #include "rogue.h"
 
 #define	NUM_OPTS	(sizeof optlist / sizeof (OPTION))
@@ -229,9 +230,8 @@ int get_str(char *opt, WINDOW * win)
 /*
  * parse options from string, usually taken from the environment.
  * the string is a series of comma seperated values, with booleans
- * being stated as "name" (true) or "noname" (false), and strings
- * being "name=....", with the string being defined up to a comma
- * or the end of the entire option string.
+ * being stated as "name" (true) or "noname" (false), and string
+ * options being no longer existing.
  */
 
 void parse_opts(char *str)

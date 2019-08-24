@@ -12,6 +12,7 @@
 
 #include <ctype.h>
 #include <string.h>
+
 #include "rogue.h"
 
 /*

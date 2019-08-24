@@ -11,6 +11,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+
 #include "rogue.h"
 
 void quaff(void)

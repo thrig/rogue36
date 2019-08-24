@@ -11,6 +11,7 @@
  */
 
 #include <stdlib.h>
+
 #include "rogue.h"
 
 void conn(int r1, int r2);

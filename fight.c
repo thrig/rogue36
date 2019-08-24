@@ -13,6 +13,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "rogue.h"
 
 long e_levels[] = {
@@ -591,7 +592,6 @@ void raise_level(void)
 
 void thunk(struct object *weap, char *mname)
 {
-// TODO hide name if monster is not visible to player (information leak)
     if (weap->o_type == WEAPON)
         msg("The %s hits the %s", w_names[weap->o_which], mname);
     else

@@ -11,6 +11,7 @@
  */
 
 #include <stdlib.h>
+
 #include "rogue.h"
 
 void draw_room(struct room *rp);

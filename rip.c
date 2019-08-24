@@ -20,7 +20,6 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 #include "rogue.h"
 
@@ -126,12 +125,13 @@ void score(int type, int amount, char monst)
 
     signal(SIGINT, SIG_DFL);
 
-// TODO does this get a message from player or is it only collecting return?
     if (type != SCORE_VIEW && type != SCORE_QUIT) {
         mvaddstr(ROLINES - 1, 0, "[Press return to continue]");
         draw(stdscr);
-        prbuf[0] = 0;
-        get_str(prbuf, stdscr);
+// XXX
+//prbuf[0] = 0;
+//get_str(prbuf, stdscr);
+        wait_for(stdscr, '\n');
         endwin();
     }
 

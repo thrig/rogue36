@@ -13,6 +13,7 @@
 #include <curses.h>
 #include <limits.h>
 #include <stdbool.h>
+#include <time.h>
 
 /*
  * Modern systems are too fast - slow things down with nanosleep(2).
@@ -469,6 +470,8 @@ extern struct magic_item s_magic[MAXSCROLLS];   /* Names and chances for scrolls
 extern struct magic_item p_magic[MAXPOTIONS];   /* Names and chances for potions */
 extern struct magic_item r_magic[MAXRINGS];     /* Names and chances for rings */
 extern struct magic_item ws_magic[MAXSTICKS];   /* Names and chances for sticks */
+
+extern struct timespec throwdelay;
 
 extern int logfd;               /* Descriptor for key logging */
 extern int level;               /* What level rogue is on */

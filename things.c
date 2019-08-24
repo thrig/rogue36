@@ -13,6 +13,7 @@
 
 #include <ctype.h>
 #include <string.h>
+
 #include "rogue.h"
 
 int pick_one(struct magic_item *magic, int nitems);

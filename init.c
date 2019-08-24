@@ -31,6 +31,8 @@ int no_food = 0, count = 0, fung_hit = 0, quiet = 0, search_repeat = 0;
 int food_left = HUNGERTIME, group = 1, hungry_state = 0;
 int lastscore = -1;
 
+struct timespec throwdelay = { 0, THROW_DELAY };
+
 struct thing player;
 struct room rooms[MAXROOMS];
 struct room *oldrp;
@@ -83,7 +85,7 @@ struct monster monsters[26] = {
 { "bat",         0,     0,      { _x,   1,   1,   3, ___, "1d2" } },
 { "centaur",     30,    0,      { _x,  15,   4,   4, ___, "1d6/1d6" } },
 { "dragon",      100,   ISGREED,{ _x,9000,  10,  -1, ___, "1d8/1d8/3d10" } },
-{ "floating eye",0,     0,      { _x,   5,   1,   9, ___, "0d0" } },
+{ "floating eye",0,     0,      { _x,   5,   1,   7, ___, "0d0" } },
 { "violet fungi",0,     ISMEAN, { _x,  85,   8,   3, ___, "000d0" } },
 { "gnome",       20,    0,      { _x,   8,   1,   5, ___, "1d6" } },
 { "hobgoblin",   10,    ISMEAN, { _x,   3,   1,   5, ___, "1d8" } },
@@ -123,13 +125,8 @@ void init_player(void)
     pstats.s_lvl = 1;
     pstats.s_exp = 0L;
     max_hp = pstats.s_hpt = 12;
-    if (rnd(100) == 7) {
-        pstats.s_str.st_str = 18;
-        pstats.s_str.st_add = rnd(100) + 1;
-    } else {
-        pstats.s_str.st_str = 16;
-        pstats.s_str.st_add = 0;
-    }
+    pstats.s_str.st_str = 12;
+    pstats.s_str.st_add = 0;
     strcpy(pstats.s_dmg, "1d4");
     pstats.s_arm = 10;
     max_stats = pstats;
@@ -297,13 +294,13 @@ char *metal[] = {
 const int cNMETAL = NMETAL;
 
 struct magic_item things[NUMTHINGS] = {
-    {"", 27},                   /* potion */
-    {"", 27},                   /* scroll */
+    {"", 29},                   /* potion */
+    {"", 29},                   /* scroll */
     {"", 9},                    /* food */
     {"", 14},                   /* weapon */
     {"", 9},                    /* armor */
     {"", 5},                    /* ring */
-    {"", 9},                    /* stick */
+    {"", 5},                    /* stick */
 };
 
 struct magic_item s_magic[MAXSCROLLS] = {
@@ -574,7 +571,6 @@ void badcheck(char *name, struct magic_item *magic, int bound)
     exit(1);
 }
 
-// TODO update this to agree with all the changes
 struct h_list helpstr[] = {
     {'?', "     prints help"},
     {'/', "     identify object"},
@@ -599,12 +595,14 @@ struct h_list helpstr[] = {
     {'p', "<dir>        zap a wand in a direction"},
     {'z', "     zap a wand or staff"},
     {'>', "     go down a staircase"},
+    {'<', "     go up a staircase (with amulet)"},
     {'s', "     search for trap/secret door"},
     {'.', "     rest for a while"},
     {'i', "     inventory"},
     {'I', "     inventory single item"},
     {'q', "     quaff potion"},
-    {'r', "     read paper"},
+    {'r', "     read scroll"},
+    {'E', "     eat food"},
     {'e', "     eat food"},
     {'w', "     wield a weapon"},
     {'W', "     wear armor"},
@@ -618,6 +616,7 @@ struct h_list helpstr[] = {
     {CTRL('R'), "       repeat last message"},
     {ESCAPE, "  cancel command"},
     {'v', "     print program version number"},
+    {'S', "     save"},
     {'Q', "     quit"},
     {0, 0}
 };

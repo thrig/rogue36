@@ -11,6 +11,7 @@
  */
 
 #include <ctype.h>
+
 #include "rogue.h"
 
 /*

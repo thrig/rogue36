@@ -12,6 +12,7 @@
  */
 
 #include <string.h>
+
 #include "rogue.h"
 
 void put_things();

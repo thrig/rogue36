@@ -5,7 +5,7 @@ this began from a rogue3.6.3-src.tar.gz that was found somewhere  |..........|
 on the Internet and is mostly for historical interest. this code  |.*.....T..|
 is more likely to compile on modern unix systems; various fixes   +N.........|
 and tweaks have been made where deemed necessary. to build rogue  |..........|
-on OpenBSD run                                                    |..........|
+on OpenBSD (or macOS) run                                         |..........|
                                                                   |.......@..|
   make                                                            --------+---
 
@@ -30,6 +30,9 @@ look at, for starters
   CFLAGS='-D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L' make
 
    other Linux may or may not need similar?
+
+ * macOS - have only tested Mac OS X 10.11; in theory it should compile
+   on more recent releases
 
  * OpenBSD - at least version 6.4 is required for the pledge(2) and
    unveil(2) calls used to prevent rogue access to the system

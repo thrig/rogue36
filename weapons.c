@@ -12,12 +12,10 @@
 
 #include <ctype.h>
 #include <string.h>
-#include <time.h>
+
 #include "rogue.h"
 
 #define NONE 100
-
-struct timespec throwdelay = { 0, THROW_DELAY };
 
 char *w_names[MAXWEAPONS] = {
     "mace",

@@ -13,6 +13,7 @@
 
 #include <ctype.h>
 #include <string.h>
+
 #include "rogue.h"
 
 void drain(int ymin, int ymax, int xmin, int xmax);
@@ -304,6 +305,7 @@ void do_zap(bool gotdir)
                     }
                     mvwaddch(cw, pos.y, pos.x, dirch);
                     draw(cw);
+                    nanosleep(&throwdelay, NULL);
                 }
                 pos.y += delta.y;
                 pos.x += delta.x;

@@ -13,6 +13,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "rogue.h"
 
 void read_scroll(void)
@@ -109,27 +110,16 @@ void read_scroll(void)
     case S_CREATE:
         /*
          * Create a monster
-         * First look in a circle around the player, next try the room,
-         * otherwise give up
+         *  Place in random empty spot around player, otherwise give up
          */
         {
-            int x, y;
-            bool appear = 0;
             coord mp;
+            int appear = 0;
 
-            /*
-             * Search for an open place
-             */
-            for (y = hero.y - 1; y <= hero.y + 1; y++) {
-                for (x = hero.x - 1; x <= hero.x + 1; x++) {
-                    /*
-                     * Don't put a monster in top of the player.
-                     */
+            for (int y = hero.y - 1; y <= hero.y + 1; y++) {
+                for (int x = hero.x - 1; x <= hero.x + 1; x++) {
                     if (y == hero.y && x == hero.x)
                         continue;
-                    /*
-                     * Or anything else nasty
-                     */
                     if (step_ok((char) winat(y, x))) {
                         if (rnd(++appear) == 0) {
                             mp.y = y;
