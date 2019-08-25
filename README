@@ -55,8 +55,11 @@ via a shared account
   $ mkdir -p ~/share/rogue
   $ cat ~/usr/bin/rogue
   #!/bin/sh
-  ROGUEHOME=~/share/rogue ROGUEOPTS=flush,jump \
+  ROGUEHOME=~/share/rogue ROGUEOPTS=flush,jump TERM=vt102 \
   exec ~/libexec/rogue -n Thrig "$@"
+
+    though this makes debugging difficult as gdb(1) will find the
+    shell script
 
  2. multiuser - this will require an exec wrapper that sets ROGUEHOME to
     a shared directory. a setgid bit will be required somewhere to run

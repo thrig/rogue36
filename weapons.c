@@ -155,7 +155,7 @@ void do_motion(struct object *obj, int ydelta, int xdelta)
 
 /*
  * fall:
- *	Drop an item someplace around here.
+ *	Drop an item someplace around here; mulch if nowhere to put it.
  */
 
 void fall(struct linked_list *item, bool pr)
@@ -285,8 +285,8 @@ int fallpos(coord * pos, coord * newpos, bool passages)
     int y, x, cnt, ch;
 
     cnt = 0;
-    for (y = pos->y - 1; y <= pos->y + 1; y++) {
-        for (x = pos->x - 1; x <= pos->x + 1; x++) {
+    for (y = pos->y - 2; y <= pos->y + 2; y++) {
+        for (x = pos->x - 2; x <= pos->x + 2; x++) {
             /*
              * check to make certain the spot is empty, if it is,
              * put the object there, set it in the level list

@@ -209,17 +209,20 @@ void do_zap(bool gotdir)
             item = find_mons(y, x);
             tp = (struct thing *) ldata(item);
             if (obj->o_which == WS_HASTE_M) {
+                msg("The %s starts moving faster!", monsters[tp->t_type - 'A'].m_name);
                 if (on(*tp, ISSLOW))
                     tp->t_flags &= ~ISSLOW;
                 else
                     tp->t_flags |= ISHASTE;
             } else {
+                msg("The %s seems to slow down.", monsters[tp->t_type - 'A'].m_name);
                 if (on(*tp, ISHASTE))
                     tp->t_flags &= ~ISHASTE;
                 else
                     tp->t_flags |= ISSLOW;
                 tp->t_turn = TRUE;
             }
+            ws_know[obj->o_which] = TRUE;
             delta.y = y;
             delta.x = x;
             runto(&delta, &hero);
