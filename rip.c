@@ -20,10 +20,11 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "rogue.h"
 
-extern int version_num, revision_num;
+extern int revision_num;
 
 static char *rip[] = {
     "                       __________",
@@ -104,7 +105,7 @@ void score(int type, int amount, char monst)
     };
     char scoreline[100];
     char score_file[PATH_MAX];
-    int rogue_ver = 0, scorefile_ver = 0;
+    int scorefile_ver = 0;
 
     snprintf(score_file, PATH_MAX, "%s/highscores", roguedir);
 
@@ -128,19 +129,15 @@ void score(int type, int amount, char monst)
     signal(SIGINT, SIG_DFL);
 
     if (type != SCORE_VIEW && type != SCORE_QUIT) {
-        mvaddstr(ROLINES - 1, 0, "[Press return to continue]");
+        mvaddstr(ROLINES - 1, 0, "--Press return to continue--");
         draw(stdscr);
-// XXX
-//prbuf[0] = 0;
-//get_str(prbuf, stdscr);
         wait_for(stdscr, '\n');
         endwin();
     }
 
-    encread((char *) scoreline, 100, fd);
-    sscanf(scoreline, "R%d %d\n", &rogue_ver, &scorefile_ver);
-
-    if (rogue_ver == version_num && scorefile_ver == revision_num) {
+    read(fd, scoreline, 32);
+    sscanf(scoreline, "rogue 3.6.3 highscores %8d\n", &scorefile_ver);
+    if (scorefile_ver == revision_num) {
         for (i = 0; i < MAX_SCORES; i++) {
             encread((char *) &scores[i].sc_name, WHOAMI_LEN + 1, fd);
             encread((char *) scoreline, 100, fd);
@@ -201,8 +198,7 @@ void score(int type, int amount, char monst)
 
     flock(fd, LOCK_EX);
     fseek(outf, 0L, SEEK_SET);
-    sprintf(scoreline, "R%d %d\n", version_num, revision_num);
-    encwrite(scoreline, 100, outf);
+    fprintf(outf, "rogue 3.6.3 highscores %08d\n", revision_num);
     for (i = 0; i < MAX_SCORES; i++) {
         encwrite((char *) &scores[i].sc_name, WHOAMI_LEN + 1, outf);
         sprintf(scoreline, " %d %d %d %d \n",

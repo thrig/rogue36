@@ -10,7 +10,6 @@
  */
 
 char version[] = "@(#)vers.c    3.6 (Berkeley) 4/21/81";
-int version_num = 36;
 
 /*
  * For the "encryption" of the save and score files.
@@ -21,4 +20,4 @@ char encstr[] =
 /*
  * Increment this when the save or score file formats change.
  */
-int revision_num = 4;
+int revision_num = 5;

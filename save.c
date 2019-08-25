@@ -22,7 +22,7 @@
 #include "rogue.h"
 
 extern char version[], encstr[];
-extern int version_num, revision_num;
+extern int revision_num;
 
 int dosave(FILE * savef);
 
@@ -68,20 +68,13 @@ void auto_save(int p)
  */
 int dosave(FILE * savef)
 {
-    char buf[ROGUE_CHARBUF_MAX];
     int ret;
 
     wmove(cw, ROLINES - 1, 0);
     draw(cw);
 
-    memset(buf, 0, ROGUE_CHARBUF_MAX);
-    strcpy(buf, version);
-    encwrite(buf, ROGUE_CHARBUF_MAX, savef);
-    memset(buf, 0, ROGUE_CHARBUF_MAX);
-    sprintf(buf, "R%d %d\n", version_num, revision_num);
-    encwrite(buf, ROGUE_CHARBUF_MAX, savef);
-    memset(buf, 0, ROGUE_CHARBUF_MAX);
-
+    fputs(version, savef);
+    fprintf(savef, "\n%08d\n", revision_num);
     ret = rs_save_file(savef);
     fclose(savef);
     return ret;
@@ -89,30 +82,32 @@ int dosave(FILE * savef)
 
 inline void restore(void)
 {
-    int inf;
+    int inf, read_size, len;
     char buf[ROGUE_CHARBUF_MAX];
-    int rogue_version = 0, savefile_version = 0;
+    int savefile_version = 0;
 
     if ((inf = open(save_file, O_RDONLY)) < 0) {
         endwin();
         err(1, "open failed");
     }
 
-    encread(buf, ROGUE_CHARBUF_MAX, inf);
-
-    if (strcmp(buf, version) != 0) {
+    len = strlen(version);
+    read_size = read(inf, buf, len);
+    if (read_size != len || strcmp(buf, version) != 0) {
         endwin();
-        printf("Sorry, saved game is out of date.\n");
-        exit(1);
+        errx(1, "unknown save game version");
     }
 
-    encread(buf, ROGUE_CHARBUF_MAX, inf);
-    sscanf(buf, "R%d %d\n", &rogue_version, &savefile_version);
-
-    if ((rogue_version != version_num) && (savefile_version != revision_num)) {
+    read_size = read(inf, buf, 10);
+    if (read_size != 10) {
         endwin();
-        printf("Sorry, saved game format is out of date.\n");
-        exit(1);
+        errx(1, "unknown save game revision");
+    }
+    sscanf(buf, "\n%8d\n", &savefile_version);
+
+    if (savefile_version != revision_num) {
+        endwin();
+        errx(1, "save game format is out of date");
     }
 
     if (rs_restore_file(inf) != 0) {

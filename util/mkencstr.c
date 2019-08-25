@@ -7,16 +7,14 @@
 
 #define ENCSTR_LEN 42
 
-uint8_t encstr[ENCSTR_LEN];
-
 int main(void)
 {
-    arc4random_buf(encstr, ENCSTR_LEN);
     for (int i = 0; i < ENCSTR_LEN; i++) {
-        if (isprint(encstr[i]) && encstr[i] != '"')
-            putchar(encstr[i]);
+        int x = 1 + arc4random_uniform(255);
+        if (isprint(x) && x != '"')
+            putchar(x);
         else
-            printf("\\%03o", encstr[i]);
+            printf("\\%03o", x);
     }
     exit(EXIT_SUCCESS);
 }

@@ -66,6 +66,9 @@ via a shared account
     so two different players will be able to use the same -n name so
     there may need to be highscores improvements made
 
+    users MUST NOT have write access to save game files as the XOR
+    encryption is trivial to break (if you care about that)
+
  3. shared - a script will need to be written that converts logins to
     player names and runs rogue with a suitable -n argument for each
     user. handle timeouts and multiple sessions for the same user

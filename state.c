@@ -1857,7 +1857,7 @@ int rs_save_file(FILE * savef)
     rs_write_potions(savef);
     rs_write_rings(savef);
     rs_write_sticks(savef);
-    rs_write_chars(savef, whoami, WHOAMI_LEN+1);
+    rs_write_string(savef, whoami);
     rs_write_window(savef, cw);
     rs_write_window(savef, mw);
     rs_write_window(savef, stdscr);
@@ -1933,7 +1933,7 @@ int rs_restore_file(int inf)
     rs_read_potions(inf);
     rs_read_rings(inf);
     rs_read_sticks(inf);
-    rs_read_chars(inf, whoami, WHOAMI_LEN+1);
+    rs_read_string(inf, whoami, WHOAMI_LEN);
     rs_read_window(inf, cw);
     rs_read_window(inf, mw);
     rs_read_window(inf, stdscr);
