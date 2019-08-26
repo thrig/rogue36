@@ -1,4 +1,4 @@
-.Dd August 23 2019
+.Dd August 25 2019
 .Dt ROGUE 6
 .nh
 .Os
@@ -167,7 +167,7 @@ Zap a wand.
 Go down a staircase. Staircase are represented by
 .Qq % .
 .It Cm <
-With the amulet in hand, use this command to climb up at a staircase.
+With the amulet, use this command to climb up at a staircase.
 .It Cm s
 Search adjacent for traps or secret doors. It may take multiple attempts
 to find these. Multiple attempts without moving increases the odds that
@@ -187,7 +187,7 @@ Display the given inventory item.
 .It Cm q
 Quaff a potion.
 .It Cm r
-Read a paper.
+Read a scroll.
 .It Cm e Cm E
 Eat food. (Uppercase 
 .Cm E
@@ -195,7 +195,7 @@ is due to an
 .Nm Angband
 habit.)
 .It Cm w
-Wield a weapon. To fire an arrow first wield the bow.
+Wield a weapon. Thrown ammo is often more effective with a launcher.
 .It Cm W
 Wear armor. Only one piece can be worn at a time.
 .It Cm T
@@ -285,7 +285,7 @@ Floating eye.
 .It F
 Violet fungi.
 .It G
-Gnome.
+Ghast. (Gnomes have been retired to fairer pastures.)
 .It H
 Hobgoblin.
 .It J
@@ -449,14 +449,17 @@ The RNG is bad and exhibits non-random results from inputs such as
 repeated coinflips.
 .Pp
 Scrolls can be read while blind. Other roguelikes disallow this, but
-maybe the scrolls use braille? Also throwing things can pass along
-confuse and somehow identify monsters.
+maybe the scrolls use braille? Also throwing passes along confuse and
+somehow identifies monsters.
 .Ss Known Issues
 If
 .Nm
 goes to 100% CPU try sending the process a
 .Dv HUP
 signal then restoring from the save game file. Wizard mode or more
-likely a debug build will be necessary to trace down the issue.
+likely a debug build will be necessary to trace down the issue. Another
+method would be to send a
+.Dv QUIT
+signal to try to force a coredump.
 .Sh SECURITY CONSIDERATIONS
 An abundance of C code from the 1980s.

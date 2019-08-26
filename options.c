@@ -35,7 +35,7 @@ typedef struct optstruct OPTION;
 int put_bool(bool * b);
 int get_bool(bool * bp, WINDOW * win);
 
-OPTION optlist[] = {
+static OPTION optlist[] = {
     {"terse", "Terse output: ",
      (int *) &terse, put_bool, get_bool},
     {"flush", "Flush typeahead during battle: ",
@@ -155,79 +155,6 @@ int get_bool(bool * bp, WINDOW * win)
 }
 
 /*
- * set a string option -- only used by other calls now as the string
- * options have all been removed
- */
-int get_str(char *opt, WINDOW * win)
-{
-    char *sp;
-    int c, oy, ox;
-    char buf[GETSTR_MAX];
-
-    draw(win);
-    getyx(win, oy, ox);
-    // TODO does ncurses have a better routine for this (that does not
-    // have security issues?
-    /*
-     * loop reading in the string, and put it in a temporary buffer
-     */
-    for (sp = buf;
-         (c = readchar(win)) != '\n' && c != '\r' && c != '\033' && c != '\007';
-         wclrtoeol(win), draw(win)) {
-        if (c == -1) {
-            continue;
-        } else if (c == erasechar()) {
-            if (sp > buf) {
-                int i;
-                int myx, myy;
-
-                sp--;
-
-                for (i = (int) strlen(unctrl(*sp)); i; i--) {
-                    getyx(win, myy, myx);
-                    if ((myx == 0) && (myy > 0)) {
-                        wmove(win, myy - 1, getmaxx(win) - 1);
-                        waddch(win, ' ');
-                        wmove(win, myy - 1, getmaxx(win) - 1);
-                    } else {
-                        waddch(win, '\b');
-                    }
-                }
-            }
-            continue;
-        } else if (c == killchar()) {
-            sp = buf;
-            wmove(win, oy, ox);
-            continue;
-        } else if (sp == buf) {
-            if (c == '-') {
-                break;
-            }
-        }
-        if ((sp - buf) < GETSTR_MAX) {  /* Avoid overflow */
-            *sp++ = c;
-            waddstr(win, unctrl(c));
-        }
-    }
-    *sp = '\0';
-    /* only change option if something has been typed */
-    if (sp > buf)
-        strucpy(opt, buf, strlen(buf));
-    wmove(win, oy, ox);
-    waddstr(win, opt);
-    waddch(win, '\n');
-    draw(win);
-    if (win == cw)
-        mpos += sp - buf;
-    if (c == '-')
-        return MINUS;
-    else if (c == '\033' || c == '\007')
-        return QUIT;
-    else
-        return NORM;
-}
-
-/*
  * parse options from string, usually taken from the environment.
  * the string is a series of comma seperated values, with booleans
  * being stated as "name" (true) or "noname" (false), and string
@@ -274,19 +201,4 @@ void parse_opts(char *str)
             sp++;
         str = sp;
     }
-}
-
-/*
- * copy string using unctrl for things
- */
-void strucpy(char *s1, char *s2, int len)
-{
-    const char *sp;
-
-    while (len--) {
-        strcpy(s1, (sp = unctrl(*s2)));
-        s1 += strlen(sp);
-        s2++;
-    }
-    *s1 = '\0';
 }

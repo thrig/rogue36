@@ -24,7 +24,14 @@
 extern char version[], encstr[];
 extern int revision_num;
 
+static char *encsp;
+
 int dosave(FILE * savef);
+
+void reset_encstr(void)
+{
+    encsp = encstr;
+}
 
 int save_game(void)
 {
@@ -75,6 +82,7 @@ int dosave(FILE * savef)
 
     fputs(version, savef);
     fprintf(savef, "\n%08d\n", revision_num);
+    reset_encstr();
     ret = rs_save_file(savef);
     fclose(savef);
     return ret;
@@ -110,6 +118,7 @@ inline void restore(void)
         errx(1, "save game format is out of date");
     }
 
+    reset_encstr();
     if (rs_restore_file(inf) != 0) {
         endwin();
         errx(1, "cannot restore savefile");
@@ -126,16 +135,14 @@ inline void restore(void)
  */
 unsigned int encwrite(void *starta, unsigned int size, FILE * outf)
 {
-    char *ep;
     char *start = starta;
     unsigned int o_size = size;
-    ep = encstr;
 
     while (size) {
-        if (putc(*start++ ^ *ep++, outf) == EOF)
+        if (putc(*start++ ^ *encsp++, outf) == EOF)
             return o_size - size;
-        if (*ep == '\0')
-            ep = encstr;
+        if (*encsp == '\0')
+            encsp = encstr;
         size--;
     }
 
@@ -147,19 +154,16 @@ unsigned int encwrite(void *starta, unsigned int size, FILE * outf)
  */
 int encread(void *starta, unsigned int size, int inf)
 {
-    char *ep;
     int read_size;
     char *start = starta;
 
     if ((read_size = read(inf, start, size)) == -1 || read_size == 0)
         return read_size;
 
-    ep = encstr;
-
     while (size--) {
-        *start++ ^= *ep++;
-        if (*ep == '\0')
-            ep = encstr;
+        *start++ ^= *encsp++;
+        if (*encsp == '\0')
+            encsp = encstr;
     }
     return read_size;
 }

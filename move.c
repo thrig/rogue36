@@ -20,7 +20,7 @@ char be_trapped(coord * tc);
  * Used to hold the new hero position
  */
 
-coord nh;
+static coord nh;
 
 /*
  * do_run:

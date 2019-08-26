@@ -18,8 +18,6 @@
 
 void badcheck(char *name, struct magic_item *magic, int bound);
 
-int logfd;
-
 bool running = FALSE, wizard = FALSE;
 bool notify = TRUE, fight_flush = FALSE, terse = FALSE, door_stop = FALSE;
 bool jump = FALSE, slow_invent = FALSE, firstmove = FALSE, askme = TRUE;
@@ -65,7 +63,7 @@ char *p_guess[MAXPOTIONS];      /* Players guess at what potion is */
 char *r_guess[MAXRINGS];        /* Players guess at what ring is */
 char *ws_guess[MAXSTICKS];      /* Players guess at what wand is */
 char *ws_type[MAXSTICKS];       /* Is it a wand or a staff */
-char roguedir[PATH_MAX];        /* where the rogue files reside */
+char roguedir[ROGUEDIR_MAX];    /* where the rogue files reside */
 char save_file[PATH_MAX];       /* Save file name */
 char prbuf[ROGUE_CHARBUF_MAX];  /* Buffer for sprintfs */
 int max_hp;                     /* Player's max hit points */
@@ -85,28 +83,28 @@ struct monster monsters[26] = {
 { "bat",         0,     0,      { _x,   2,   1,   3, ___, "1d2" } },
 { "centaur",     30,    0,      { _x,  15,   4,   4, ___, "1d6/1d6" } },
 { "dragon",      100,   ISGREED,{ _x,9000,  10,  -1, ___, "1d8/1d8/3d10" } },
-{ "floating eye",0,     0,      { _x,   5,   1,   7, ___, "0d0" } },
-{ "violet fungi",0,     ISMEAN, { _x,  85,   8,   3, ___, "000d0" } },
-{ "gnome",       20,    0,      { _x,   8,   1,   4, ___, "1d6" } },
-{ "hobgoblin",   10,    ISMEAN, { _x,   4,   1,   5, ___, "1d4" } },
+{ "floating eye",0,     0,      { _x,   5,   1,   5, ___, "0d0" } },
+{ "violet fungi",30,    ISMEAN, { _x,  85,   8,   3, ___, "000d0" } },
+{ "ghast",       0,     ISREGEN|ISMEAN,{ _x,8,2,  7, ___, "1d10" } },
+{ "hobgoblin",   15,    ISMEAN, { _x,   4,   1,   5, ___, "1d4" } },
 { "invisible stalker",0,ISINVIS,{ _x, 120,   8,   3, ___, "4d4" } },
-{ "jackal",      0,     ISMEAN, { _x,   2,   1,   6, ___, "1d2" } },
-{ "kobold",      5,     ISMEAN, { _x,   2,   1,   7, ___, "1d4" } },
+{ "jackal",      0,     ISMEAN, { _x,   1,   1,   6, ___, "1d2" } },
+{ "kobold",      10,    ISMEAN, { _x,   2,   1,   7, ___, "1d4" } },
 { "leprechaun",  0,     0,      { _x,  10,   3,   8, ___, "1d1" } },
 { "mimic",       60,    0,      { _x, 140,   7,   7, ___, "3d4" } },
-{ "nymph",       100,   0,      { _x,  40,   3,   9, ___, "0d0" } },
-{ "orc",         30,    ISBLOCK,{ _x,   5,   1,   6, ___, "1d8" } },
+{ "nymph",       100,   0,      { _x,  40,   3,   9, ___, "1d1" } },
+{ "orc",         50,    ISMEAN, { _x,   7,   2,   4, ___, "1d4/1d4" } },
 { "purple worm", 70,    0,      { _x,7000,  15,   6, ___, "2d12/2d4" } },
 { "quasit",      60,    ISMEAN, { _x,  35,   3,   2, ___, "1d2/1d2/1d4" } },
-{ "rust monster",0,     ISMEAN, { _x,  25,   5,   2, ___, "0d0/0d0" } },
+{ "rust monster",0,     ISMEAN, { _x,  20,   5,   5, ___, "1d1/1d1" } },
 { "snake",       0,     ISMEAN, { _x,   3,   1,   5, ___, "1d3" } },
 { "troll",       75,    ISREGEN|ISMEAN,{ _x,55,6, 4, ___, "1d8/1d8/2d6" } },
 { "umber hulk",  80,    ISMEAN, { _x, 130,   8,   2, ___, "3d4/3d4/2d5" } },
 { "vampire",     65,    ISREGEN|ISMEAN,{ _x,380,8,1, ___, "1d10" } },
-{ "wraith",      0,     0,      { _x,  55,   5,   4, ___, "1d6" } },
+{ "wraith",      0,     0,      { _x,  55,   5,   4, ___, "1d8" } },
 { "xorn",        0,     ISMEAN, { _x, 120,   7,  -2, ___, "1d3/1d3/1d3/4d6" } },
-{ "yeti",        60,    0,      { _x,  50,   4,   6, ___, "1d6/1d6" } },
-{ "zombie",      0,     ISMEAN, { _x,   7,   2,   8, ___, "1d8" } }
+{ "yeti",        60,    0,      { _x,  50,   5,   6, ___, "1d6/1d6" } },
+{ "zombie",      0,     ISMEAN, { _x,   9,   4,   7, ___, "1d3/1d3/1d3" } }
 };
 /* *INDENT-ON* */
 
@@ -144,11 +142,13 @@ void init_player(void)
     obj->o_type = WEAPON;
     obj->o_which = DAGGER;
     init_weapon(obj, DAGGER);
-    obj->o_dplus = obj->o_hplus = 0;
+    obj->o_dplus = 0;
+    obj->o_hplus = 1;
     obj->o_flags |= ISKNOW;
     add_pack(item, TRUE);
     cur_weapon = obj;
 
+/* TODO dunno how frugal start should be (need to audit item gen)
     item = new_item(sizeof *obj);
     obj = (struct object *) ldata(item);
     obj->o_type = ARMOR;
@@ -157,6 +157,7 @@ void init_player(void)
     obj->o_flags |= ISKNOW;
     cur_armor = obj;
     add_pack(item, TRUE);
+*/
 
     item = new_item(sizeof *obj);
     obj = (struct object *) ldata(item);
@@ -304,12 +305,12 @@ const int cNMETAL = NMETAL;
 
 struct magic_item things[NUMTHINGS] = {
     {"", 29},                   /* potion */
-    {"", 29},                   /* scroll */
-    {"", 9},                    /* food */
-    {"", 14},                   /* weapon */
+    {"", 30},                   /* scroll */
+    {"", 5},                    /* food */
+    {"", 12},                   /* weapon */
     {"", 9},                    /* armor */
     {"", 5},                    /* ring */
-    {"", 5},                    /* stick */
+    {"", 10},                   /* stick */
 };
 
 struct magic_item s_magic[MAXSCROLLS] = {

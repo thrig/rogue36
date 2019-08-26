@@ -23,7 +23,7 @@
 
 #include "rogue.h"
 
-int have_seed;
+static int have_seed;
 
 WINDOW *cw;                     /* Window that the player sees */
 WINDOW *hw;                     /* Used for the help command */
@@ -32,9 +32,9 @@ WINDOW *mw;                     /* Used to store mosnters */
 long argtol(const char *arg, const long min, const long max);
 void endit(int p);
 char *getroguedir(void);
-int load_savefile(void);
-void new_game(void);
-void seed_rng(void);
+static int load_savefile(void);
+static void new_game(void);
+static void seed_rng(void);
 void tstp(int);
 
 int main(int argc, char *argv[])
@@ -188,7 +188,7 @@ inline char *getroguedir(void)
  * the player name contains reserved characters.
  */
 
-inline int load_savefile(void)
+inline static int load_savefile(void)
 {
     struct stat sb;
     char fname[WHOAMI_LEN + 1], *fp, *wp;
@@ -213,7 +213,7 @@ inline int load_savefile(void)
         return 0;
 }
 
-inline void new_game(void)
+inline static void new_game(void)
 {
     char *ropts;
 
@@ -276,7 +276,7 @@ inline void playit(void)
  *      Pick a very random number. (Nope, not very random.)
  */
 
-int rnd(int range)
+inline int rnd(int range)
 {
     return range == 0 ? 0 : abs(RN) % range;
 }
@@ -295,7 +295,7 @@ int roll(int number, int sides)
     return dtotal;
 }
 
-inline void seed_rng(void)
+inline static void seed_rng(void)
 {
     if (!have_seed) {
 #ifdef __OpenBSD__
@@ -340,9 +340,9 @@ inline void setup_sigs(void)
     signal(SIGTERM, auto_save);
     signal(SIGINT, quit);
     /* disabled so can try to get core files when some goes awry
-#ifdef SIGQUIT
-    signal(SIGQUIT, endit);
-#endif
+       #ifdef SIGQUIT
+       signal(SIGQUIT, endit);
+       #endif
      */
 #ifdef SIGTSTP
     signal(SIGTSTP, tstp);

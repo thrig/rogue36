@@ -49,7 +49,6 @@ via a shared account
     environment, e.g.
 
   $ make rogue
-  $ strip rogue
   $ mkdir ~/libexec
   $ cp rogue ~/libexec
   $ mkdir -p ~/share/rogue

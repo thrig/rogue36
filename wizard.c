@@ -162,4 +162,3 @@ void whatis(void)
     }
     msg(inv_name(obj, FALSE));
 }
-

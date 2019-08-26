@@ -123,11 +123,9 @@ inline void command(void)
                 case 's':
                 case 'f':
                 case 't':
-                case 'C':
                 case 'I':
-                case ' ':
-                case 'z':
                 case 'p':
+                case 'z':
                 case '.':
                     break;
                 default:

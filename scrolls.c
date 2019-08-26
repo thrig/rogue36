@@ -49,6 +49,8 @@ void read_scroll(void)
          * Scroll of monster confusion.  Give them that power.
          */
         msg("Your hands begin to glow red");
+        /* gets old after very few games so just ID it... */
+        s_know[S_CONFUSE] = TRUE;
         player.t_flags |= CANHUH;
         break;
     case S_LIGHT:

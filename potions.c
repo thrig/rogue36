@@ -71,7 +71,11 @@ void quaff(void)
         p_know[P_HEALING] = TRUE;
         break;
     case P_STRENGTH:
-        msg("You feel stronger, now.  What bulging muscles!");
+        if (pstats.s_str.st_str < max_stats.s_str.st_str ||
+            (pstats.s_str.st_str == 18 &&
+             pstats.s_str.st_add < max_stats.s_str.st_add))
+            pstats.s_str = max_stats.s_str;
+        msg("You feel stronger now, with bulging muscles!");
         chg_str(1);
         p_know[P_STRENGTH] = TRUE;
         break;
@@ -134,8 +138,9 @@ void quaff(void)
         p_know[P_PARALYZE] = TRUE;
         break;
     case P_SEEINVIS:
-        msg("This potion tastes like %s juice.", fruit);
+        msg("This tastes like %s juice, reputed good for the eyes", fruit);
         if (off(player, CANSEE)) {
+            p_know[P_SEEINVIS] = TRUE;
             player.t_flags |= CANSEE;
             fuse(unsee, 0, SEEDURATION, AFTER);
             light(&hero);
@@ -163,8 +168,10 @@ void quaff(void)
         msg("Hey, this tastes great.  It make you feel warm all over.");
         if (pstats.s_str.st_str < max_stats.s_str.st_str ||
             (pstats.s_str.st_str == 18 &&
-             pstats.s_str.st_add < max_stats.s_str.st_add))
+             pstats.s_str.st_add < max_stats.s_str.st_add)) {
             pstats.s_str = max_stats.s_str;
+            p_know[P_RESTORE] = TRUE;
+        }
         break;
     case P_BLIND:
         msg("A cloak of darkness falls around you.");

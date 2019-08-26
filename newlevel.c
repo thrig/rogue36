@@ -129,7 +129,7 @@ void put_things(void)
     if (amulet && level < max_level)
         return;
 
-    objodds = 100 - level * 5;
+    objodds = 105 - level * 10;
     if (objodds < 35)
         objodds = 35;
     for (i = 0; i < MAXOBJ; i++) {

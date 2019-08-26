@@ -83,7 +83,7 @@ typedef struct {
 struct linked_list {
     struct linked_list *l_next;
     struct linked_list *l_prev;
-    char *l_data;               /* Various structure pointers */
+    void *l_data;               /* Various structure pointers */
 };
 
 /*
@@ -199,12 +199,9 @@ struct linked_list *new_item(size_t size);
 /*
  * Various constants
  */
-#define PASSWD          "mTvVTJapOTSbg"
 #define BEARTIME 3
 #define SLEEPTIME 5
-#define HEALTIME 30
 #define HOLDTIME 2
-#define STPOS 0
 #define WANDERTIME 70
 #define BEFORE 1
 #define AFTER 2
@@ -222,10 +219,6 @@ struct linked_list *new_item(size_t size);
  * Save against things
  */
 #define VS_POISON 00
-#define VS_PARALYZATION 00
-#define VS_DEATH 00
-#define VS_PETRIFICATION 01
-#define VS_BREATH 02
 #define VS_MAGIC  03
 
 /*
@@ -241,7 +234,8 @@ struct linked_list *new_item(size_t size);
 #define ISINVIS 0000020
 #define ISMEAN  0000040
 #define ISGREED 0000100
-#define ISBLOCK 0000200
+// ???
+//#define ISBLOCK 0000200
 #define ISHELD  0000400
 #define ISHUH   0001000
 #define ISREGEN 0002000
@@ -333,7 +327,8 @@ struct linked_list *new_item(size_t size);
 #define R_SUSTSTR 2
 #define R_SEARCH 3
 #define R_SEEINVIS 4
-#define R_NOP 5
+// ???
+//#define R_NOP 5
 #define R_AGGR 6
 #define R_ADDHIT 7
 #define R_ADDDAM 8
@@ -357,7 +352,8 @@ struct linked_list *new_item(size_t size);
 #define WS_HASTE_M 7
 #define WS_SLOW_M 8
 #define WS_DRAIN 9
-#define WS_NOP 10
+// ???
+//#define WS_NOP 10
 #define WS_TELAWAY 11
 #define WS_TELTO 12
 #define WS_CANCEL 13
@@ -516,7 +512,7 @@ extern char *p_guess[MAXPOTIONS];       /* Players guess at what potion is */
 extern char *r_guess[MAXRINGS]; /* Players guess at what ring is */
 extern char *ws_guess[MAXSTICKS];       /* Players guess at what wand is */
 extern char *ws_type[MAXSTICKS];        /* Is it a wand or a staff */
-extern char roguedir[PATH_MAX]; /* where rogue files reside */
+extern char roguedir[ROGUEDIR_MAX];     /* where rogue files reside */
 extern char save_file[PATH_MAX];        /* Save file name */
 
 extern WINDOW *cw;              /* Window that the player sees */
@@ -548,7 +544,6 @@ extern char countch, direction, newcount;
 extern struct delayed_action d_list[20];
 extern int between;
 extern char lvl_mons[27], wand_mons[27];
-extern coord nh;
 
 /* armor.c */
 void take_off(void);
@@ -615,6 +610,7 @@ void addmsg(char *fmt, ...);
 void doadd(char *fmt, va_list ap);
 void endmsg(void);
 void flush_type(void);
+int get_str(char *opt, WINDOW * win);
 void msg(char *fmt, ...);
 int readchar(WINDOW * win);
 void show_win(WINDOW * scr, char *message);
@@ -665,10 +661,8 @@ void new_level(void);
 int rnd_room(void);
 
 /* options.c */
-int get_str(char *opt, WINDOW * win);
 void option(void);
 void parse_opts(char *str);
-void strucpy(char *s1, char *s2, int len);
 
 /* pack.c */
 void add_pack(struct linked_list *item, bool silent);
@@ -707,6 +701,7 @@ void read_scroll(void);
 void auto_save(int p);
 int encread(void *starta, unsigned int size, int inf);
 unsigned int encwrite(void *starta, unsigned int size, FILE * outf);
+void reset_encstr(void);
 void restore(void);
 int save_game(void);
 

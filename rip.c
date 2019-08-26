@@ -103,7 +103,7 @@ void score(int type, int amount, char monst)
         "quit",
         "A total winner",
     };
-    char scoreline[100];
+    char scoreline[ROGUE_CHARBUF_MAX];
     char score_file[PATH_MAX];
     int scorefile_ver = 0;
 
@@ -137,10 +137,11 @@ void score(int type, int amount, char monst)
 
     read(fd, scoreline, 32);
     sscanf(scoreline, "rogue 3.6.3 highscores %8d\n", &scorefile_ver);
+    reset_encstr();
     if (scorefile_ver == revision_num) {
         for (i = 0; i < MAX_SCORES; i++) {
             encread((char *) &scores[i].sc_name, WHOAMI_LEN + 1, fd);
-            encread((char *) scoreline, 100, fd);
+            encread((char *) scoreline, ROGUE_CHARBUF_MAX, fd);
             sscanf(scoreline, " %d %d %d %u \n",
                    &scores[i].sc_score, &scores[i].sc_type,
                    &scores[i].sc_level, &sc_monster_i);
@@ -199,12 +200,13 @@ void score(int type, int amount, char monst)
     flock(fd, LOCK_EX);
     fseek(outf, 0L, SEEK_SET);
     fprintf(outf, "rogue 3.6.3 highscores %08d\n", revision_num);
+    reset_encstr();
     for (i = 0; i < MAX_SCORES; i++) {
         encwrite((char *) &scores[i].sc_name, WHOAMI_LEN + 1, outf);
         sprintf(scoreline, " %d %d %d %d \n",
                 scores[i].sc_score, scores[i].sc_type,
                 scores[i].sc_level, scores[i].sc_monster);
-        encwrite((char *) scoreline, 100, outf);
+        encwrite((char *) scoreline, ROGUE_CHARBUF_MAX, outf);
     }
     fclose(outf);
     flock(fd, LOCK_UN);

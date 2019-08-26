@@ -16,7 +16,7 @@
 
 #include "rogue.h"
 
-long e_levels[] = {
+static long e_levels[] = {
     10L, 20L, 40L, 80L, 160L, 320L, 640L, 1280L, 2560L, 5120L, 10240L,
     20480L,
     40920L, 81920L, 163840L, 327680L, 655360L, 1310720L, 2621440L, 0L

@@ -18,6 +18,7 @@ char encstr[] =
     "\354\251\243\332A\201|\301\321p\210\251\327\"\257\365t\341%3\271^`~\203z{\341};\f\341\231\222e\234\351]\321";
 
 /*
- * Increment this when the save or score file formats change.
+ * Increment this when the save or score file formats change, or when
+ * the game itself has been changed.
  */
-int revision_num = 5;
+int revision_num = 7;
