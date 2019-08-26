@@ -304,13 +304,13 @@ char *metal[] = {
 const int cNMETAL = NMETAL;
 
 struct magic_item things[NUMTHINGS] = {
-    {"", 29},                   /* potion */
-    {"", 30},                   /* scroll */
+    {"", 31},                   /* potion */
+    {"", 31},                   /* scroll */
     {"", 5},                    /* food */
     {"", 12},                   /* weapon */
     {"", 9},                    /* armor */
     {"", 5},                    /* ring */
-    {"", 10},                   /* stick */
+    {"", 7},                    /* stick */
 };
 
 struct magic_item s_magic[MAXSCROLLS] = {
@@ -600,9 +600,9 @@ struct h_list helpstr[] = {
     {'U', "     run up & right"},
     {'B', "     run down & left"},
     {'N', "     run down & right"},
-    {'t', "<dir>        throw something"},
-    {'f', "<dir>        forward until find something"},
-    {'p', "<dir>        zap a wand in a direction"},
+    {'t', "     <dir> throw something"},
+    {'f', "     <dir> forward until find something"},
+    {'p', "     <dir> zap a wand in a direction"},
     {'z', "     zap a wand or staff"},
     {'>', "     go down a staircase"},
     {'<', "     go up a staircase (with amulet)"},
@@ -622,8 +622,8 @@ struct h_list helpstr[] = {
     {'d', "     drop object"},
     {'c', "     call object"},
     {'o', "     examine/set options"},
-    {CTRL('L'), "       redraw screen"},
-    {CTRL('R'), "       repeat last message"},
+    "CTRL('L'), "    redraw screen"},
+    {CTRL('R'), "    repeat last message"},
     {ESCAPE, "  cancel command"},
     {'v', "     print program version number"},
     {'S', "     save"},

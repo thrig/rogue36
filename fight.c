@@ -284,7 +284,7 @@ int attack(struct thing *mp)
     if ((mp != NULL) && (on(*mp, ISREGEN) && rnd(100) < 33))
         mp->t_stats.s_hpt++;
     if (fight_flush)
-        flush_type();           /* flush typeahead */
+        flushinp();
     count = 0;
     status();
 

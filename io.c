@@ -320,8 +320,3 @@ void strucpy(char *s1, char *s2, int len)
     }
     *s1 = '\0';
 }
-
-void flush_type(void)
-{
-    flushinp();
-}

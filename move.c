@@ -284,7 +284,7 @@ char be_trapped(coord * tc)
             msg("A small dart whizzes by your ear and vanishes.");
         }
     }
-    flush_type();               /* flush typeahead */
+    flushinp();
     return ch;
 }
 

@@ -609,7 +609,6 @@ void init_keylog(void);
 void addmsg(char *fmt, ...);
 void doadd(char *fmt, va_list ap);
 void endmsg(void);
-void flush_type(void);
 int get_str(char *opt, WINDOW * win);
 void msg(char *fmt, ...);
 int readchar(WINDOW * win);

@@ -35,7 +35,6 @@ char *getroguedir(void);
 static int load_savefile(void);
 static void new_game(void);
 static void seed_rng(void);
-void tstp(int);
 
 int main(int argc, char *argv[])
 {
@@ -344,32 +343,7 @@ inline void setup_sigs(void)
        signal(SIGQUIT, endit);
        #endif
      */
-#ifdef SIGTSTP
-    signal(SIGTSTP, tstp);
-#endif
-}
-
-/*
- * handle stop and start signals
- */
-
-void tstp(int p)
-{
-#ifdef SIGTSTP
-    signal(SIGTSTP, SIG_IGN);
-#endif
-    mvcur(0, ROCOLS - 1, ROLINES - 1, 0);
-    endwin();
-    fflush(stdout);
-#ifdef SIGTSTP
-    signal(SIGTSTP, SIG_DFL);
-    kill(0, SIGTSTP);
-    signal(SIGTSTP, tstp);
-#endif
-    cbreak();
-    noecho();
-    clearok(curscr, TRUE);
-    touchwin(cw);
-    draw(cw);
-    flush_type();               /* flush input */
+    /* There used to be TSTP code but that is also done by ncurses, and
+     * this code is not acting on a ^Z anyways so the TSTP code got
+     * removed. */
 }

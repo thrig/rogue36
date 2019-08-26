@@ -1,4 +1,4 @@
-.Dd August 25 2019
+.Dd August 26 2019
 .Dt ROGUE 6
 .nh
 .Os
@@ -454,7 +454,7 @@ somehow identifies monsters.
 .Ss Known Issues
 If
 .Nm
-goes to 100% CPU try sending the process a
+goes to 100% CPU or otherwise freezes try sending the process a
 .Dv HUP
 signal then restoring from the save game file. Wizard mode or more
 likely a debug build will be necessary to trace down the issue. Another

@@ -267,6 +267,7 @@ void read_scroll(void)
         if (cur_ring[RIGHT] != NULL)
             cur_ring[RIGHT]->o_flags &= ~ISCURSED;
         msg("You feel as if somebody is watching over you.");
+        s_know[S_REMOVE] = TRUE;
         break;
     case S_AGGR:
         /*

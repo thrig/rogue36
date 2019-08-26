@@ -108,7 +108,7 @@ int teleport(void)
     }
     count = 0;
     running = FALSE;
-    flush_type();               /* flush typeahead */
+    flushinp();
     return rm;
 }
 
