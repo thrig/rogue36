@@ -22,8 +22,7 @@ portability
 ===========
 
 various modern system calls are used, and it is assumed a DEV_RANDOM
-device exists to set the seed randomly from. rogue.h might be good to
-look at, for starters
+device exists to set the seed randomly from (unless OpenBSD)
 
  * Centos 7 - try building with at least:
 
@@ -35,7 +34,15 @@ look at, for starters
    on more recent releases
 
  * OpenBSD - at least version 6.4 is required for the pledge(2) and
-   unveil(2) calls used to prevent rogue access to the system
+   unveil(2) calls used to prevent rogue access to the system.
+   arc4random(3) is ised to set the initial seed instead of from
+   DEV_RANDOM
+
+keypad support is now disabled by default (it causes backspace to emit
+^G when TERM is xterm* or screen on OpenBSD) though can be restored by
+compiling with WITHKEYPAD
+
+  CFLAGS='-DWITHKEYPAD ...' make
 
 
 rogue run
@@ -54,7 +61,7 @@ via a shared account
   $ mkdir -p ~/share/rogue
   $ cat ~/usr/bin/rogue
   #!/bin/sh
-  ROGUEHOME=~/share/rogue ROGUEOPTS=flush,jump TERM=vt102 \
+  ROGUEHOME=~/share/rogue ROGUEOPTS=flush,jump \
   exec ~/libexec/rogue -n Thrig "$@"
 
     though this makes debugging difficult as gdb(1) will find the

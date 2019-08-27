@@ -76,8 +76,7 @@ bool fight(coord * mp, char mn, struct object *weap, bool thrown)
             else
                 hit(NULL, mname);
             if (on(player, CANHUH)) {
-                msg("Your hands stop glowing red");
-                msg("The %s appears confused.", mname);
+                msg("The %s is confused!", mname);
                 tp->t_flags |= ISHUH;
                 player.t_flags &= ~CANHUH;
             }
@@ -150,7 +149,7 @@ int attack(struct thing *mp)
                     endmsg();
                     no_command = SLEEPTIME + rnd(4);
                 } else {
-                    pstats.s_hpt -= 1 + rnd(4);
+                    pstats.s_hpt -= roll(1, 3);
                     if (pstats.s_hpt <= 0)
                         death(mp->t_type);      /* Bye bye life ... */
                 }
@@ -200,46 +199,41 @@ int attack(struct thing *mp)
                 break;
             case 'F':
                 /*
-                 * Violet fungi stops the poor guy from moving
+                 * Violet fungi stops them from moving
                  */
                 player.t_flags |= ISHELD;
                 sprintf(monsters['F' - 'A'].m_stats.s_dmg, "%dd1", ++fung_hit);
                 break;
             case 'L':
-                {
-                    /*
-                     * Leperachaun steals some gold
-                     */
-                    long lastpurse;
-
-                    lastpurse = purse;
-                    purse -= GOLDCALC;
-                    if (!save(VS_MAGIC))
-                        purse -= GOLDCALC + GOLDCALC + GOLDCALC + GOLDCALC;
-                    if (purse < 0)
-                        purse = 0;
-                    if (purse != lastpurse)
-                        msg("Your purse feels lighter");
-                    remove_monster(&mp->t_pos,
-                                   find_mons(mp->t_pos.y, mp->t_pos.x));
-                    mp = NULL;
-                }
+                /*
+                 * Lampades drive the player mad (and summon other
+                 * monsters). Technically they should cast light like
+                 * the player does because torches but that's more work.
+                 */
+                msg("The lampades shout and strike about you with their torches!");
+                aggravate();
+                if (on(player, ISHUH))
+                    lengthen(unconfuse, roll(1, 6));
+                else
+                    fuse(unconfuse, 0, roll(1, 6), AFTER);
+                remove_monster(&mp->t_pos, find_mons(mp->t_pos.y, mp->t_pos.x));
+                mp = NULL;
                 break;
             case 'N':
                 {
                     struct linked_list *list, *steal;
                     struct object *obj;
                     int nobj;
-
                     /*
-                     * Nymph's steal a magic item, look through the pack
-                     * and pick out one we like.
+                     * Nymph steal a magic item; look through the pack
+                     * and pick out one we like--not worn items.
                      */
                     steal = NULL;
                     for (nobj = 0, list = pack; list != NULL; list = next(list)) {
                         obj = (struct object *) ldata(list);
-                        if (obj != cur_armor && obj != cur_weapon && obj != cur_ring[LEFT] && obj != cur_ring[RIGHT] && /* Nymph bug fix */
-                            is_magic(obj) && rnd(++nobj) == 0)
+                        if (obj != cur_armor && obj != cur_weapon
+                            && obj != cur_ring[LEFT] && obj != cur_ring[RIGHT]
+                            && is_magic(obj) && rnd(++nobj) == 0)
                             steal = list;
                     }
                     if (steal != NULL) {
@@ -296,7 +290,7 @@ int attack(struct thing *mp)
 
 /*
  * swing:
- *	returns true if the swing hits
+ *      returns true if the swing hits
  */
 
 int swing(int at_lvl, int op_arm, int wplus)
@@ -309,7 +303,7 @@ int swing(int at_lvl, int op_arm, int wplus)
 
 /*
  * check_level:
- *	Check to see if the guy has gone up a level.
+ *      Check to see if they have gone up a level.
  */
 
 void check_level(void)
@@ -339,7 +333,7 @@ void check_level(void)
 
 /*
  * roll_em:
- *	Roll several attacks
+ *      Roll several attacks
  */
 
 bool
@@ -423,7 +417,7 @@ roll_em(struct stats *att, struct stats *def, struct object *weap, bool hurl)
 
 /*
  * prname:
- *	The print name of a combatant
+ *      The print name of a combatant
  */
 
 char *prname(char *who, bool upper)
@@ -446,7 +440,7 @@ char *prname(char *who, bool upper)
 
 /*
  * hit:
- *	Print a message to indicate a succesful hit
+ *      Print a message to indicate a succesful hit
  */
 
 void hit(char *er, char *ee)
@@ -479,7 +473,7 @@ void hit(char *er, char *ee)
 
 /*
  * miss:
- *	Print a message to indicate a poor swing
+ *      Print a message to indicate a poor swing
  */
 
 void miss(char *er, char *ee)
@@ -508,7 +502,7 @@ void miss(char *er, char *ee)
 
 /*
  * save_throw:
- *	See if a creature save against something
+ *      See if a creature save against something
  */
 
 int save_throw(int which, struct thing *tp)
@@ -521,7 +515,7 @@ int save_throw(int which, struct thing *tp)
 
 /*
  * save:
- *	See if they save against various nasty things
+ *      See if they save against various nasty things
  */
 
 int save(int which)
@@ -531,7 +525,7 @@ int save(int which)
 
 /*
  * str_plus:
- *	compute bonus/penalties for strength on the "to hit" roll
+ *      compute bonus/penalties for strength on the "to hit" roll
  */
 
 int str_plus(str_t * str)
@@ -551,7 +545,7 @@ int str_plus(str_t * str)
 
 /*
  * add_dam:
- *	compute additional damage done for exceptionally high or low strength
+ *      compute additional damage done for exceptionally high or low strength
  */
 
 int add_dam(str_t * str)
@@ -576,7 +570,7 @@ int add_dam(str_t * str)
 
 /*
  * raise_level:
- *	The guy just magically went up a level.
+ *      They just magically went up a level.
  */
 
 void raise_level(void)
@@ -587,7 +581,7 @@ void raise_level(void)
 
 /*
  * thunk:
- *	A missile hits a monster
+ *      A missile hits a monster
  */
 
 void thunk(struct object *weap, char *mname)
@@ -600,7 +594,7 @@ void thunk(struct object *weap, char *mname)
 
 /*
  * bounce:
- *	A missile misses a monster
+ *      A missile misses a monster
  */
 
 void bounce(struct object *weap, char *mname)
@@ -624,7 +618,7 @@ void remove_monster(coord * mp, struct linked_list *item)
 
 /*
  * is_magic:
- *	Returns true if an object radiates magic
+ *      Returns true if an object radiates magic
  */
 
 int is_magic(struct object *obj)
@@ -648,7 +642,7 @@ int is_magic(struct object *obj)
 
 /*
  * killed:
- *	Called to put a monster to death
+ *      Called to put a monster to death
  */
 
 void killed(struct linked_list *item, bool pr)

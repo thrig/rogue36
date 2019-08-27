@@ -17,6 +17,10 @@
 
 #define NONE 100
 
+/*
+ * NOTE ammo must not be at index 0 in these tables; see o_group
+ * assignment code that allows ammo to stack in the inventory.
+ */
 char *w_names[MAXWEAPONS] = {
     "mace",
     "long sword",
@@ -66,7 +70,7 @@ static struct init_weps {
 
 /*
  * missile:
- *	Fire a missile in a given direction
+ *      Fire a missile in a given direction
  */
 
 void missile(int ydelta, int xdelta)
@@ -155,7 +159,7 @@ void do_motion(struct object *obj, int ydelta, int xdelta)
 
 /*
  * fall:
- *	Drop an item someplace around here; mulch if nowhere to put it.
+ *      Drop an item someplace around here; mulch if nowhere to put it.
  */
 
 void fall(struct linked_list *item, bool pr)
@@ -187,7 +191,7 @@ void fall(struct linked_list *item, bool pr)
 
 /*
  * init_weapon:
- *	Set up the initial goodies for a weapon
+ *      Set up the initial goodies for a weapon
  */
 
 void init_weapon(struct object *weap, char type)
@@ -201,7 +205,12 @@ void init_weapon(struct object *weap, char type)
     weap->o_flags = iwp->iw_flags;
     if (weap->o_flags & ISMANY) {
         weap->o_count = rnd(8) + 8;
-        weap->o_group = newgrp();
+        /* 
+         * KLUGE this assumes type != 0 and that the type does not
+         * conflict with any !weapon groups (only this function used the
+         * old newgrp() macro). But want inventory ammo stacking...
+         */
+        weap->o_group = type;
     } else {
         weap->o_count = 1;
     }
@@ -222,7 +231,7 @@ int hit_monster(int y, int x, struct object *obj)
 
 /*
  * num:
- *	Figure out the plus number for armor/weapons
+ *      Figure out the plus number for armor/weapons
  */
 
 char *num(int n1, int n2)
@@ -241,7 +250,7 @@ char *num(int n1, int n2)
 
 /*
  * wield:
- *	Pull out a certain weapon
+ *      Pull out a certain weapon
  */
 
 void wield(void)
@@ -264,6 +273,14 @@ void wield(void)
     obj = (struct object *) ldata(item);
     if (obj->o_type == ARMOR) {
         msg("You can't wield armor!");
+        goto BADWIELD;
+    }
+    /*
+     * This prevents ammo enchants so that ammo can (more easily) stack
+     * in the inventory.
+     */
+    if (obj->o_type == WEAPON && obj->o_flags & ISMANY) {
+        msg("You can't wield ammo!");
         goto BADWIELD;
     }
     if (is_current(obj))

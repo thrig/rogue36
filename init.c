@@ -80,31 +80,32 @@ struct trap traps[MAXTRAPS];
 struct monster monsters[26] = {
 /* Name          CARRY  FLAG    str,  exp, lvl, amr, hpt, dmg */
 { "giant ant",   0,     ISMEAN, { _x,  10,   2,   3, ___, "1d6" } },
-{ "bat",         0,     0,      { _x,   2,   1,   3, ___, "1d2" } },
-{ "centaur",     30,    0,      { _x,  15,   4,   4, ___, "1d6/1d6" } },
+{ "bat",         0,     0,      { _x,   2,   1,   4, ___, "1d2" } },
+{ "centaur",     30,    ISGREED,{ _x,  15,   4,   4, ___, "1d6/1d6" } },
 { "dragon",      100,   ISGREED,{ _x,9000,  10,  -1, ___, "1d8/1d8/3d10" } },
-{ "floating eye",0,     0,      { _x,   5,   1,   5, ___, "0d0" } },
+{ "floating eye",0,     0,      { _x,  10,   2,   3, ___, "0d0" } },
 { "violet fungi",30,    ISMEAN, { _x,  85,   8,   3, ___, "000d0" } },
-{ "ghast",       0,     ISREGEN|ISMEAN,{ _x,8,2,  7, ___, "1d10" } },
-{ "hobgoblin",   15,    ISMEAN, { _x,   4,   1,   5, ___, "1d4" } },
+{ "ghast",       0,     ISHASTE|ISMEAN,{ _x,8,2,  5, ___, "1d3/1d3/1d3" } },
+{ "hobgoblin",   15,    ISMEAN, { _x,   5,   2,   5, ___, "1d4" } },
 { "invisible stalker",0,ISINVIS,{ _x, 120,   8,   3, ___, "4d4" } },
-{ "jackal",      0,     ISMEAN, { _x,   1,   1,   6, ___, "1d2" } },
+{ "jackal",      0,     ISMEAN, { _x,   2,   1,   7, ___, "1d2" } },
 { "kobold",      10,    ISMEAN, { _x,   2,   1,   7, ___, "1d4" } },
-{ "leprechaun",  0,     0,      { _x,  10,   3,   8, ___, "1d1" } },
-{ "mimic",       60,    0,      { _x, 140,   7,   7, ___, "3d4" } },
-{ "nymph",       100,   0,      { _x,  40,   3,   9, ___, "1d1" } },
-{ "orc",         50,    ISMEAN, { _x,   7,   2,   4, ___, "1d4/1d4" } },
+{ "lampades",    100,   0,      { _x,  40,   3,   8, ___, "1d1" } },
+{ "mimic",       60,    0,      { _x, 140,   7,   7, ___, "4d4" } },
+{ "nymph",       100,   0,      { _x,  40,   3,   8, ___, "1d1" } },
+{ "orc",         30,    ISMEAN, { _x,   7,   2,   4, ___, "1d4/1d4" } },
 { "purple worm", 70,    0,      { _x,7000,  15,   6, ___, "2d12/2d4" } },
 { "quasit",      60,    ISMEAN, { _x,  35,   3,   2, ___, "1d2/1d2/1d4" } },
 { "rust monster",0,     ISMEAN, { _x,  20,   5,   5, ___, "1d1/1d1" } },
 { "snake",       0,     ISMEAN, { _x,   3,   1,   5, ___, "1d3" } },
 { "troll",       75,    ISREGEN|ISMEAN,{ _x,55,6, 4, ___, "1d8/1d8/2d6" } },
 { "umber hulk",  80,    ISMEAN, { _x, 130,   8,   2, ___, "3d4/3d4/2d5" } },
-{ "vampire",     65,    ISREGEN|ISMEAN,{ _x,380,8,1, ___, "1d10" } },
+{ "vampire",     50,    ISREGEN|ISMEAN,{ _x,380,8,1, ___, "1d10" } },
 { "wraith",      0,     0,      { _x,  55,   5,   4, ___, "1d8" } },
 { "xorn",        0,     ISMEAN, { _x, 120,   7,  -2, ___, "1d3/1d3/1d3/4d6" } },
-{ "yeti",        60,    0,      { _x,  50,   5,   6, ___, "1d6/1d6" } },
-{ "zombie",      0,     ISMEAN, { _x,   9,   4,   7, ___, "1d3/1d3/1d3" } }
+{ "yeti",        40,    0,      { _x,  50,   5,   6, ___, "1d6/1d6" } },
+{ "zombie",      0,     ISMEAN, { _x,   9,   4,   5, ___, "3d4" } }
+/* Name          CARRY  FLAG    str,  exp, lvl, amr, hpt, dmg */
 };
 /* *INDENT-ON* */
 

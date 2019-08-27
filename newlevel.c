@@ -58,24 +58,24 @@ void new_level(void)
                 rm = rnd_room();
                 rnd_pos(&rooms[rm], &stairs);
             } while (winat(stairs.y, stairs.x) != FLOOR);
-            switch (rnd(6)) {
+            switch (rnd(7)) {
             case 0:
                 ch = TRAPDOOR;
                 break;
             case 1:
-                ch = BEARTRAP;
-                break;
-            case 2:
                 ch = SLEEPTRAP;
                 break;
-            case 3:
+            case 2:
                 ch = ARROWTRAP;
                 break;
-            case 4:
+            case 3:
                 ch = TELTRAP;
                 break;
-            case 5:
+            case 4:
                 ch = DARTTRAP;
+                break;
+            default:
+                ch = BEARTRAP;
             }
             addch(TRAP);
             traps[i].tr_type = ch;
@@ -130,8 +130,8 @@ void put_things(void)
         return;
 
     objodds = 105 - level * 10;
-    if (objodds < 35)
-        objodds = 35;
+    if (objodds < 45)
+        objodds = 45;
     for (i = 0; i < MAXOBJ; i++) {
         if (rnd(100) < objodds) {
             item = new_thing();

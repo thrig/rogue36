@@ -106,7 +106,9 @@ int main(int argc, char *argv[])
     cw = newwin(ROLINES, ROCOLS, 0, 0);
     mw = newwin(ROLINES, ROCOLS, 0, 0);
     hw = newwin(ROLINES, ROCOLS, 0, 0);
+#ifdef WITHKEYPAD
     keypad(cw, 1);
+#endif
     clearok(cw, TRUE);
 
     if (load_savefile())

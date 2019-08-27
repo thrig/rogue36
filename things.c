@@ -297,11 +297,18 @@ struct linked_list *new_thing(void)
         cur->o_type = WEAPON;
         cur->o_which = rnd(MAXWEAPONS);
         init_weapon(cur, cur->o_which);
-        if ((k = rnd(100)) < 10) {
-            cur->o_flags |= ISCURSED;
-            cur->o_hplus -= rnd(3) + 1;
-        } else if (k < 15) {
-            cur->o_hplus += rnd(3) + 1;
+        /*
+         * Grouped weapons (ammo) cannot be enchanted so that they can
+         * stack in the inventory. These (hopefully) have a positive
+         * o_group number.
+         */
+        if (cur->o_group == 0) {
+            if ((k = rnd(100)) < 10) {
+                cur->o_flags |= ISCURSED;
+                cur->o_hplus -= rnd(3) + 1;
+            } else if (k < 15) {
+                cur->o_hplus += rnd(3) + 1;
+            }
         }
         break;
     case 4:
@@ -309,10 +316,6 @@ struct linked_list *new_thing(void)
         for (j = 0, k = rnd(100); j < MAXARMORS; j++) {
             if (k < a_chances[j])
                 break;
-        }
-        if (j == MAXARMORS) {
-            debug("Picked a bad armor %d", k);
-            j = 0;
         }
         cur->o_which = j;
         cur->o_ac = a_class[j];

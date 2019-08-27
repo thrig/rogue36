@@ -63,7 +63,7 @@ void ring_on(void)
     cur_ring[ring] = obj;
 
     /*
-     * Calculate the effect it has on the poor guy.
+     * Calculate the effect it has on the poor hero.
      */
     switch (obj->o_which) {
     case R_ADDSTR:

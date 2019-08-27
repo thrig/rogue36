@@ -233,6 +233,7 @@ char be_trapped(coord * tc)
     tp->tr_flags |= ISFOUND;
     switch (ch = tp->tr_type) {
     case TRAPDOOR:
+        no_food++;              /* assume food was missed */
         level++;
         new_level();
         msg("You fell into a trap!");

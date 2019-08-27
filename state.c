@@ -1849,7 +1849,6 @@ int rs_save_file(FILE * savef)
     rs_write_int(savef, max_level);
     rs_write_int(savef, search_repeat);
     rs_write_int(savef, food_left);
-    rs_write_int(savef, group);
     rs_write_int(savef, hungry_state);
     rs_write_char(savef, take);
     rs_write_char(savef, runch);
@@ -1925,7 +1924,6 @@ int rs_restore_file(int inf)
     rs_read_int(inf, &max_level);
     rs_read_int(inf, &search_repeat);
     rs_read_int(inf, &food_left);
-    rs_read_int(inf, &group);
     rs_read_int(inf, &hungry_state);
     rs_read_char(inf, &take);
     rs_read_char(inf, &runch);

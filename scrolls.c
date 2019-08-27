@@ -39,7 +39,7 @@ void read_scroll(void)
     }
     msg("As you read the scroll, it vanishes.");
     /*
-     * Calculate the effect it has on the poor guy.
+     * Calculate the effect it has on the poor hero.
      */
     if (obj == cur_weapon)
         cur_weapon = NULL;

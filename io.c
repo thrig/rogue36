@@ -191,11 +191,18 @@ int readchar(WINDOW * win)
 {
     int ch;
 
+#ifdef WITHKEYPAD
     ch = md_readchar(win);
+#else
+    ch = wgetch(win);
+    if (ch == ERR)
+        ch = 27;
+#endif
 
     nanosleep(&readdelay, NULL);
+    flushinp();
 
-    if ((ch == 3) || (ch == 0)) {
+    if (ch == 3 || ch == 0) {
         quit(0);
         return 27;
     }
@@ -274,7 +281,7 @@ void status(void)
 
 /*
  * wait_for
- *      Sit around until the guy types the right key
+ *      Sit around until they type the right key
  */
 
 void wait_for(WINDOW * win, char ch)

@@ -50,7 +50,7 @@ void add_pack(struct linked_list *item, bool silent)
                 /*
                  * Put it in the pack and notify the user
                  */
-                op->o_count++;
+                op->o_count += obj->o_count;
                 if (from_floor) {
                     detach(lvl_obj, item);
                     mvaddch(hero.y, hero.x,
@@ -66,7 +66,7 @@ void add_pack(struct linked_list *item, bool silent)
      * Check if there is room
      */
     if (inpack == MAXPACK - 1) {
-        msg("You can't carry anything else.");
+        msg("%s will not fit in your pack.", inv_name(obj, !terse));
         return;
     }
     /*
@@ -247,8 +247,6 @@ void pick_up(char ch)
     case GOLD:
         money();
         break;
-    default:
-        debug("Where did you pick that up???");
     case ARMOR:
     case POTION:
     case FOOD:
@@ -259,6 +257,8 @@ void pick_up(char ch)
     case STICK:
         add_pack(NULL, FALSE);
         break;
+    default:
+        debug("Where did you pick that up???");
     }
 }
 
@@ -305,7 +305,7 @@ struct linked_list *get_item(char *purpose, int type)
     char ch, och;
 
     if (pack == NULL) {
-        msg("You aren't carrying anything.");
+        msg("Your pack is empty.");
     } else {
         while (1) {
             if (!terse)
@@ -318,7 +318,8 @@ struct linked_list *get_item(char *purpose, int type)
             mpos = 0;
             msg("");
             /*
-             * Give the poor player a chance to abort the command
+             * Give the poor player a chance to abort the command.
+             * (curses has ESCDELAY but with that too low no arrows/keypad)
              */
             if (ch == ESCAPE || ch == CTRL('G')) {
                 after = FALSE;

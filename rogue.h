@@ -164,7 +164,6 @@ struct linked_list *new_item(size_t size);
 #define GOLDCALC (rnd(50 + 10 * level) + 2)
 #define ISRING(h,r) (cur_ring[h] != NULL && cur_ring[h]->o_which == r)
 #define ISWEARING(r) (ISRING(LEFT, r) || ISRING(RIGHT, r))
-#define newgrp() ++group
 #define o_charges o_ac
 #define ISMULT(type) (type == POTION || type == SCROLL || type == FOOD)
 
@@ -234,7 +233,7 @@ struct linked_list *new_item(size_t size);
 #define ISINVIS 0000020
 #define ISMEAN  0000040
 #define ISGREED 0000100
-// ???
+// was for Orc but doesn't show up elsewhere in the code
 //#define ISBLOCK 0000200
 #define ISHELD  0000400
 #define ISHUH   0001000
@@ -327,7 +326,7 @@ struct linked_list *new_item(size_t size);
 #define R_SUSTSTR 2
 #define R_SEARCH 3
 #define R_SEEINVIS 4
-// ???
+// adornment
 //#define R_NOP 5
 #define R_AGGR 6
 #define R_ADDHIT 7
@@ -352,7 +351,7 @@ struct linked_list *new_item(size_t size);
 #define WS_HASTE_M 7
 #define WS_SLOW_M 8
 #define WS_DRAIN 9
-// ???
+// staff of nothing
 //#define WS_NOP 10
 #define WS_TELAWAY 11
 #define WS_TELTO 12
@@ -436,7 +435,7 @@ struct thing {
 struct monster {
     char m_name[20];            /* What to call the monster */
     short m_carry;              /* Probability of carrying something */
-    short m_flags;              /* Things about the monster */
+    int m_flags;                /* Things about the monster */
     struct stats m_stats;       /* Initial stats */
 };
 
@@ -458,7 +457,7 @@ extern struct thing player;     /* The rogue */
 extern struct stats max_stats;  /* The maximum for the player */
 extern struct monster monsters[26];     /* The initial monster states */
 extern struct linked_list *lvl_obj;     /* List of objects on this level */
-extern struct object *cur_weapon;       /* Which weapon he is weilding */
+extern struct object *cur_weapon;       /* Which weapon are they weilding */
 extern struct object *cur_armor;        /* What a well dresssed rogue wears */
 extern struct object *cur_ring[2];      /* Which rings are being worn */
 extern struct magic_item things[NUMTHINGS];     /* Chances for each type of item */
@@ -490,8 +489,7 @@ extern int fung_hit;            /* Number of time fungi has hit */
 extern int quiet;               /* Number of quiet turns */
 extern int max_level;           /* Deepest player has gone */
 extern int food_left;           /* Amount of food in hero's stomach */
-extern int group;               /* Current group number */
-extern int hungry_state;        /* How hungry is he */
+extern int hungry_state;        /* How hungry they are */
 
 extern char take;               /* Thing the rogue is taking */
 extern char prbuf[ROGUE_CHARBUF_MAX];   /* Buffer for sprintfs */
@@ -530,11 +528,11 @@ extern bool jump;               /* Show running as series of jumps */
 extern bool slow_invent;        /* Inventory one line at a time */
 extern bool firstmove;          /* First move after setting door_stop */
 extern bool askme;              /* Ask about unidentified things */
-extern bool s_know[MAXSCROLLS]; /* Does he know what a scroll does */
-extern bool p_know[MAXPOTIONS]; /* Does he know what a potion does */
-extern bool r_know[MAXRINGS];   /* Does he know what a ring does */
-extern bool ws_know[MAXSTICKS]; /* Does he know what a stick does */
-extern bool amulet;             /* He found the amulet */
+extern bool s_know[MAXSCROLLS]; /* Do they know what a scroll does */
+extern bool p_know[MAXPOTIONS]; /* Do they know what a potion does */
+extern bool r_know[MAXRINGS];   /* Do they know what a ring does */
+extern bool ws_know[MAXSTICKS]; /* Do they know what a stick does */
+extern bool amulet;             /* They found the amulet? */
 
 extern coord oldpos;            /* Position before last look() call */
 extern coord delta;             /* Change indicated to get_dir() */

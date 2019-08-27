@@ -221,9 +221,16 @@ Redraw the screen.
 .It Cm C-r
 Repeat the last message.
 .It Cm esc
-Cancel a command.
+Cancel a command. This may take a second to apply due to
+.Xr curses 3
+waiting for some time to see if the 
+.Cm esc
+is part of a longer key sequence or not. When selecting an item
+from the pack,
+.Cm C-g
+may abort that selection.
 .It Cm v
-Program version number.
+Program version.
 .It Cm S
 Save game and exit from
 .Nm . Confirm with
@@ -293,7 +300,7 @@ Jackal.
 .It K
 Kobold.
 .It L
-Leprechaun.
+Lampades. (Leprechaun are chasing some other rainbow now.)
 .It M
 Mimic.
 .It N
