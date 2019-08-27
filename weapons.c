@@ -70,7 +70,7 @@ static struct init_weps {
 
 /*
  * missile:
- *      Fire a missile in a given direction
+ *      Throw a missile in a given direction
  */
 
 void missile(int ydelta, int xdelta)
@@ -169,7 +169,7 @@ void fall(struct linked_list *item, bool pr)
     static coord fpos;
 
     obj = (struct object *) ldata(item);
-    if (fallpos(&obj->o_pos, &fpos, TRUE)) {
+    if (fallpos(&obj->o_pos, &fpos)) {
         mvaddch(fpos.y, fpos.x, obj->o_type);
         obj->o_pos = fpos;
         if ((rp = roomin(&hero)) != NULL && !(rp->r_flags & ISDARK)) {
@@ -297,13 +297,12 @@ void wield(void)
 /*
  * pick a random position around the give (y, x) coordinates
  */
-int fallpos(coord * pos, coord * newpos, bool passages)
+int fallpos(coord * pos, coord * newpos)
 {
-    int y, x, cnt, ch;
+    int cnt = 0, ch;
 
-    cnt = 0;
-    for (y = pos->y - 2; y <= pos->y + 2; y++) {
-        for (x = pos->x - 2; x <= pos->x + 2; x++) {
+    for (int y = pos->y - 1; y <= pos->y + 1; y++) {
+        for (int x = pos->x - 1; x <= pos->x + 1; x++) {
             /*
              * check to make certain the spot is empty, if it is,
              * put the object there, set it in the level list
@@ -311,8 +310,8 @@ int fallpos(coord * pos, coord * newpos, bool passages)
              */
             if (y == hero.y && x == hero.x)
                 continue;
-            if (((ch = winat(y, x)) == FLOOR || (passages && ch == PASSAGE))
-                && rnd(++cnt) == 0) {
+            ch = winat(y, x);
+            if ((ch == FLOOR || ch == PASSAGE) && rnd(++cnt) == 0) {
                 newpos->y = y;
                 newpos->x = x;
             }

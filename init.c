@@ -80,7 +80,7 @@ struct trap traps[MAXTRAPS];
 struct monster monsters[26] = {
 /* Name          CARRY  FLAG    str,  exp, lvl, amr, hpt, dmg */
 { "giant ant",   0,     ISMEAN, { _x,  10,   2,   3, ___, "1d6" } },
-{ "bat",         0,     0,      { _x,   2,   1,   4, ___, "1d2" } },
+{ "bat",         0,     0,      { _x,   2,   1,   4, ___, "1d1" } },
 { "centaur",     30,    ISGREED,{ _x,  15,   4,   4, ___, "1d6/1d6" } },
 { "dragon",      100,   ISGREED,{ _x,9000,  10,  -1, ___, "1d8/1d8/3d10" } },
 { "floating eye",0,     0,      { _x,  10,   2,   3, ___, "0d0" } },
@@ -143,13 +143,11 @@ void init_player(void)
     obj->o_type = WEAPON;
     obj->o_which = DAGGER;
     init_weapon(obj, DAGGER);
-    obj->o_dplus = 0;
     obj->o_hplus = 1;
     obj->o_flags |= ISKNOW;
     add_pack(item, TRUE);
     cur_weapon = obj;
 
-/* TODO dunno how frugal start should be (need to audit item gen)
     item = new_item(sizeof *obj);
     obj = (struct object *) ldata(item);
     obj->o_type = ARMOR;
@@ -158,15 +156,13 @@ void init_player(void)
     obj->o_flags |= ISKNOW;
     cur_armor = obj;
     add_pack(item, TRUE);
-*/
 
     item = new_item(sizeof *obj);
     obj = (struct object *) ldata(item);
     obj->o_type = WEAPON;
     obj->o_which = DART;
     init_weapon(obj, DART);
-    obj->o_count = 15;
-    obj->o_hplus = obj->o_dplus = 0;
+    obj->o_count = rnd(8) + 8;
     obj->o_flags |= ISKNOW;
     add_pack(item, TRUE);
 

@@ -210,7 +210,7 @@ inline void command(void)
             case 'N':
                 do_run('n');
                 break;
-            case 't':
+            case 't':          /* throw */
                 if (!get_dir())
                     after = FALSE;
                 else

@@ -721,7 +721,7 @@ struct linked_list *new_thing(void);
 /* weapons.c */
 void do_motion(struct object *obj, int ydelta, int xdelta);
 void fall(struct linked_list *item, bool pr);
-int fallpos(coord * pos, coord * newpos, bool passages);
+int fallpos(coord * pos, coord * newpos);
 int hit_monster(int y, int x, struct object *obj);
 void init_weapon(struct object *weap, char type);
 char *num(int n1, int n2);

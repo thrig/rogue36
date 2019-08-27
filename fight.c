@@ -675,23 +675,6 @@ void killed(struct linked_list *item, bool pr)
         fung_hit = 0;
         strcpy(monsters['F' - 'A'].m_stats.s_dmg, "000d0");
         break;
-    case 'L':
-        {
-            struct room *rp;
-
-            if ((rp = roomin(&tp->t_pos)) == NULL)
-                break;
-            if (rp->r_goldval != 0 || fallpos(&tp->t_pos, &rp->r_gold, FALSE)) {
-                rp->r_goldval += GOLDCALC;
-                if (save(VS_MAGIC))
-                    rp->r_goldval += GOLDCALC + GOLDCALC + GOLDCALC + GOLDCALC;
-                mvwaddch(stdscr, rp->r_gold.y, rp->r_gold.x, GOLD);
-                if (!(rp->r_flags & ISDARK)) {
-                    light(&hero);
-                    mvwaddch(cw, hero.y, hero.x, PLAYER);
-                }
-            }
-        }
     }
     /*
      * Empty the monsters pack
