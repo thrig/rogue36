@@ -14,7 +14,7 @@
 
 /*
  * doctor:
- *	A healing daemon that restors hit points after rest
+ *	A healing daemon that restores player hit points after rest
  */
 
 int doctor(void)
@@ -25,7 +25,7 @@ int doctor(void)
     ohp = pstats.s_hpt;
     quiet++;
     if (lv < 8) {
-        if (quiet > 20 - lv * 2)
+        if (quiet > 11 - lv)
             pstats.s_hpt++;
     } else if (quiet >= 3)
         pstats.s_hpt += rnd(lv - 7) + 1;

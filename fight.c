@@ -316,15 +316,10 @@ void check_level(void)
     }
     i++;
     if (i > pstats.s_lvl) {
-        max_hp += 2 * (i - pstats.s_lvl) + roll(i - pstats.s_lvl, 8);
-
-        int heal = max_hp * 2 / 3;
-        heal += rnd(max_hp - heal);
-        if (heal > max_hp)
-            heal = max_hp;
-        if (heal > pstats.s_hpt)
-            pstats.s_hpt = heal;
-
+        int add = 2 * (i - pstats.s_lvl) + roll(i - pstats.s_lvl, 8);
+        max_hp += add;
+        if ((pstats.s_hpt += add) > max_hp)
+            pstats.s_hpt = max_hp;
         msg("Welcome to level %d", i);
     }
 
