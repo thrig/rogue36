@@ -22,11 +22,11 @@ static long e_levels[] = {
     40920L, 81920L, 163840L, 327680L, 655360L, 1310720L, 2621440L, 0L
 };
 
-int add_dam(str_t * str);
+int add_dam(short str);
 void bounce(struct object *weap, char *mname);
 void hit(char *er, char *ee);
 void miss(char *er, char *ee);
-int str_plus(str_t * str);
+int str_plus(short str);
 
 /*
  * fight:
@@ -393,13 +393,13 @@ roll_em(struct stats *att, struct stats *def, struct object *weap, bool hurl)
         } else {
             def_arm = def->s_arm;
         }
-        if (swing(att->s_lvl, def_arm, hplus + str_plus(&att->s_str))) {
+        if (swing(att->s_lvl, def_arm, hplus + str_plus(att->s_str))) {
             int proll;
 
             proll = roll(ndice, nsides);
             if (ndice + nsides > 0 && proll < 1)
                 debug("Damage for %dd%d came out %d.", ndice, nsides, proll);
-            damage = dplus + proll + add_dam(&att->s_str);
+            damage = dplus + proll + add_dam(att->s_str);
             def->s_hpt -= max(0, damage);
             did_hit = TRUE;
         }
@@ -523,19 +523,15 @@ int save(int which)
  *      compute bonus/penalties for strength on the "to hit" roll
  */
 
-int str_plus(str_t * str)
+inline int str_plus(short str)
 {
-    if (str->st_str == 18) {
-        if (str->st_add == 100)
-            return 3;
-        if (str->st_add > 50)
-            return 2;
+    int adjust = 0;
+    if (str > 16) {
+        adjust = str - 16;
+    } else if (str < 5) {
+        adjust = str - 5;
     }
-    if (str->st_str >= 17)
-        return 1;
-    if (str->st_str > 6)
-        return 0;
-    return str->st_str - 7;
+    return adjust;
 }
 
 /*
@@ -543,24 +539,15 @@ int str_plus(str_t * str)
  *      compute additional damage done for exceptionally high or low strength
  */
 
-int add_dam(str_t * str)
+inline int add_dam(short str)
 {
-    if (str->st_str == 18) {
-        if (str->st_add == 100)
-            return 6;
-        if (str->st_add > 90)
-            return 5;
-        if (str->st_add > 75)
-            return 4;
-        if (str->st_add != 0)
-            return 3;
-        return 2;
+    int adjust = 0;
+    if (str > 14) {
+        adjust = str - 14;
+    } else if (str < 7) {
+        adjust = str - 7;
     }
-    if (str->st_str > 15)
-        return 1;
-    if (str->st_str > 6)
-        return 0;
-    return str->st_str - 7;
+    return adjust;
 }
 
 /*

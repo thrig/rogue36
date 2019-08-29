@@ -22,7 +22,7 @@ void ring_on(void)
     struct object *obj;
     struct linked_list *item;
     int ring;
-    str_t save_max;
+    short save_max;
     char buf[ROGUE_CHARBUF_MAX];
 
     item = get_item("put on", RING);

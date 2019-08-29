@@ -218,7 +218,7 @@ void drop(void)
  */
 int dropcheck(struct object *op)
 {
-    str_t save_max;
+    short save_max;
 
     if (op == NULL)
         return TRUE;

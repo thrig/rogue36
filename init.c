@@ -74,11 +74,11 @@ int seed;                       /* Random number seed */
 struct trap traps[MAXTRAPS];
 
 #define ___ 1
-#define _x {1,1}
+#define _x 1
 
 /* *INDENT-OFF* */
 struct monster monsters[26] = {
-/* Name          CARRY  FLAG    str,  exp, lvl, amr, hpt, dmg */
+/* Name          CARRY  FLAG     str,  exp, lvl, amr, hpt, dmg */
 { "giant ant",   0,     ISMEAN, { _x,  10,   2,   3, ___, "1d6" } },
 { "bat",         0,     0,      { _x,   2,   1,   4, ___, "1d1" } },
 { "centaur",     30,    ISGREED,{ _x,  15,   4,   4, ___, "1d6/1d6" } },
@@ -105,7 +105,7 @@ struct monster monsters[26] = {
 { "xorn",        0,     ISMEAN, { _x, 120,   7,  -2, ___, "1d3/1d3/1d3/4d6" } },
 { "yeti",        40,    0,      { _x,  50,   5,   6, ___, "1d6/1d6" } },
 { "zombie",      0,     ISMEAN, { _x,   9,   4,   5, ___, "3d4" } }
-/* Name          CARRY  FLAG    str,  exp, lvl, amr, hpt, dmg */
+/* Name          CARRY  FLAG     str,  exp, lvl, amr, hpt, dmg */
 };
 /* *INDENT-ON* */
 
@@ -124,8 +124,7 @@ void init_player(void)
     pstats.s_lvl = 1;
     pstats.s_exp = 0L;
     max_hp = pstats.s_hpt = 12;
-    pstats.s_str.st_str = 12;
-    pstats.s_str.st_add = 0;
+    pstats.s_str = 12;
     strcpy(pstats.s_dmg, "1d4");
     pstats.s_arm = 10;
     max_stats = pstats;

@@ -66,7 +66,7 @@ void new_monster(struct linked_list *item, char type, coord * cp)
     tp->t_stats.s_arm = mp->m_stats.s_arm;
     strcpy(tp->t_stats.s_dmg, mp->m_stats.s_dmg);
     tp->t_stats.s_exp = mp->m_stats.s_exp;
-    tp->t_stats.s_str.st_str = 10;
+    tp->t_stats.s_str = 10;
     tp->t_flags = mp->m_flags;
     tp->t_turn = TRUE;
     tp->t_pack = NULL;

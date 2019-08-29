@@ -71,10 +71,7 @@ void quaff(void)
         p_know[P_HEALING] = TRUE;
         break;
     case P_STRENGTH:
-        if (pstats.s_str.st_str < max_stats.s_str.st_str ||
-            (pstats.s_str.st_str == 18 &&
-             pstats.s_str.st_add < max_stats.s_str.st_add))
-            pstats.s_str = max_stats.s_str;
+        /* TODO should this bump the maximum up to make restore nicer? */
         msg("You feel stronger now, with bulging muscles!");
         chg_str(1);
         p_know[P_STRENGTH] = TRUE;
@@ -165,21 +162,18 @@ void quaff(void)
         p_know[P_HASTE] = TRUE;
         break;
     case P_RESTORE:
-        msg("Hey, this tastes great.  It make you feel warm all over.");
-        if (pstats.s_str.st_str < max_stats.s_str.st_str ||
-            (pstats.s_str.st_str == 18 &&
-             pstats.s_str.st_add < max_stats.s_str.st_add)) {
+        if (pstats.s_str < max_stats.s_str)
             pstats.s_str = max_stats.s_str;
-            p_know[P_RESTORE] = TRUE;
-        }
+        msg("Hey, this tastes great.  It make you feel warm all over.");
+        p_know[P_RESTORE] = TRUE;
         break;
     case P_BLIND:
-        msg("A cloak of darkness falls around you.");
         if (off(player, ISBLIND)) {
             player.t_flags |= ISBLIND;
             fuse(sight, 0, rnd(20) + SEEDURATION, AFTER);
             look(FALSE);
         }
+        msg("A cloak of darkness falls around you.");
         p_know[P_BLIND] = TRUE;
         break;
     case P_NOP:

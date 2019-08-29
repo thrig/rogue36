@@ -218,10 +218,10 @@ int readchar(WINDOW * win)
 void status(void)
 {
     int oy, ox, temp;
-    char *pb;
     static char buf[ROGUE_CHARBUF_MAX];
     static int hpwidth = 0, s_hungry = -1;
-    static int s_lvl = -1, s_pur, s_hp = -1, s_str, s_add, s_ac = 0;
+    static int s_lvl = -1, s_pur, s_hp = -1, s_ac = 0;
+    static short s_str;
     static long s_exp = 0;
 
     /*
@@ -230,8 +230,7 @@ void status(void)
      */
     if (s_hp == pstats.s_hpt && s_exp == pstats.s_exp && s_pur == purse
         && s_ac == (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm)
-        && s_str == pstats.s_str.st_str && s_add == pstats.s_str.st_add
-        && s_lvl == level && s_hungry == hungry_state)
+        && s_str == pstats.s_str && s_lvl == level && s_hungry == hungry_state)
         return;
 
     getyx(cw, oy, ox);
@@ -240,25 +239,16 @@ void status(void)
         for (hpwidth = 0; temp; hpwidth++)
             temp /= 10;
     }
-    sprintf(buf, "Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %-2d",
-            level, purse, hpwidth, pstats.s_hpt, hpwidth, max_hp,
-            pstats.s_str.st_str);
-    if (pstats.s_str.st_add != 0) {
-        pb = &buf[strlen(buf)];
-        sprintf(pb, "/%d", pstats.s_str.st_add);
-    }
-    pb = &buf[strlen(buf)];
-    sprintf(pb, "  Ac: %-2d  Exp: %d/%ld",
-            cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm,
-            pstats.s_lvl, pstats.s_exp);
-    /*
-     * Save old status
-     */
+    sprintf(buf, "Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %-2d"
+            "  Ac: %-2d  Exp: %d/%ld", level, purse, hpwidth, pstats.s_hpt,
+            hpwidth, max_hp, pstats.s_str,
+            cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm, pstats.s_lvl,
+            pstats.s_exp);
+
     s_lvl = level;
     s_pur = purse;
     s_hp = pstats.s_hpt;
-    s_str = pstats.s_str.st_str;
-    s_add = pstats.s_str.st_add;
+    s_str = pstats.s_str;
     s_exp = pstats.s_exp;
     s_ac = (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm);
     mvwaddstr(cw, ROLINES - 1, 0, buf);

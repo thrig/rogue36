@@ -58,6 +58,12 @@
 #define NUMTHINGS 7             /* number of types of things (scrolls, rings, etc.) */
 
 /*
+ * Strength used to have 18/nnn complications. No more.
+ */
+#define MINSTRENGTH 3
+#define MAXSTRENGTH 18
+
+/*
  * Return values for get functions
  */
 #define NORM    0               /* normal exit */
@@ -71,11 +77,6 @@ typedef struct {
     int x;
     int y;
 } coord;
-
-typedef struct {
-    short st_str;
-    short st_add;
-} str_t;
 
 /*
  * Linked list data type
@@ -109,7 +110,7 @@ struct object {
  * Structure describing a fighting being
  */
 struct stats {
-    str_t s_str;                /* Strength */
+    short s_str;                /* Strength */
     long s_exp;                 /* Experience */
     int s_lvl;                  /* Level of mastery */
     int s_arm;                  /* Armor class */
@@ -628,7 +629,7 @@ int md_readchar(WINDOW * win);
 /* misc.c */
 void add_haste(bool potion);
 void aggravate(void);
-void chg_str(int amt);
+void chg_str(short amt);
 void eat(void);
 struct linked_list *find_obj(int y, int x);
 int get_dir(void);

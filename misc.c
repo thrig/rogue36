@@ -265,51 +265,23 @@ void eat(void)
 }
 
 /*
- * Used to modify the playes strength
+ * Used to modify the players strength
  * it keeps track of the highest it has been, just in case
  */
 
-void chg_str(int amt)
+void chg_str(short amt)
 {
+    short new;
     if (amt == 0)
         return;
-    if (amt > 0) {
-        while (amt--) {
-            if (pstats.s_str.st_str < 18)
-                pstats.s_str.st_str++;
-            else if (pstats.s_str.st_add == 0)
-                pstats.s_str.st_add = rnd(50) + 1;
-            else if (pstats.s_str.st_add <= 50)
-                pstats.s_str.st_add = 51 + rnd(24);
-            else if (pstats.s_str.st_add <= 75)
-                pstats.s_str.st_add = 76 + rnd(14);
-            else if (pstats.s_str.st_add <= 90)
-                pstats.s_str.st_add = 91;
-            else if (pstats.s_str.st_add < 100)
-                pstats.s_str.st_add++;
-        }
-        if (pstats.s_str.st_str > max_stats.s_str.st_str ||
-            (pstats.s_str.st_str == 18 &&
-             pstats.s_str.st_add > max_stats.s_str.st_add))
-            max_stats.s_str = pstats.s_str;
-    } else {
-        while (amt++) {
-            if (pstats.s_str.st_str < 18 || pstats.s_str.st_add == 0)
-                pstats.s_str.st_str--;
-            else if (pstats.s_str.st_add < 51)
-                pstats.s_str.st_add = 0;
-            else if (pstats.s_str.st_add < 76)
-                pstats.s_str.st_add = 1 + rnd(50);
-            else if (pstats.s_str.st_add < 91)
-                pstats.s_str.st_add = 51 + rnd(25);
-            else if (pstats.s_str.st_add < 100)
-                pstats.s_str.st_add = 76 + rnd(14);
-            else
-                pstats.s_str.st_add = 91 + rnd(8);
-        }
-        if (pstats.s_str.st_str < 3)
-            pstats.s_str.st_str = 3;
-    }
+    new = pstats.s_str + amt;
+    if (new > MAXSTRENGTH)
+        new = MAXSTRENGTH;
+    else if (new < MINSTRENGTH)
+        new = MINSTRENGTH;
+    pstats.s_str = new;
+    if (new > max_stats.s_str)
+        max_stats.s_str = new;
 }
 
 /*

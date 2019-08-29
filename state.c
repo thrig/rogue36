@@ -811,28 +811,6 @@ int rs_read_string_index(int inf, char *master[], int maxindex, char **str)
     return READSTAT;
 }
 
-int rs_write_str_t(FILE * savef, str_t st)
-{
-    if (write_error)
-        return WRITESTAT;
-
-    rs_write_short(savef, st.st_str);
-    rs_write_short(savef, st.st_add);
-
-    return WRITESTAT;
-}
-
-int rs_read_str_t(int inf, str_t * st)
-{
-    if (read_error || format_error)
-        return READSTAT;
-
-    rs_read_short(inf, &st->st_str);
-    rs_read_short(inf, &st->st_add);
-
-    return READSTAT;
-}
-
 int rs_write_coord(FILE * savef, coord c)
 {
     if (write_error)
@@ -960,7 +938,7 @@ int rs_write_stats(FILE * savef, struct stats *s)
         return WRITESTAT;
 
     rs_write_marker(savef, RSID_STATS);
-    rs_write_str_t(savef, s->s_str);
+    rs_write_short(savef, s->s_str);
     rs_write_long(savef, s->s_exp);
     rs_write_int(savef, s->s_lvl);
     rs_write_int(savef, s->s_arm);
@@ -976,7 +954,7 @@ int rs_read_stats(int inf, struct stats *s)
         return READSTAT;
 
     rs_read_marker(inf, RSID_STATS);
-    rs_read_str_t(inf, &s->s_str);
+    rs_read_short(inf, &s->s_str);
     rs_read_long(inf, &s->s_exp);
     rs_read_int(inf, &s->s_lvl);
     rs_read_int(inf, &s->s_arm);
