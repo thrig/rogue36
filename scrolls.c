@@ -137,21 +137,17 @@ void read_scroll(void)
                 msg("You hear a faint cry of anguish in the distance.");
             }
         }
+        s_know[S_CREATE] = TRUE;
         break;
     case S_IDENT:
-        /*
-         * Identify, let the rogue figure something out
-         */
-        msg("This scroll is an identify scroll");
+        if (s_know[S_IDENT] == FALSE)
+            msg("This scroll is an identify scroll");
         s_know[S_IDENT] = TRUE;
         whatis();
         break;
     case S_MAP:
-        /*
-         * Scroll of magic mapping.
-         */
-        s_know[S_MAP] = TRUE;
         msg("Oh, now this scroll has a map on it.");
+        s_know[S_MAP] = TRUE;
         overwrite(stdscr, hw);
         /*
          * Take all the things we want to keep hidden out of the window
@@ -256,6 +252,7 @@ void read_scroll(void)
          * laughter at the poor rogue's boo boo.
          */
         msg("You hear maniacal laughter in the distance.");
+        s_know[S_SCARE] = TRUE;
         break;
     case S_REMOVE:
         if (cur_armor != NULL)

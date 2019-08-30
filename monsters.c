@@ -18,8 +18,8 @@
 /*
  * List of monsters in rough order of vorpalness
  */
-char lvl_mons[27] = "KJBSHEAOZGLCRQNYTWFIXUMVDP";
-char wand_mons[27] = "KJBSH AOZG CRQ Y W IXU V  ";
+char lvl_mons[27] = "KJBSHEAOZGNCRQLYTWFIXUMVDP";
+char wand_mons[27] = "KJBSH AOZG CRQ Y WLIXU V  ";
 
 /*
  * randmonster:
@@ -176,9 +176,9 @@ struct linked_list *wake_monster(int y, int x)
             if (off(*tp, ISFOUND) && !save(VS_MAGIC)) {
                 msg("The umber hulk's gaze has confused you.");
                 if (on(player, ISHUH))
-                    lengthen(unconfuse, roll(1, 4));
+                    lengthen(unconfuse, roll(2, 4));
                 else
-                    fuse(unconfuse, 0, roll(1, 4), AFTER);
+                    fuse(unconfuse, 0, roll(2, 4), AFTER);
                 player.t_flags |= ISHUH;
             }
             tp->t_flags |= ISFOUND;

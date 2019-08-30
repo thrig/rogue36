@@ -74,7 +74,7 @@ int rollwand(void)
 
 /*
  * unconfuse:
- *	Release the poor player from his confusion
+ *	Release the poor player from their confusion
  */
 
 int unconfuse(void)

@@ -135,7 +135,7 @@ void quaff(void)
         p_know[P_PARALYZE] = TRUE;
         break;
     case P_SEEINVIS:
-        msg("This tastes like %s juice, reputed good for the eyes", fruit);
+        msg("This tastes like %s juice.", fruit);
         if (off(player, CANSEE)) {
             p_know[P_SEEINVIS] = TRUE;
             player.t_flags |= CANSEE;

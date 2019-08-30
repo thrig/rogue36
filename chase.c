@@ -250,7 +250,7 @@ struct room *roomin(coord * cp)
 
 /*
  * find_mons:
- *	Find the monster from his corrdinates
+ *	Find the monster from their coordinates
  */
 
 struct linked_list *find_mons(int y, int x)

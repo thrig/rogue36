@@ -83,8 +83,14 @@ inline void command(void)
             ch = ' ';
         }
         if (no_command) {
-            if (--no_command == 0)
+            if (--no_command == 0) {
                 msg("You can move again.");
+                /*
+                 * Avoid giving runners a(nother) free whack at the
+                 * hero, though this does let the BEFORE fuses fire.
+                 */
+                after = FALSE;
+            }
         } else {
             /*
              * check for prefixes
@@ -379,7 +385,7 @@ inline void command(void)
 
 /*
  * quit:
- *	Have player make certain, then exit.
+ *      Have player make certain, then exit.
  */
 
 void quit(int p)
@@ -411,7 +417,7 @@ void quit(int p)
 
 /*
  * search:
- *	Player gropes around to find hidden things.
+ *      Player gropes around to find hidden things.
  */
 
 void search(void)
@@ -458,7 +464,7 @@ void search(void)
 
 /*
  * help:
- *	Give single character help, or the whole mess
+ *      Give single character help, or the whole mess
  */
 
 void help(void)
@@ -513,7 +519,7 @@ void help(void)
 
 /*
  * identify:
- *	Tell the player what a certain thing is.
+ *      Tell the player what a certain thing is.
  */
 
 void identify(void)
@@ -661,7 +667,7 @@ void call(void)
 
 /*
  * d_level:
- *	They want to go down a level
+ *      They want to go down a level
  */
 
 void d_level(void)
@@ -676,7 +682,7 @@ void d_level(void)
 
 /*
  * u_level:
- *	They want to go up a level
+ *      They want to go up a level
  */
 
 void u_level(void)
@@ -769,7 +775,7 @@ inline void wiz_command(int ch)
             add_pack(item, TRUE);
             cur_weapon = obj;
             /*
-             * And his suit of armor
+             * And their suit of armor
              */
             item = new_item(sizeof *obj);
             obj = (struct object *) ldata(item);

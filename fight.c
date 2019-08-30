@@ -114,8 +114,7 @@ int attack(struct thing *mp)
     else
         mname = monsters[mp->t_type - 'A'].m_name;
     if (roll_em(&mp->t_stats, &pstats, NULL, FALSE)) {
-        if (mp->t_type != 'E')
-            hit(mname, NULL);
+        hit(mname, NULL);
         if (pstats.s_hpt <= 0)
             death(mp->t_type);  /* Bye bye life ... */
         if (off(*mp, ISCANC)) {
@@ -137,8 +136,7 @@ int attack(struct thing *mp)
                 break;
             case 'E':
                 /*
-                 * The gaze of the floating eye hypnotizes you (and then,
-                 * somehow, hurts you (this is to avoid softlocks))
+                 * The gaze of the floating eye hypnotizes you.
                  */
                 if (on(player, ISBLIND))
                     break;
@@ -148,10 +146,6 @@ int attack(struct thing *mp)
                         addmsg(" by the gaze of the floating eye.");
                     endmsg();
                     no_command = SLEEPTIME + rnd(4);
-                } else {
-                    pstats.s_hpt -= roll(1, 3);
-                    if (pstats.s_hpt <= 0)
-                        death(mp->t_type);      /* Bye bye life ... */
                 }
                 break;
             case 'A':
@@ -210,14 +204,13 @@ int attack(struct thing *mp)
                  * monsters). Technically they should cast light like
                  * the player does because torches but that's more work.
                  */
-                msg("The lampades shout and strike about you with their torches!");
-                aggravate();
-                if (on(player, ISHUH))
-                    lengthen(unconfuse, roll(1, 6));
-                else
-                    fuse(unconfuse, 0, roll(1, 6), AFTER);
-                remove_monster(&mp->t_pos, find_mons(mp->t_pos.y, mp->t_pos.x));
-                mp = NULL;
+                if (!on(player, ISHUH)) {
+                    msg("The lampades strike about you with their torches!");
+                    fuse(unconfuse, 0, roll(3, 4), AFTER);
+                } else if (!save(VS_MAGIC)) {
+                    msg("The lampades shout wildly!");
+                    aggravate();
+                }
                 break;
             case 'N':
                 {
