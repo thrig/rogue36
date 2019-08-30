@@ -104,7 +104,7 @@ struct monster monsters[26] = {
 { "wraith",      0,     0,      { _x,  55,   5,   4, ___, "1d8" } },
 { "xorn",        0,     ISMEAN, { _x, 120,   7,  -2, ___, "1d3/1d3/1d3/4d6" } },
 { "yeti",        40,    0,      { _x,  50,   5,   6, ___, "1d6/1d6" } },
-{ "zombie",      0,     ISSLOW|ISMEAN, { _x, 7,4, 7, ___, "3d4" } }
+{ "zombie",      0,     ISSLOW|ISMEAN, { _x, 7,4, 6, ___, "3d4" } }
 /* Name          CARRY  FLAG     str,  exp, lvl, amr, hpt, dmg */
 };
 /* *INDENT-ON* */

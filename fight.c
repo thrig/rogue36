@@ -204,8 +204,9 @@ int attack(struct thing *mp)
                  * monsters). Technically they should cast light like
                  * the player does because torches but that's more work.
                  */
-                if (!on(player, ISHUH)) {
+                if (off(player, ISHUH)) {
                     msg("The lampades strike about you with their torches!");
+                    player.t_flags |= ISHUH;
                     fuse(unconfuse, 0, roll(3, 4), AFTER);
                 } else if (!save(VS_MAGIC)) {
                     msg("The lampades shout wildly!");

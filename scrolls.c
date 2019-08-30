@@ -37,7 +37,6 @@ void read_scroll(void)
             msg("Nothing to read");
         return;
     }
-    msg("As you read the scroll, it vanishes.");
     /*
      * Calculate the effect it has on the poor hero.
      */
