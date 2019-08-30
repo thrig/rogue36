@@ -64,9 +64,9 @@ void quaff(void)
         p_know[P_POISON] = TRUE;
         break;
     case P_HEALING:
-        if ((pstats.s_hpt += roll(pstats.s_lvl, 4)) > max_hp)
-            pstats.s_hpt = ++max_hp;
-        msg("You begin to feel better.");
+        if ((pstats.s_hpt += 8 + roll(pstats.s_lvl, 4)) > max_hp)
+            pstats.s_hpt = max_hp;
+        msg("You feel better.");
         sight();
         p_know[P_HEALING] = TRUE;
         break;
@@ -150,9 +150,9 @@ void quaff(void)
         raise_level();
         break;
     case P_XHEAL:
-        if ((pstats.s_hpt += roll(pstats.s_lvl, 8)) > max_hp)
+        if ((pstats.s_hpt += 16 + roll(pstats.s_lvl, 8)) > max_hp)
             pstats.s_hpt = ++max_hp;
-        msg("You begin to feel much better.");
+        msg("You feel much better.");
         p_know[P_XHEAL] = TRUE;
         sight();
         break;
