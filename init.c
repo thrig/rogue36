@@ -81,10 +81,10 @@ struct monster monsters[26] = {
 /* Name          CARRY  FLAG     str,  exp, lvl, amr, hpt, dmg */
 { "giant ant",   0,     ISMEAN, { _x,  10,   2,   3, ___, "1d6" } },
 { "bat",         0,     0,      { _x,   2,   1,   4, ___, "1d1" } },
-{ "centaur",     30,    ISGREED,{ _x,  15,   4,   4, ___, "1d6/1d6" } },
+{ "centaur",     30,    ISMEAN, { _x,  15,   4,   4, ___, "1d6/1d6" } },
 { "dragon",      100,   ISGREED,{ _x,9000,  10,  -1, ___, "1d8/1d8/3d10" } },
 { "floating eye",0,     0,      { _x,  10,   2,   3, ___, "1d1" } },
-{ "violet fungi",30,    ISMEAN, { _x,  85,   8,   3, ___, "000d0" } },
+{ "violet fungi",60,    ISMEAN, { _x,  85,   8,   3, ___, "000d0" } },
 { "ghast",       0,     ISHASTE|ISMEAN,{ _x,8,3,  5, ___, "1d3/1d3/1d3" } },
 { "hobgoblin",   15,    ISMEAN, { _x,   5,   2,   5, ___, "1d4" } },
 { "invisible stalker",0,ISINVIS,{ _x, 120,   8,   3, ___, "4d4" } },
@@ -99,11 +99,11 @@ struct monster monsters[26] = {
 { "rust monster",0,     ISMEAN, { _x,  20,   5,   5, ___, "1d1/1d1" } },
 { "snake",       0,     ISMEAN, { _x,   3,   1,   5, ___, "1d3" } },
 { "troll",       75,    ISREGEN|ISMEAN,{ _x,55,6, 4, ___, "1d8/1d8/2d6" } },
-{ "umber hulk",  80,    ISMEAN, { _x, 130,   8,   2, ___, "3d4/3d4/2d5" } },
-{ "vampire",     50,    ISREGEN|ISMEAN,{ _x,380,8,1, ___, "1d10" } },
+{ "umber hulk",  80,    ISMEAN, { _x, 150,   8,   2, ___, "2d4/2d4/2d5" } },
+{ "vampire",     65,    ISREGEN|ISMEAN,{ _x,380,8,1, ___, "1d10" } },
 { "wraith",      0,     0,      { _x,  55,   5,   4, ___, "1d8" } },
-{ "xorn",        0,     ISMEAN, { _x, 120,   7,  -2, ___, "1d3/1d3/1d3/4d6" } },
-{ "yeti",        40,    0,      { _x,  50,   5,   6, ___, "1d6/1d6" } },
+{ "xorn",        0,     ISMEAN, { _x, 140,   7,   0, ___, "1d3/1d3/1d3/2d6" } },
+{ "yeti",        50,    0,      { _x,  50,   5,   6, ___, "1d8/1d8" } },
 { "zombie",      0,     ISSLOW|ISMEAN, { _x, 7,4, 6, ___, "3d4" } }
 /* Name          CARRY  FLAG     str,  exp, lvl, amr, hpt, dmg */
 };

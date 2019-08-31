@@ -32,8 +32,8 @@ struct optstruct {
 
 typedef struct optstruct OPTION;
 
-int put_bool(bool * b);
 int get_bool(bool * bp, WINDOW * win);
+int put_bool(bool * b);
 
 static OPTION optlist[] = {
     {"terse", "Terse output: ",

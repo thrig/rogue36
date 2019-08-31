@@ -325,9 +325,12 @@ inline void command(void)
             case '&':
                 after = FALSE;
                 if (!wizard) {
-                    msg("You are suddenly as smart as Ken Arnold in dungeon %d",
-                        dnum);
-                    wizard = TRUE;
+                    msg("Enable wizardly powers?");
+                    draw(cw);
+                    if (readchar(cw) == 'Y') {
+                        msg("You are suddenly as smart as Ken Arnold in dungeon %d", dnum);
+                        wizard = TRUE;
+                    }
                 }
                 break;
 #endif

@@ -74,6 +74,7 @@ void read_scroll(void)
             msg("Your armor glows faintly for a moment");
             cur_armor->o_ac--;
             cur_armor->o_flags &= ~ISCURSED;
+            s_know[S_ARMOR] = TRUE;
         }
         break;
     case S_HOLD:
@@ -131,6 +132,7 @@ void read_scroll(void)
             }
             if (appear) {
                 titem = new_item(sizeof(struct thing));
+                msg("A monster appears!");
                 new_monster(titem, randmonster(FALSE), &mp);
             } else {
                 msg("You hear a faint cry of anguish in the distance.");
@@ -243,6 +245,7 @@ void read_scroll(void)
             msg("Your %s glows blue for a moment.",
                 w_names[cur_weapon->o_which]);
         }
+        s_know[S_ENCH] = TRUE;
         break;
     case S_SCARE:
         /*

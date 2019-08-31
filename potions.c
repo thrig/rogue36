@@ -65,7 +65,7 @@ void quaff(void)
         break;
     case P_HEALING:
         if ((pstats.s_hpt += 8 + roll(pstats.s_lvl, 4)) > max_hp)
-            pstats.s_hpt = max_hp;
+            pstats.s_hpt = ++max_hp;
         msg("You feel better.");
         sight();
         p_know[P_HEALING] = TRUE;
