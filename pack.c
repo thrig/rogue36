@@ -172,18 +172,29 @@ int inventory(struct linked_list *list, int type)
 {
     struct object *obj;
     char ch;
-    int n_objs;
+    int n_objs = 0;
     char inv_temp[ROGUE_CHARBUF_MAX];
 
-    n_objs = 0;
     for (ch = 'a'; list != NULL; ch++, list = next(list)) {
         obj = (struct object *) ldata(list);
-        if (type && type != obj->o_type && !(type == CALLABLE &&
-                                             (obj->o_type == SCROLL
-                                              || obj->o_type == POTION
-                                              || obj->o_type == RING
-                                              || obj->o_type == STICK)))
-            continue;
+        int o_type;
+        if (type) {
+            o_type = obj->o_type;
+            if (type == CALLABLE) {
+                if (!
+                    (o_type == SCROLL || o_type == POTION || o_type == RING
+                     || o_type == STICK))
+                    continue;
+            } else if (type == THROWABLE) {
+                if (!(o_type == WEAPON && obj->o_group > 0))
+                    continue;
+            } else if (type == WIELDABLE) {
+                if (!(o_type == WEAPON && obj->o_group == 0))
+                    continue;
+            } else if (type != o_type) {
+                continue;
+            }
+        }
         switch (n_objs++) {
             /*
              * For the first thing in the inventory, just save the string
@@ -319,7 +330,8 @@ struct linked_list *get_item(char *purpose, int type)
             msg("");
             /*
              * Give the poor player a chance to abort the command.
-             * (curses has ESCDELAY but with that too low no arrows/keypad)
+             * WITHKEYPAD will make ESCAPE that much slower due to
+             * ncurses ESCDELAY so ^G is another way to abort.
              */
             if (ch == ESCAPE || ch == CTRL('G')) {
                 after = FALSE;

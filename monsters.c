@@ -61,7 +61,7 @@ void new_monster(struct linked_list *item, char type, coord * cp)
     tp->t_oldch = (char) mvwinch(cw, cp->y, cp->x);
     mvwaddch(mw, cp->y, cp->x, tp->t_type);
     mp = &monsters[tp->t_type - 'A'];
-    tp->t_stats.s_hpt = roll(mp->m_stats.s_lvl, 8);
+    tp->t_stats.s_hpt = max(1, roll(mp->m_stats.s_lvl, 8) + mp->mp_stats.s_hpt);
     tp->t_stats.s_lvl = mp->m_stats.s_lvl;
     tp->t_stats.s_arm = mp->m_stats.s_arm;
     strcpy(tp->t_stats.s_dmg, mp->m_stats.s_dmg);

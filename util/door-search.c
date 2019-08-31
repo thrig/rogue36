@@ -6,7 +6,7 @@
 
 #include "rogue.h"
 
-#define SEEDS  1024
+#define SEEDS  4096
 #define TRIALS 1024
 
 int search(void);
@@ -38,7 +38,7 @@ int new_search(void)
 {
     int turns = 0;
     while (1) {
-        if (rnd(100) < 10 + 6 * turns++)
+        if (rnd(100) < 33 + 6 * turns++)
             break;
     }
     return turns;

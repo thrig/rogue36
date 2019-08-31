@@ -58,7 +58,7 @@ void new_level(void)
                 rm = rnd_room();
                 rnd_pos(&rooms[rm], &stairs);
             } while (winat(stairs.y, stairs.x) != FLOOR);
-            switch (rnd(7)) {
+            switch (rnd(8)) {
             case 0:
                 ch = TRAPDOOR;
                 break;
@@ -69,10 +69,11 @@ void new_level(void)
                 ch = ARROWTRAP;
                 break;
             case 3:
-                ch = TELTRAP;
+                ch = DARTTRAP;
                 break;
             case 4:
-                ch = DARTTRAP;
+            case 5:
+                ch = TELTRAP;
                 break;
             default:
                 ch = BEARTRAP;

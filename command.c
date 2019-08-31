@@ -439,7 +439,7 @@ void search(void)
             ch = (char) winat(y, x);
             switch (ch) {
             case SECRETDOOR:
-                if (rnd(100) < 10 + 6 * search_repeat++) {
+                if (rnd(100) < 30 + 6 * search_repeat++) {
                     mvaddch(y, x, DOOR);
                     count = 0;
                 }

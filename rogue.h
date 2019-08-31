@@ -197,6 +197,8 @@ struct linked_list *new_item(size_t size);
 #define RING '='
 #define STICK '/'
 #define CALLABLE -1
+#define THROWABLE -2
+#define WIELDABLE -3
 
 /*
  * Various constants

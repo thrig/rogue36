@@ -23,7 +23,10 @@ rogue.o: rogue.c rogue.h
 scroll-o-matic: scroll-o-matic.c rogue.o rogue.h
 	$(CC) $(CFLAGS) rogue.o scroll-o-matic.c -o scroll-o-matic
 
+trap-odds: trap-odds.c rogue.o rogue.h
+	$(CC) $(CFLAGS) rogue.o trap-odds.c -o trap-odds
+
 clean:
-	rm -f count-things door-search gaze-odds monster-odds newesim rogue.o scroll-o-matic
+	rm -f count-things door-search gaze-odds monster-odds newesim rogue.o scroll-o-matic trap-odds
 
 .PHONY: all clean
