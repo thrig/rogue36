@@ -73,43 +73,38 @@ int seed;                       /* Random number seed */
 
 struct trap traps[MAXTRAPS];
 
-#define ___ 1
-#define _x 1
-
 /* *INDENT-OFF* */
 struct monster monsters[26] = {
-/* Name          CARRY  FLAG     str,  exp, lvl, amr, hpt, dmg */
-{ "giant ant",   0,     ISMEAN, { _x,  10,   2,   3, ___, "1d6" } },
-{ "bat",         0,     0,      { _x,   2,   1,   4, ___, "1d1" } },
-{ "centaur",     30,    ISMEAN, { _x,  15,   4,   4, ___, "1d6/1d6" } },
-{ "dragon",      100,   ISGREED,{ _x,9000,  10,  -1, ___, "1d8/1d8/3d10" } },
-{ "floating eye",0,     0,      { _x,  10,   2,   3, ___, "1d1" } },
-{ "violet fungi",60,    ISMEAN, { _x,  85,   8,   3, ___, "000d0" } },
-{ "ghast",       0,     ISHASTE|ISMEAN,{ _x,8,3,  5, ___, "1d3/1d3/1d3" } },
-{ "hobgoblin",   15,    ISMEAN, { _x,   5,   2,   5, ___, "1d4" } },
-{ "invisible stalker",0,ISINVIS,{ _x, 120,   8,   3, ___, "4d4" } },
-{ "jackal",      0,     ISHASTE|ISMEAN,{ _x,2,1,  7, ___, "1d1" } },
-{ "kobold",      10,    ISMEAN, { _x,   2,   1,   7, ___, "1d4" } },
-{ "lampades",    50,    0,      { _x,  45,   4,   6, ___, "1d4" } },
-{ "mimic",       60,    0,      { _x, 140,   7,   7, ___, "4d4" } },
-{ "nymph",       100,   0,      { _x,  40,   3,   8, ___, "1d1" } },
-{ "orc",         30,    ISMEAN, { _x,   7,   2,   6, ___, "1d8" } },
-{ "purple worm", 70,    0,      { _x,7000,  15,   6, ___, "2d12/2d4" } },
-{ "quasit",      60,    ISMEAN, { _x,  35,   3,   2, ___, "1d2/1d2/1d4" } },
-{ "rust monster",0,     ISMEAN, { _x,  20,   5,   5, ___, "1d1/1d1" } },
-{ "snake",       0,     ISMEAN, { _x,   3,   1,   5, ___, "1d3" } },
-{ "troll",       75,    ISREGEN|ISMEAN,{ _x,55,6, 4, ___, "1d8/1d8/2d6" } },
-{ "umber hulk",  80,    ISMEAN, { _x, 150,   8,   2, ___, "2d4/2d4/2d5" } },
-{ "vampire",     65,    ISREGEN|ISMEAN,{ _x,380,8,1, ___, "1d10" } },
-{ "wraith",      0,     0,      { _x,  55,   5,   4, ___, "1d8" } },
-{ "xorn",        0,     ISMEAN, { _x, 140,   7,   0, ___, "1d3/1d3/1d3/2d6" } },
-{ "yeti",        50,    0,      { _x,  50,   5,   6, ___, "1d8/1d8" } },
-{ "zombie",      0,     ISSLOW|ISMEAN, { _x, 7,4, 6, ___, "3d4" } }
-/* Name          CARRY  FLAG     str,  exp, lvl, amr, hpt, dmg */
+/* Name          CARRY FLAG     str,  exp, lvl,amr, hpt,dmg */
+{ "giant ant",   0,    ISMEAN, { 10,  10,   2,   3, 1, "1d6", 0, 0 } },
+{ "bat",         0,    0,      { 10,   1,   1,   4, 1, "1d3", 0,-2 } },
+{ "centaur",     30,   ISMEAN, { 10,  15,   4,   4, 1, "1d6/1d6", 0, 0 } },
+{ "dragon",      100,  ISGREED,{ 10,9000,  10,  -1, 1, "1d8/1d8/3d10", 0, 0 } },
+{ "floating eye",0,    0,      { 10,  10,   2,   3, 1, "1d3", 0,-1 } },
+{ "violet fungi",60,   ISMEAN, { 10,  85,   8,   3, 1, "000d0", 0, 0 } },
+{ "ghast",       0,    ISHASTE|ISMEAN,{ 10,8,3,  5, 1, "1d3/1d3/1d3", 1,-1 } },
+{ "hobgoblin",   15,   ISMEAN, { 10,   4,   2,   5, 1, "1d4", 0,-1 } },
+{ "invisible stalker",0,ISINVIS,{ 10, 120,  8,   3, 1, "4d4", 0, 0 } },
+{ "jackal",      0,    ISHASTE|ISMEAN,{ 10,2,1,  7, 1, "1d2", 0,-1 } },
+{ "kobold",      10,   ISMEAN, { 10,   2,   1,   7, 1, "1d4", 0,-1 } },
+{ "lampades",    50,   0,      { 10,  45,   4,   6, 1, "1d4", 0, 0 } },
+{ "mimic",       60,   0,      { 10, 140,   7,   7, 1, "4d4", 0, 0 } },
+{ "nymph",       100,  0,      { 10,  40,   3,   8, 1, "1d1", 0, 0 } },
+{ "orc",         30,   ISMEAN, { 10,   7,   2,   6, 1, "1d8",-1, 1 } },
+{ "purple worm", 70,   0,      { 10,7000,  15,   6, 1, "2d12/2d4", 0, 0 } },
+{ "quasit",      60,   ISMEAN, { 10,  35,   3,   2, 1, "1d2/1d2/1d4", 0, 0 } },
+{ "rust monster",0,    ISMEAN, { 10,  20,   5,   5, 1, "1d1/1d1", 0, 0 } },
+{ "snake",       0,    ISMEAN, { 10,   2,   1,   5, 1, "1d3",-1,-1 } },
+{ "troll",       75,   ISREGEN|ISMEAN,{ 10,55,6, 4, 1, "1d8/1d8/2d6", 0, 0 } },
+{ "umber hulk",  80,   ISMEAN, { 10, 150,   8,   2, 1, "2d4/2d4/2d5", 0, 0 } },
+{ "vampire",     65,   ISREGEN|ISMEAN,{ 10,380,8,1, 1, "1d10", 0, 0 } },
+{ "wraith",      0,    0,      { 10,  55,   5,   4, 1, "1d8", 0, 0 } },
+{ "xorn",        0,    ISMEAN, { 10, 140,   7,   0, 1, "1d3/1d3/1d3/2d6", 0, 0 } },
+{ "yeti",        50,   0,      { 10,  50,   5,   6, 1, "1d8/1d8", 0, 0 } },
+{ "zombie",      0,    ISSLOW|ISMEAN, { 10, 7,4, 6, 1, "3d4",-2, 2 } }
+/* Name          CARRY FLAG     str,  exp, lvl,amr, hpt,dmg */
 };
 /* *INDENT-ON* */
-
-#undef ___
 
 /*
  * init_player:
@@ -142,7 +137,6 @@ void init_player(void)
     obj->o_type = WEAPON;
     obj->o_which = DAGGER;
     init_weapon(obj, DAGGER);
-    obj->o_hplus = 1;
     obj->o_flags |= ISKNOW;
     add_pack(item, TRUE);
     cur_weapon = obj;
@@ -300,13 +294,13 @@ char *metal[] = {
 const int cNMETAL = NMETAL;
 
 struct magic_item things[NUMTHINGS] = {
-    {"", 31},                   /* potion */
-    {"", 31},                   /* scroll */
+    {"", 29},                   /* potion */
+    {"", 29},                   /* scroll */
     {"", 5},                    /* food */
-    {"", 12},                   /* weapon */
+    {"", 14},                   /* weapon */
     {"", 9},                    /* armor */
     {"", 5},                    /* ring */
-    {"", 7},                    /* stick */
+    {"", 9},                    /* stick */
 };
 
 struct magic_item s_magic[MAXSCROLLS] = {

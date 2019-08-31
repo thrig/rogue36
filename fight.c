@@ -338,6 +338,8 @@ roll_em(struct stats *att, struct stats *def, struct object *weap, bool hurl)
     prop_hplus = prop_dplus = 0;
     if (weap == NULL) {
         cp = att->s_dmg;
+        prop_hplus += att->s_hplus;
+        prop_dplus += att->s_dplus;
     } else if (hurl) {
         if ((weap->o_flags & ISMISL) && cur_weapon != NULL &&
             cur_weapon->o_which == weap->o_launch) {

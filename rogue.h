@@ -116,6 +116,8 @@ struct stats {
     int s_arm;                  /* Armor class */
     int s_hpt;                  /* Hit points */
     char s_dmg[30];             /* String describing damage done */
+    int s_hplus;                /* to-hit plus */
+    int s_dplus;                /* damage plus */
 };
 
 /* list.c */

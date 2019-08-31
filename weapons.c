@@ -36,37 +36,31 @@ char *w_names[MAXWEAPONS] = {
     "spear",
 };
 
+/* *INDENT-OFF* */
 static struct init_weps {
     char *iw_dam;
     char *iw_hrl;
+    short iw_hplus;
+    short iw_dplus;
     char iw_launch;
     int iw_flags;
 } init_dam[MAXWEAPONS] = {
-    {
-    "2d4", "1d3", NONE, 0},     /* Mace */
-    {
-    "1d10", "1d2", NONE, 0},    /* Long sword */
-    {
-    "1d1", "1d1", NONE, 0},     /* Bow */
-    {
-    "1d1", "1d6", BOW, ISMANY | ISMISL},        /* Arrow */
-    {
-    "1d6", "1d4", NONE, ISMISL},        /* Dagger */
-    {
-    "1d2", "1d4", SLING, ISMANY | ISMISL},      /* Rock */
-    {
-    "3d6", "1d2", NONE, 0},     /* 2h sword */
-    {
-    "0d0", "0d0", NONE, 0},     /* Sling */
-    {
-    "1d1", "1d3", NONE, ISMANY | ISMISL},       /* Dart */
-    {
-    "1d1", "1d1", NONE, 0},     /* Crossbow */
-    {
-    "1d2", "1d10", CROSSBOW, ISMANY | ISMISL},  /* Crossbow bolt */
-    {
-    "1d8", "1d6", NONE, ISMISL} /* Spear */
+/*  attack throw  h+  d+  launcher */
+  { "2d4", "1d3",  0,  0, NONE,     0},                 /* Mace */
+  { "1d10","1d1",  0,  0, NONE,     0},                 /* Long sword */
+  { "1d1", "1d1",  0,  0, NONE,     0},                 /* Bow */
+  { "1d1", "1d6",  0,  0, BOW,      ISMANY | ISMISL},   /* Arrow */
+  { "1d6", "1d6",  2, -1, NONE,     ISMISL},            /* Dagger */
+  { "1d2", "1d4",  0,  0, SLING,    ISMANY | ISMISL},   /* Rock */
+  { "3d6", "1d1", -1,  0, NONE,     0},                 /* 2h sword */
+  { "0d0", "0d0",  0,  0, NONE,     0},                 /* Sling */
+  { "1d1", "1d3",  2, -1, NONE,     ISMANY | ISMISL},   /* Dart */
+  { "1d1", "1d1",  0,  0, NONE,     0},                 /* Crossbow */
+  { "1d1", "1d10", 0,  0, CROSSBOW, ISMANY | ISMISL},   /* Crossbow bolt */
+  { "1d8", "1d8",  1,  0, NONE,     ISMISL}             /* Spear */
+/*  attack throw  launcher */
 };
+/* *INDENT-ON* */
 
 /*
  * missile:
@@ -203,6 +197,8 @@ void init_weapon(struct object *weap, char type)
     strcpy(weap->o_hurldmg, iwp->iw_hrl);
     weap->o_launch = iwp->iw_launch;
     weap->o_flags = iwp->iw_flags;
+    weap->o_hplus = iwp->iw_hplus;
+    weap->o_dplus = iwp->iw_dplus;
     if (weap->o_flags & ISMANY) {
         weap->o_count = rnd(8) + 8;
         /* 
