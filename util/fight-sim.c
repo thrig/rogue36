@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     for (unsigned long i = 0; i < RUNSEEDS; i++)
         printf("%.4f\n", thunderdome(ch));
 
-    return 0;
+    exit(EXIT_SUCCESS);
 }
 
 inline double thunderdome(char m)

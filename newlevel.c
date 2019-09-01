@@ -115,11 +115,10 @@ int rnd_room(void)
 
 void put_things(void)
 {
-    int i;
+    coord tp;
+    int objodds, rm;
     struct linked_list *item;
     struct object *cur;
-    int objodds, rm;
-    coord tp;
 
     free_list(lvl_obj);
 
@@ -130,10 +129,9 @@ void put_things(void)
     if (amulet && level < max_level)
         return;
 
-    objodds = 105 - level * 10;
-    if (objodds < 45)
-        objodds = 45;
-    for (i = 0; i < MAXOBJ; i++) {
+    objodds = max(45, 105 - level * 10);
+
+    for (int i = 0; i < MAXOBJ; i++) {
         if (rnd(100) < objodds) {
             item = new_thing();
             attach(lvl_obj, item);
