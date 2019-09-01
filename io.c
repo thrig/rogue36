@@ -41,8 +41,6 @@ int get_str(char *opt, WINDOW * win)
 
     draw(win);
     getyx(win, oy, ox);
-    // TODO does ncurses have a better routine for this (that does not
-    // have security issues?
     /*
      * loop reading in the string, and put it in a temporary buffer
      */

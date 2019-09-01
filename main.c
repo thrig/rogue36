@@ -25,10 +25,6 @@
 
 static int have_seed;
 
-WINDOW *cw;                     /* Window that the player sees */
-WINDOW *hw;                     /* Used for the help command */
-WINDOW *mw;                     /* Used to store mosnters */
-
 long argtol(const char *arg, const long min, const long max);
 void endit(int p);
 char *getroguedir(void);
@@ -148,21 +144,6 @@ void endit(int p)
     fatal("O, I am slain!\n");
 }
 
-/*
- * fatal:
- *      Exit the program, printing a message.
- */
-
-void fatal(char *s)
-{
-    clear();
-    move(ROLINES - 2, 0);
-    printw("%s", s);
-    draw(stdscr);
-    endwin();
-    exit(1);
-}
-
 inline char *getroguedir(void)
 {
     char *dir;
@@ -270,30 +251,6 @@ inline void playit(void)
 
     /* NOTREACHED */
     endit(-1);
-}
-
-/*
- * rnd:
- *      Pick a very random number. (Nope, not very random.)
- */
-
-inline int rnd(int range)
-{
-    return range == 0 ? 0 : abs(RN) % range;
-}
-
-/*
- * roll:
- *      roll a number of dice
- */
-
-int roll(int number, int sides)
-{
-    int dtotal = 0;
-
-    while (number--)
-        dtotal += rnd(sides) + 1;
-    return dtotal;
 }
 
 inline static void seed_rng(void)

@@ -71,7 +71,6 @@ void quaff(void)
         p_know[P_HEALING] = TRUE;
         break;
     case P_STRENGTH:
-        /* TODO should this bump the maximum up to make restore nicer? */
         msg("You feel stronger now, with bulging muscles!");
         chg_str(1);
         p_know[P_STRENGTH] = TRUE;

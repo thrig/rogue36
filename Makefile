@@ -42,6 +42,7 @@ scrolls.o: scrolls.c rogue.h
 state.o: state.c rogue.h
 sticks.o: sticks.c rogue.h
 things.o: things.c rogue.h
+vers.o: vers.c rogue.h
 weapons.o: weapons.c rogue.h
 wizard.o: wizard.c rogue.h
 

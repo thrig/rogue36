@@ -600,12 +600,15 @@ int swing(int at_lvl, int op_arm, int wplus);
 void thunk(struct object *weap, char *mname);
 
 /* init.c */
+void fatal(char *s);
 void init_colors(void);
 void init_materials(void);
 void init_names(void);
 void init_player(void);
 void init_stones(void);
 void init_things(void);
+int rnd(int range);
+int roll(int number, int sides);
 
 /* io.c */
 void init_keylog(void);
@@ -621,10 +624,7 @@ void status(void);
 void wait_for(WINDOW * win, char ch);
 
 /* main.c */
-void fatal(char *s);
 void playit(void);
-int rnd(int range);
-int roll(int number, int sides);
 void setup_sigs(void);
 
 /* mdport.c */

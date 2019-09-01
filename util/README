@@ -1,1 +1,4 @@
 some utility/testing code
+
+this code requires arc4random(3) so on Linux will require libbsd or
+changes to the code

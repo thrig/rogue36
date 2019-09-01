@@ -16,7 +16,9 @@
 
 #include "rogue.h"
 
-void badcheck(char *name, struct magic_item *magic, int bound);
+WINDOW *cw;                     /* Window that the player sees */
+WINDOW *hw;                     /* Used for the help command */
+WINDOW *mw;                     /* Used to store mosnters */
 
 bool running = FALSE, wizard = FALSE;
 bool notify = TRUE, fight_flush = FALSE, terse = FALSE, door_stop = FALSE;
@@ -76,25 +78,25 @@ struct trap traps[MAXTRAPS];
 /* *INDENT-OFF* */
 struct monster monsters[26] = {
 /* Name          CARRY FLAG     str,  exp, lvl,amr,hpt,dmg */
-{ "giant ant",   0,    ISMEAN, { 10,  10,   2,   3, 0, "1d6", 0, 0 } },
-{ "bat",         0,    0,      { 10,   1,   1,   4,-2, "1d3", 0,-2 } },
+{ "giant ant",   0,    ISMEAN, { 10,  10,   2,   3, 0, "1d6", 0,-1 } },
+{ "bat",         0,    0,      { 10,   1,   1,   3,-4, "1d1", 0, 0 } },
 { "centaur",     50,   ISMEAN, { 10,  15,   4,   4, 0, "1d6/1d6", 0, 0 } },
 { "dragon",      100,  ISGREED,{ 10,9000,  10,  -1, 0, "1d8/1d8/3d10", 0, 0 } },
-{ "floating eye",0,    0,      { 10,  10,   2,   3, 0, "1d3", 0,-1 } },
+{ "floating eye",0,    0,      { 10,   7,   2,   3, 0, "1d3", 0,-1 } },
 { "violet fungi",60,   ISMEAN, { 10,  85,   8,   3, 0, "000d0", 0, 0 } },
 { "ghast",       0,    ISHASTE|ISMEAN,{10,8,3,   6,-2, "1d3/1d3/1d3", 0,-1 } },
-{ "hobgoblin",   30,   ISMEAN, { 10,   3,   1,   6, 0, "1d4", 0,-1 } },
+{ "hobgoblin",   30,   ISMEAN, { 10,   3,   1,   6,-1, "1d4", 0,-1 } },
 { "invisible stalker",0,ISINVIS,{ 10, 120,  8,   3, 0, "4d4", 0, 0 } },
-{ "jackal",      0,    ISHASTE|ISMEAN,{ 10,2,1,  7, 0, "1d2", 0,-1 } },
-{ "kobold",      20,   ISMEAN, { 10,   2,   1,   7, 0, "1d4", 0,-2 } },
+{ "jackal",      0,    ISHASTE|ISMEAN,{ 10,3,1,  8,-4, "1d2", 0, 0 } },
+{ "kobold",      20,   ISMEAN, { 10,   2,   1,   7,-1, "1d4", 0,-1 } },
 { "lampades",    50,   0,      { 10,  45,   4,   6, 0, "1d4", 0, 0 } },
 { "mimic",       60,   0,      { 10, 140,   7,   7, 0, "4d4", 0, 0 } },
 { "nymph",       100,  0,      { 10,  40,   3,   8, 0, "1d1", 0, 0 } },
-{ "orc",         40,   ISMEAN, { 10,   7,   2,   7, 4, "1d8",-1, 1 } },
+{ "orc",         40,   ISMEAN, { 10,  12,   2,   8, 4, "1d8",-3, 0 } },
 { "purple worm", 70,   0,      { 10,7000,  15,   6, 0, "2d12/2d4", 0, 0 } },
 { "quasit",      60,   ISMEAN, { 10,  35,   3,   2, 0, "1d2/1d2/1d4", 0, 0 } },
 { "rust monster",0,    ISMEAN, { 10,  20,   5,   5, 0, "1d1/1d1", 0, 0 } },
-{ "snake",       0,    ISMEAN, { 10,   1,   1,   5,-1, "1d3",-1,-1 } },
+{ "snake",       0,    ISMEAN, { 10,   1,   1,   5,-3, "1d3",0,-1 } },
 { "troll",       75,   ISREGEN|ISMEAN,{ 10,55,6, 4, 0, "1d8/1d8/2d6", 0, 0 } },
 { "umber hulk",  80,   ISMEAN, { 10, 150,   8,   2, 0, "2d4/2d4/2d5", 0, 0 } },
 { "vampire",     65,   ISREGEN|ISMEAN,{ 10,380,8,1, 0, "1d10", 0, 0 } },
@@ -105,6 +107,23 @@ struct monster monsters[26] = {
 /* Name          CARRY FLAG     str,  exp, lvl,amr,hpt,dmg */
 };
 /* *INDENT-ON* */
+
+void badcheck(char *name, struct magic_item *magic, int bound);
+
+/*
+ * fatal:
+ *      Exit the program, printing a message.
+ */
+
+void fatal(char *s)
+{
+    clear();
+    move(ROLINES - 2, 0);
+    printw("%s", s);
+    draw(stdscr);
+    endwin();
+    exit(1);
+}
 
 /*
  * init_player:
@@ -165,6 +184,30 @@ void init_player(void)
     obj->o_count = 1;
     obj->o_which = RATION;
     add_pack(item, TRUE);
+}
+
+/*
+ * rnd:
+ *      Pick a very random number. (Nope, not very random.)
+ */
+
+inline int rnd(int range)
+{
+    return range == 0 ? 0 : abs(RN) % range;
+}
+
+/*
+ * roll:
+ *      roll a number of dice
+ */
+
+int roll(int number, int sides)
+{
+    int dtotal = 0;
+
+    while (number--)
+        dtotal += rnd(sides) + 1;
+    return dtotal;
 }
 
 /*
