@@ -1,4 +1,4 @@
-CFLAGS=-std=c99 -g -Wall -pedantic -fno-diagnostics-color -fstack-protector-all -fPIC -fPIE -pie -pipe
+CFLAGS += -std=c99 -Wall -pedantic -pipe
 
 ROBJ=../armor.o ../chase.o ../command.o ../daemon.o ../daemons.o ../fight.o ../io.o ../init.o ../list.o ../misc.o ../monsters.o ../move.o ../newlevel.o ../options.o ../pack.o ../passages.o ../potions.o ../rings.o ../rip.o ../rooms.o ../save.o ../scrolls.o ../state.o ../sticks.o ../things.o ../vers.o ../weapons.o ../wizard.o
 

@@ -251,15 +251,15 @@ void status(void)
     s_ac = (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm);
     mvwaddstr(cw, ROLINES - 1, 0, buf);
     switch (hungry_state) {
-    case 0:;
+    case HUNGRY_OKAY:
         break;
-    case 1:
+    case HUNGRY_HUN:
         waddstr(cw, "  Hungry");
         break;
-    case 2:
+    case HUNGRY_WEAK:
         waddstr(cw, "  Weak");
         break;
-    case 3:
+    case HUNGRY_FAINT:
         waddstr(cw, "  Fainting");
     }
     wclrtoeol(cw);

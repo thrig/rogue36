@@ -198,8 +198,6 @@ void drop(void)
         *op = *((struct object *) ldata(obj));
         op->o_count = 1;
         obj = nobj;
-        if (op->o_group != 0)
-            inpack++;
     } else {
         detach(pack, obj);
     }

@@ -194,14 +194,9 @@ void quaff(void)
                 strcpy(p_guess[obj->o_which], buf);
         }
     }
-    /*
-     * Throw the item away
-     */
-    inpack--;
-    if (obj->o_count > 1) {
-        obj->o_count--;
-    } else {
+    if (--obj->o_count < 1) {
         detach(pack, item);
         discard(item);
     }
+    inpack--;
 }

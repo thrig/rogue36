@@ -44,11 +44,7 @@ inline void command(void)
 
     if (on(player, ISHASTE))
         ntimes++;
-    /*
-     * Let the daemons start up
-     */
-    do_daemons(BEFORE);
-    do_fuses(BEFORE);
+
     while (ntimes--) {
         look(TRUE);
         if (!running)
@@ -86,8 +82,7 @@ inline void command(void)
             if (--no_command == 0) {
                 msg("You can move again.");
                 /*
-                 * Avoid giving runners a(nother) free whack at the
-                 * hero, though this does let the BEFORE fuses fire.
+                 * Avoid giving runners another free whack at the hero.
                  */
                 after = FALSE;
             }
@@ -298,6 +293,7 @@ inline void command(void)
                     after = FALSE;
                 break;
             case 'v':
+                after = FALSE;
                 msg("Rogue 3.6.3 + bugfixes + changes (%d)", revision_num);
                 break;
             case CTRL('L'):

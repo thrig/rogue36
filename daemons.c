@@ -25,7 +25,7 @@ int doctor(void)
     ohp = pstats.s_hpt;
     quiet++;
     if (lv < 8) {
-        if (quiet > 11 - lv)
+        if (quiet > 18 - lv * 2)
             pstats.s_hpt++;
     } else if (quiet >= 3)
         pstats.s_hpt += rnd(lv - 7) + 1;
@@ -48,7 +48,7 @@ int doctor(void)
 
 int swander(void)
 {
-    start_daemon(rollwand, 0, BEFORE);
+    start_daemon(rollwand, 0, AFTER);
     return 0;
 }
 
@@ -65,7 +65,7 @@ int rollwand(void)
         if (roll(1, 6) == 4) {
             wanderer();
             kill_daemon(rollwand);
-            fuse(swander, 0, WANDERTIME, BEFORE);
+            fuse(swander, 0, WANDERTIME, AFTER);
         }
         between = 0;
     }
@@ -143,20 +143,20 @@ int stomach(void)
         msg("You faint");
         running = FALSE;
         count = 0;
-        hungry_state = 3;
+        hungry_state = HUNGRY_FAINT;
     } else {
         oldfood = food_left;
         food_left -= ring_eat(LEFT) + ring_eat(RIGHT) + 1 - amulet;
 
         if (food_left < MORETIME && oldfood >= MORETIME) {
             msg("You are starting to feel weak");
-            hungry_state = 2;
+            hungry_state = HUNGRY_WEAK;
         } else if (food_left < 2 * MORETIME && oldfood >= 2 * MORETIME) {
             if (!terse)
                 msg("You are starting to get hungry");
             else
                 msg("Getting hungry");
-            hungry_state = 1;
+            hungry_state = HUNGRY_HUN;
         }
     }
     return 0;

@@ -79,8 +79,6 @@ void take_off(void)
 
 void waste_time(void)
 {
-    do_daemons(BEFORE);
-    do_fuses(BEFORE);
     do_daemons(AFTER);
     do_fuses(AFTER);
 }

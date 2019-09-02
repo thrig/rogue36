@@ -51,6 +51,7 @@ int randmonster(bool wander)
 
 void new_monster(struct linked_list *item, char type, coord * cp)
 {
+    int minhp, monsthp;
     struct thing *tp;
     struct monster *mp;
 
@@ -64,7 +65,9 @@ void new_monster(struct linked_list *item, char type, coord * cp)
 
     mp = &monsters[tp->t_type - 'A'];
     memcpy(&tp->t_stats, &mp->m_stats, sizeof(struct stats));
-    tp->t_stats.s_hpt = max(1, roll(mp->m_stats.s_lvl, 8) + mp->m_stats.s_hpt);
+    monsthp = roll(mp->m_stats.s_lvl, 8) + mp->m_stats.s_hpt;
+    minhp = 2 + level / 2;
+    tp->t_stats.s_hpt = max(minhp, monsthp);
 
     tp->t_flags = mp->m_flags;
     tp->t_turn = TRUE;

@@ -1,7 +1,10 @@
 /* fight-sim - see how deadly monsters are
  *
  *   make fight-sim
- *   for m in B K J H;do echo $m;./fight-sim $m|r-fu summary|grep '^[0-9]';done
+ *   for m in B K J H S; do
+ *      echo -n "$m "
+ *      ./fight-sim $m | r-fu summary | grep '^[0-9]'
+ *   done
  *
  * would review the starting lineup of monsters
  * https://github.com/thrig/r-fu
@@ -16,7 +19,7 @@
 
 #include "../rogue.h"
 
-#define RUNSEEDS  100000UL
+#define RUNSEEDS  10000UL
 #define RUNTRIALS 100UL
 
 double trials(struct linked_list *mlist);

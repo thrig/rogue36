@@ -83,11 +83,11 @@ void read_scroll(void)
          * from chasing after the hero.
          */
         {
-            int x, y;
+            int held = 0;
             struct linked_list *mon;
 
-            for (x = hero.x - 2; x <= hero.x + 2; x++) {
-                for (y = hero.y - 2; y <= hero.y + 2; y++) {
+            for (int x = hero.x - 2; x <= hero.x + 2; x++) {
+                for (int y = hero.y - 2; y <= hero.y + 2; y++) {
                     if (y > 0 && x > 0 && isupper(mvwinch(mw, y, x))) {
                         if ((mon = find_mons(y, x)) != NULL) {
                             struct thing *th;
@@ -95,9 +95,17 @@ void read_scroll(void)
                             th = (struct thing *) ldata(mon);
                             th->t_flags &= ~ISRUN;
                             th->t_flags |= ISHELD;
+                            held++;
                         }
                     }
                 }
+            }
+            if (held) {
+                msg("%s freezes in place.",
+                    held > 1 ? "Some monsters" : "A monster");
+                s_know[S_HOLD] = TRUE;
+            } else {
+                msg("Nothing appears to happen.");
             }
         }
         break;
@@ -275,9 +283,10 @@ void read_scroll(void)
          */
         aggravate();
         msg("You hear a high pitched humming noise.");
+        s_know[S_AGGR] = TRUE;
         break;
     case S_NOP:
-        msg("This scroll seems to be blank.");
+        msg("Nothing appears to happen.");
         break;
     case S_GENOCIDE:
         msg("You have been granted the boon of genocide");
@@ -301,14 +310,9 @@ void read_scroll(void)
                 strcpy(s_guess[obj->o_which], buf);
         }
     }
-    /*
-     * Get rid of the thing
-     */
-    inpack--;
-    if (obj->o_count > 1) {
-        obj->o_count--;
-    } else {
+    if (--obj->o_count < 1) {
         detach(pack, item);
         discard(item);
     }
+    inpack--;
 }

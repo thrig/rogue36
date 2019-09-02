@@ -243,7 +243,6 @@ void eat(void)
             msg("That's Inedible!");
         return;
     }
-    inpack--;
     if (obj->o_which == MANGO) {
         msg("My, that was a yummy %s", fruit);
     } else if (rnd(100) > 70) {
@@ -255,13 +254,14 @@ void eat(void)
     }
     if ((food_left += HUNGERTIME + rnd(400) - 200) > STOMACHSIZE)
         food_left = STOMACHSIZE;
-    hungry_state = 0;
+    hungry_state = HUNGRY_OKAY;
     if (obj == cur_weapon)
         cur_weapon = NULL;
     if (--obj->o_count < 1) {
         detach(pack, item);
         discard(item);
     }
+    inpack--;
 }
 
 /*

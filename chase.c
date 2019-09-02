@@ -165,7 +165,7 @@ int chase(struct thing *tp, coord * ee)
      */
     if ((on(*tp, ISHUH) && rnd(10) < 8)
         || (tp->t_type == 'I' && rnd(100) < 20)
-        || (tp->t_type == 'B' && rnd(100) < 50)) {
+        || (tp->t_type == 'B' && rnd(100) < 65)) {
         /*
          * get a valid random move
          */
@@ -174,7 +174,7 @@ int chase(struct thing *tp, coord * ee)
         /*
          * Small chance that it will become un-confused
          */
-        if (rnd(1000) < 50)
+        if (on(*tp, ISHUH) && rnd(1000) < 50)
             tp->t_flags &= ~ISHUH;
     }
     /*

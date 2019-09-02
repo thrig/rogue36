@@ -207,7 +207,6 @@ struct linked_list *new_item(size_t size);
 #define SLEEPTIME 5
 #define HOLDTIME 2
 #define WANDERTIME 70
-#define BEFORE 1
 #define AFTER 2
 #define HUHDURATION 20
 #define SEEDURATION 200
@@ -495,6 +494,8 @@ extern int quiet;               /* Number of quiet turns */
 extern int max_level;           /* Deepest player has gone */
 extern int food_left;           /* Amount of food in hero's stomach */
 extern int hungry_state;        /* How hungry they are */
+
+enum hungry { HUNGRY_OKAY, HUNGRY_HUN, HUNGRY_WEAK, HUNGRY_FAINT };
 
 extern char take;               /* Thing the rogue is taking */
 extern char prbuf[ROGUE_CHARBUF_MAX];   /* Buffer for sprintfs */

@@ -47,6 +47,6 @@ weapons.o: weapons.c rogue.h
 wizard.o: wizard.c rogue.h
 
 clean:
-	@-rm -f *.core highscores $(OBJS) $(PROGRAM) sav.*
+	@-rm -f *.core highscores $(OBJS) $(ROGUE) $(ROGUE).dSYM sav.*
 
 .PHONY: clean

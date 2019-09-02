@@ -40,7 +40,7 @@ void add_pack(struct linked_list *item, bool silent)
      * that is exactly the same and just increment the count if there is.
      * it  that.  Food is always put at the beginning for ease of access, but
      * is not ordered so that you can't tell good food from bad.  First check
-     * to see if there is something in thr same group and if there is then
+     * to see if there is something in the same group and if there is then
      * increment the count.
      */
     if (obj->o_group) {
@@ -62,10 +62,8 @@ void add_pack(struct linked_list *item, bool silent)
             }
         }
     }
-    /*
-     * Check if there is room
-     */
-    if (inpack == MAXPACK - 1) {
+
+    if (inpack >= MAXPACK - 1) {
         msg("%s will not fit in your pack.", inv_name(obj, !terse));
         return;
     }

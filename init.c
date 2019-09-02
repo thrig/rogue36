@@ -28,7 +28,7 @@ struct linked_list *lvl_obj = NULL, *mlist = NULL;
 struct object *cur_weapon = NULL;
 int mpos = 0, no_move = 0, no_command = 0, level = 1, purse = 0, inpack = 0;
 int no_food = 0, count = 0, fung_hit = 0, quiet = 0, search_repeat = 0;
-int food_left = HUNGERTIME, group = 1, hungry_state = 0;
+int food_left = HUNGERTIME, group = 1, hungry_state = HUNGRY_OKAY;
 int lastscore = -1;
 
 struct timespec throwdelay = { 0, THROW_DELAY };
@@ -77,18 +77,18 @@ struct trap traps[MAXTRAPS];
 
 /* *INDENT-OFF* */
 struct monster monsters[26] = {
-/* Name          CARRY FLAG     str,  exp, lvl,amr,hpt,dmg */
-{ "giant ant",   0,    ISMEAN, { 10,  10,   2,   3, 0, "1d6", 0,-1 } },
-{ "bat",         0,    0,      { 10,   1,   1,   3,-4, "1d1", 0, 0 } },
+/* Name          CARRY FLAG     str,  exp, lvl,amr,hpt,dmg,  h+,d+ */
+{ "giant ant",   0,    ISMEAN, { 10,  10,   2,   3, 0, "1d6", 0, 0 } },
+{ "bat",         0,    ISHASTE,{ 10,   1,   1,   3,-4, "1d1",-1, 0 } },
 { "centaur",     50,   ISMEAN, { 10,  15,   4,   4, 0, "1d6/1d6", 0, 0 } },
 { "dragon",      100,  ISGREED,{ 10,9000,  10,  -1, 0, "1d8/1d8/3d10", 0, 0 } },
-{ "floating eye",0,    0,      { 10,   7,   2,   3, 0, "1d3", 0,-1 } },
+{ "floating eye",0,    0,      { 10,   7,   2,   3, 0, "1d3", 0, 0 } },
 { "violet fungi",60,   ISMEAN, { 10,  85,   8,   3, 0, "000d0", 0, 0 } },
 { "ghast",       0,    ISHASTE|ISMEAN,{10,8,3,   6,-2, "1d3/1d3/1d3", 0,-1 } },
-{ "hobgoblin",   30,   ISMEAN, { 10,   3,   1,   6,-1, "1d4", 0,-1 } },
+{ "hobgoblin",   30,   ISMEAN, { 10,   2,   1,   6,-1, "1d4", 1,-1 } },
 { "invisible stalker",0,ISINVIS,{ 10, 120,  8,   3, 0, "4d4", 0, 0 } },
-{ "jackal",      0,    ISHASTE|ISMEAN,{ 10,3,1,  8,-4, "1d2", 0, 0 } },
-{ "kobold",      20,   ISMEAN, { 10,   2,   1,   7,-1, "1d4", 0,-1 } },
+{ "jackal",      0,    ISHASTE|ISMEAN,{ 10,2,1,  8,-3, "1d2", 0, 0 } },
+{ "kobold",      20,   ISMEAN, { 10,   2,   1,   7,-1, "1d4", 1,-1 } },
 { "lampades",    50,   0,      { 10,  45,   4,   6, 0, "1d4", 0, 0 } },
 { "mimic",       60,   0,      { 10, 140,   7,   7, 0, "4d4", 0, 0 } },
 { "nymph",       100,  0,      { 10,  40,   3,   8, 0, "1d1", 0, 0 } },
@@ -96,7 +96,7 @@ struct monster monsters[26] = {
 { "purple worm", 70,   0,      { 10,7000,  15,   6, 0, "2d12/2d4", 0, 0 } },
 { "quasit",      60,   ISMEAN, { 10,  35,   3,   2, 0, "1d2/1d2/1d4", 0, 0 } },
 { "rust monster",0,    ISMEAN, { 10,  20,   5,   5, 0, "1d1/1d1", 0, 0 } },
-{ "snake",       0,    ISMEAN, { 10,   1,   1,   5,-3, "1d3",0,-1 } },
+{ "snake",       0,    ISMEAN, { 10,   1,   1,   5,-2, "1d3",3,-1 } },
 { "troll",       75,   ISREGEN|ISMEAN,{ 10,55,6, 4, 0, "1d8/1d8/2d6", 0, 0 } },
 { "umber hulk",  80,   ISMEAN, { 10, 150,   8,   2, 0, "2d4/2d4/2d5", 0, 0 } },
 { "vampire",     65,   ISREGEN|ISMEAN,{ 10,380,8,1, 0, "1d10", 0, 0 } },
@@ -104,7 +104,7 @@ struct monster monsters[26] = {
 { "xorn",        0,    ISMEAN, { 10, 140,   7,   0, 0, "1d3/1d3/1d3/2d6", 0, 0 } },
 { "yeti",        50,   0,      { 10,  50,   5,   6, 0, "1d8/1d8", 0, 0 } },
 { "zombie",      0,    ISSLOW|ISMEAN, { 10, 7,4,10, 4, "3d4",-2, 2 } }
-/* Name          CARRY FLAG     str,  exp, lvl,amr,hpt,dmg */
+/* Name          CARRY FLAG     str,  exp, lvl,amr,hpt,dmg,  h+,d+ */
 };
 /* *INDENT-ON* */
 
@@ -337,27 +337,27 @@ char *metal[] = {
 const int cNMETAL = NMETAL;
 
 struct magic_item things[NUMTHINGS] = {
-    {"", 29},                   /* potion */
-    {"", 29},                   /* scroll */
-    {"", 5},                    /* food */
-    {"", 14},                   /* weapon */
-    {"", 9},                    /* armor */
-    {"", 5},                    /* ring */
-    {"", 9},                    /* stick */
+    {"", 31},                   /* potion */
+    {"", 30},                   /* scroll */
+    {"", 9},                    /* food */
+    {"", 12},                   /* weapon */
+    {"", 7},                    /* armor */
+    {"", 4},                    /* ring */
+    {"", 7},                    /* stick */
 };
 
 struct magic_item s_magic[MAXSCROLLS] = {
     {"monster confusion", 8, 170},
-    {"magic mapping", 7, 180},
-    {"light", 8, 100},
-    {"hold monster", 2, 200},
+    {"magic mapping", 9, 180},
+    {"light", 2, 100},
+    {"hold monster", 4, 200},
     {"sleep", 4, 50},
     {"enchant armor", 8, 130},
-    {"identify", 21, 100},
+    {"identify", 22, 100},
     {"scare monster", 4, 180},
     {"gold detection", 1, 110},
     {"teleportation", 10, 175},
-    {"enchant weapon", 10, 150},
+    {"enchant weapon", 11, 150},
     {"create monster", 4, 75},
     {"remove curse", 8, 105},
     {"aggravate monsters", 2, 60},
@@ -366,17 +366,17 @@ struct magic_item s_magic[MAXSCROLLS] = {
 };
 
 struct magic_item p_magic[MAXPOTIONS] = {
-    {"confusion", 4, 50},
-    {"paralysis", 4, 50},
+    {"confusion", 2, 50},
+    {"paralysis", 2, 50},
     {"poison", 4, 50},
-    {"gain strength", 15, 150},
+    {"gain strength", 16, 150},
     {"see invisible", 5, 170},
-    {"healing", 21, 130},
-    {"monster detection", 6, 120},
-    {"magic detection", 6, 105},
-    {"raise level", 2, 220},
+    {"healing", 26, 130},
+    {"monster detection", 4, 120},
+    {"magic detection", 4, 105},
+    {"raise level", 1, 220},
     {"extra healing", 5, 180},
-    {"haste self", 11, 200},
+    {"haste self", 14, 200},
     {"restore strength", 14, 120},
     {"blindness", 2, 50},
     {"thirst quenching", 1, 50},
@@ -401,16 +401,16 @@ struct magic_item r_magic[MAXRINGS] = {
 struct magic_item ws_magic[MAXSTICKS] = {
     {"light", 12, 120},
     {"striking", 9, 115},
-    {"lightning", 3, 200},
-    {"fire", 3, 200},
-    {"cold", 3, 200},
+    {"lightning", 4, 200},
+    {"fire", 4, 200},
+    {"cold", 4, 200},
     {"polymorph", 15, 210},
     {"magic missile", 10, 170},
-    {"haste monster", 9, 50},
+    {"haste monster", 2, 50},
     {"slow monster", 11, 220},
-    {"drain life", 9, 210},
+    {"drain life", 11, 210},
     {"nothing", 1, 70},
-    {"teleport away", 5, 140},
+    {"teleport away", 7, 140},
     {"teleport to", 5, 60},
     {"cancellation", 5, 130},
 };
