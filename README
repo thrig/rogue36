@@ -42,7 +42,9 @@ keypad support is now disabled by default (it causes backspace to emit
 ^G when TERM is xterm* or screen on OpenBSD) though can be restored by
 compiling with WITHKEYPAD
 
-  CFLAGS='-DWITHKEYPAD ...' make
+  make clean; CFLAGS='-DWITHKEYPAD ...' make
+
+but then anything involving the ESCAPE key will be slow!
 
 
 rogue run
@@ -89,8 +91,13 @@ via a shared account
 the changes (of note)
 =====================
 
+ * auto-id various things to streamline gameplay
+ * ammo stacks together in the inventory (con: no more enchants on ammo)
  * "askme" defaults to being on, because who can remember what 'ox sun
    asunmon seh seefaa' or whatever was. also removed various options
+ * before-turn fuses/daemons have been changed to be after-turn to
+   prevent non-action commands such as viewing the inventory from
+   decrementing the "start a wandering monster" counter
  * better avoid a rare softlock when putting things onto the map
  * eliminate the use of the ' ' command to rest, as that key is mainly
    used to clear --More messages and giant ants don't need any help
@@ -108,8 +115,11 @@ the changes (of note)
    (downside: more monsters may see you)
  * pledge(2) and unveil(2) support for OpenBSD, and thus the removal of
    the ! command to escape to the shell and various other system calls
+ * replace Gnomes and Leprechauns with perhaps more interesting critters
  * reworked searching (less likely to require many keypresses to find a
    door, but may require at least a few presses holding still)
+ * simplify strength to be just 3..18 (sorry Gygax)
+ * some utility code added for testing things (see util dir)
  * various code bugfixes and modernizations (removed needless GNUisms
    from the Makefile, removed unused loadaverage code, tossed most of
    the DOS portability, etc)

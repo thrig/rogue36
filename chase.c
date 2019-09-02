@@ -174,7 +174,7 @@ int chase(struct thing *tp, coord * ee)
         /*
          * Small chance that it will become un-confused
          */
-        if (on(*tp, ISHUH) && rnd(1000) < 50)
+        if (on(*tp, ISHUH) && rnd(100) < 5)
             tp->t_flags &= ~ISHUH;
     }
     /*

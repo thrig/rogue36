@@ -301,10 +301,10 @@ struct linked_list *new_thing(void)
          * o_group number.
          */
         if (cur->o_group == 0) {
-            if ((k = rnd(100)) < 10) {
+            if ((k = rnd(100)) < 20) {
                 cur->o_flags |= ISCURSED;
                 cur->o_hplus -= rnd(3) + 1;
-            } else if (k < 15) {
+            } else if (k < 28) {
                 cur->o_hplus += rnd(3) + 1;
             }
         }

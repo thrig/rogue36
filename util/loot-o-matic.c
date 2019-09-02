@@ -7,10 +7,8 @@
 
 #include "../rogue.h"
 
-#define RUNSEEDS 1000UL
-
 void gen_things(int lv);
-void loot(int lv);
+void loot(int lv, int s);
 
 int main(int argc, char *argv[])
 {
@@ -29,8 +27,9 @@ int main(int argc, char *argv[])
     init_stones();              /* Set up stone settings of rings */
     init_materials();           /* Set up materials of wands */
 
-    for (unsigned long i = 0; i < RUNSEEDS; i++)
-        loot(lv);
+    // RN in rogue only has INT16_MAX >> 1 possible outputs
+    for (int i = 0; i < 16838; i++)
+        loot(lv, i);
 
     exit(EXIT_SUCCESS);
 }
@@ -54,9 +53,9 @@ inline void gen_things(int lv)
     }
 }
 
-inline void loot(int lv)
+inline void loot(int lv, int s)
 {
-    seed = (int) arc4random();
+    seed = s;
     gen_things(lv);
     for (struct linked_list * item = lvl_obj; item != NULL; item = next(item)) {
         struct object *obj = ldata(item);

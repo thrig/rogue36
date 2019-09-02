@@ -193,7 +193,11 @@ void init_player(void)
 
 inline int rnd(int range)
 {
-    return range == 0 ? 0 : abs(RN) % range;
+#ifdef WIZARD
+    if (range < 0)
+        abort();
+#endif
+    return range <= 0 ? 0 : RN % range;
 }
 
 /*

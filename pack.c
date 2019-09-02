@@ -35,13 +35,10 @@ void add_pack(struct linked_list *item, bool silent)
     }
     obj = (struct object *) ldata(item);
     /*
-     * Link it into the pack.  Search the pack for a object of similar type
-     * if there isn't one, stuff it at the beginning, if there is, look for one
-     * that is exactly the same and just increment the count if there is.
-     * it  that.  Food is always put at the beginning for ease of access, but
-     * is not ordered so that you can't tell good food from bad.  First check
-     * to see if there is something in the same group and if there is then
-     * increment the count.
+     * Link it into the pack. o_group is (now only) for ammo so stack
+     * those together. Otherwise some types stack, but still change the
+     * inpack counter. There are some complications to group similar
+     * types, and perhaps some bugs around the inpack counter.
      */
     if (obj->o_group) {
         for (ip = pack; ip != NULL; ip = next(ip)) {
@@ -164,7 +161,7 @@ void add_pack(struct linked_list *item, bool silent)
 
 /*
  * inventory:
- *	list what is in the pack
+ *      list what is in the pack
  */
 int inventory(struct linked_list *list, int type)
 {
@@ -247,7 +244,7 @@ int inventory(struct linked_list *list, int type)
 
 /*
  * pick_up:
- *	Add something to characters pack.
+ *      Add something to characters pack.
  */
 
 void pick_up(char ch)
@@ -273,7 +270,7 @@ void pick_up(char ch)
 
 /*
  * picky_inven:
- *	Allow player to inventory a single item
+ *      Allow player to inventory a single item
  */
 void picky_inven(void)
 {
@@ -306,7 +303,7 @@ void picky_inven(void)
 
 /*
  * get_item:
- *	pick something out of a pack for a purpose
+ *      pick something out of a pack for a purpose
  */
 struct linked_list *get_item(char *purpose, int type)
 {
