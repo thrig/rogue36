@@ -50,11 +50,11 @@ static struct init_weps {
   { "1d10","1d1",  0,  0, NONE,     0},                 /* Long sword */
   { "1d1", "1d1",  0,  0, NONE,     0},                 /* Bow */
   { "1d1", "1d6",  0,  0, BOW,      ISMANY | ISMISL},   /* Arrow */
-  { "1d6", "2d3",  2, -1, NONE,     ISMISL},            /* Dagger */
+  { "1d6", "1d6",  1, -1, NONE,     ISMISL},            /* Dagger */
   { "1d2", "1d4",  2,  0, SLING,    ISMANY | ISMISL},   /* Rock */
-  { "3d6", "1d1", -1,  0, NONE,     0},                 /* 2h sword */
+  { "3d6", "1d1", -3,  4, NONE,     0},                 /* 2h sword */
   { "0d0", "0d0",  0,  0, NONE,     0},                 /* Sling */
-  { "1d1", "1d3",  4,  0, NONE,     ISMANY | ISMISL},   /* Dart */
+  { "1d1", "1d3",  3,  0, NONE,     ISMANY | ISMISL},   /* Dart */
   { "1d1", "1d1",  0,  0, NONE,     0},                 /* Crossbow */
   { "1d1", "1d10", 0,  0, CROSSBOW, ISMANY | ISMISL},   /* Crossbow bolt */
   { "1d8", "1d8",  1,  0, NONE,     ISMISL}             /* Spear */

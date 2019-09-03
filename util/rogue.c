@@ -22,7 +22,7 @@ long argtol(const char *arg, const long min, const long max)
 
 int rnd(int range)
 {
-    return range == 0 ? 0 : abs(RN) % range;
+    return range == 0 ? 0 : RN % range;
 }
 
 int roll(int number, int sides)

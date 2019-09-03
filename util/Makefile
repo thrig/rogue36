@@ -33,6 +33,10 @@ trap-odds: trap-odds.c rogue.o rogue.h
 	$(CC) $(CFLAGS) rogue.o trap-odds.c -o trap-odds
 
 clean:
-	rm -f *.core *.o count-things door-search gaze-odds monster-odds newesim scroll-o-matic trap-odds
+	@-rm -f *.core *.o count-things door-search gaze-odds monster-odds newesim scroll-o-matic trap-odds
+	@-rm -rf *.dSYM
 
-.PHONY: all clean
+depend:
+	cpanm --installdeps .
+
+.PHONY: clean depend

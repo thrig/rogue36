@@ -1,0 +1,53 @@
+#!/usr/bin/env perl
+#
+#   make loot-o-matic
+#   ./loot-o-matic 1 | ./loot2sql loot.db
+#   sqlite3 loot.db
+
+use strict;
+use warnings;
+use DBI;
+use SQL::Abstract;
+
+my $file = shift // die "Usage: loot2sql dbfile\n";
+
+my $dbh = DBI->connect(
+    'dbi:SQLite:dbname=' . $file,
+    '', '',
+    {   AutoCommit                       => 0,
+        PrintError                       => 1,
+        RaiseError                       => 1,
+        sqlite_allow_multiple_statements => 1,
+    }
+);
+$dbh->do(
+    do { local $/; readline DATA }
+);
+$dbh->commit;
+
+my $sql = SQL::Abstract->new;
+my ($sth, $stmt);
+my $count = 0;
+
+while (readline) {
+    chomp;
+    my %fields;
+    @fields{qw(id type name flavor)} = map { !defined ? '' : $_ } split "\t";
+    $stmt //= $sql->insert('loot', \%fields);
+    $sth  //= $dbh->prepare($stmt);
+    $sth->execute($sql->values(\%fields));
+    if ($count++ > 1000) {
+        $dbh->commit;
+        $count = 0;
+    }
+}
+$dbh->disconnect;
+
+__DATA__
+DROP TABLE IF EXISTS loot;
+CREATE TABLE loot (
+  id INTEGER NOT NULL,
+  type TEXT,
+  name TEXT,
+  flavor TEXT
+);

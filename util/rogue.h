@@ -11,7 +11,7 @@
 #include <time.h>
 #include <unistd.h>
 
-int seed;                       /* Random number seed */
+int seed;                       /* "Random" number seed */
 
 #define RN (((seed = seed*11109+13849) & 0x7fff) >> 1)
 

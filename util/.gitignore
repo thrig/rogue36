@@ -1,3 +1,4 @@
+*.db
 count-things
 door-search
 fight-sim

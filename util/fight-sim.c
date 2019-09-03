@@ -7,6 +7,7 @@
  *   done
  *
  * would review the starting lineup of monsters
+ *
  * https://github.com/thrig/r-fu
  *
  * another interesting stat may be how many turns the fight takes
@@ -19,7 +20,7 @@
 
 #include "../rogue.h"
 
-#define RUNSEEDS  10000UL
+#define RUNSEEDS  8192UL
 #define RUNTRIALS 100UL
 
 double trials(struct linked_list *mlist);

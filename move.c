@@ -265,11 +265,11 @@ char be_trapped(coord * tc)
             init_weapon(arrow, ARROW);
             arrow->o_count = 1;
             arrow->o_pos = hero;
-            arrow->o_hplus = arrow->o_dplus = 0;        /* "arrow bug" FIX */
             fall(item, FALSE);
         }
         break;
     case TELTRAP:
+        msg("You teleport!");
         teleport();
         break;
     case DARTTRAP:

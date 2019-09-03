@@ -34,6 +34,7 @@ void wear(void)
     obj = (struct object *) ldata(item);
     if (obj->o_type != ARMOR) {
         msg("You can't wear that.");
+        after = FALSE;
         return;
     }
     waste_time();
@@ -60,6 +61,7 @@ void take_off(void)
             msg("Not wearing armor");
         else
             msg("You aren't wearing any armor");
+        after = FALSE;
         return;
     }
     if (!dropcheck(cur_armor))

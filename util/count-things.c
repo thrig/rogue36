@@ -6,47 +6,46 @@
 
 #include "rogue.h"
 
-#define SEEDS  1024
-#define TRIALS 1024
-
 #define MAXOBJ 9
+#define TRIALS 8192
 
 int make_things(int level);
 int n_levels(int maxlevel);
 
 int main(int argc, char *argv[])
 {
-    for (int s = 0; s < SEEDS; s++) {
-        seed = (int) arc4random();
-        for (int t = 0; t < TRIALS; t++)
-            printf("%d\n", n_levels(1));
-    }
+    for (int s = 0; s < TRIALS; s++)
+        printf("%d\n", n_levels(25));
     exit(0);
 }
 
 int n_levels(int maxlevel)
 {
     int count = 0;
-    for (int i = 0; i < maxlevel; i++)
+    for (int i = 0; i < maxlevel; i++) {
+        /* the seed (probably) is somewhere else when generating
+         * each new level */
+        seed = arc4random();
         count += make_things(i);
+    }
     return count;
 }
+
+#define max(a, b) ((a) > (b) ? (a) : (b))
 
 int make_things(int level)
 {
     int count = 0;
-    int odds = 100 - level * 10;
-    if (odds < 30) odds = 30;
-    for (int i = 0; i < MAXOBJ; i++)
-        if (rnd(100) < 30) count++;
-        //if (rnd(100) < odds) count++;
+    int odds = 105 - level * 10;
+    odds = max(45, odds);
+    for (int i = 0; i < MAXOBJ; i++) {
+        //if (rnd(100) < 35) count++;
+        if (rnd(100) < odds) count++;
+    }
     return count;
 }
 
 /* outcomes over 25 levels with the original 35% odds of item drop:
 
-	elements 1048576 mean 78.827 range 46.000 min 58.000 max 104.000 sd 7.192
-
-	quantile (type 8)
-	  0%  25%  50%  75% 100% 
-	  58   74   79   84  104 */
+  0%  25%  50%  75% 100%
+  58   74   79   84  104 */

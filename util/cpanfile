@@ -1,0 +1,3 @@
+requires 'DBD::SQLite';
+requires 'DBI';
+requires 'SQL::Abstract';
