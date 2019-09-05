@@ -84,7 +84,7 @@ struct monster monsters[26] = {
 { "dragon",      100,  ISGREED,{ 10,9000,  10,  -1, 0, "1d8/1d8/3d10", 0, 0 } },
 { "floating eye",0,    0,      { 10,   7,   2,   3, 0, "1d3", 0, 0 } },
 { "violet fungi",60,   ISMEAN, { 10,  85,   8,   3, 0, "000d0", 0, 0 } },
-{ "ghast",       0,    ISHASTE|ISMEAN,{10,8,3,   6,-2, "1d3/1d3/1d3", 0,-1 } },
+{ "ghast",       0,    ISHASTE|ISMEAN,{12,8,3,   6,-2, "1d3/1d3/1d3", 0,-1 } },
 { "hobgoblin",   30,   ISMEAN, { 10,   2,   1,   6,-1, "1d4", 1,-1 } },
 { "invisible stalker",0,ISINVIS,{ 10, 120,  8,   3, 0, "4d4", 0, 0 } },
 { "jackal",      0,    ISHASTE|ISMEAN,{ 10,2,1,  8,-3, "1d2", 0, 0 } },
@@ -92,18 +92,18 @@ struct monster monsters[26] = {
 { "lampades",    50,   0,      { 10,  45,   4,   6, 0, "1d4", 0, 0 } },
 { "mimic",       60,   0,      { 10, 140,   7,   7, 0, "4d4", 0, 0 } },
 { "nymph",       100,  0,      { 10,  40,   3,   8, 0, "1d1", 0, 0 } },
-{ "orc",         40,   ISMEAN, { 10,  12,   2,   8, 4, "1d8",-3, 0 } },
+{ "orc",         40,   ISMEAN, { 10,  10,   2,   7, 6, "1d8",-1,-1 } },
 { "purple worm", 70,   0,      { 10,7000,  15,   6, 0, "2d12/2d4", 0, 0 } },
 { "quasit",      60,   ISMEAN, { 10,  35,   3,   2, 0, "1d2/1d2/1d4", 0, 0 } },
-{ "rust monster",0,    ISMEAN, { 10,  20,   5,   5, 0, "1d1/1d1", 0, 0 } },
+{ "rust monster",0,    ISMEAN, { 10,  20,   5,   5, 0, "1d3/1d3", 0, -2 } },
 { "snake",       0,    ISMEAN, { 10,   1,   1,   5,-2, "1d3",3,-1 } },
 { "troll",       75,   ISREGEN|ISMEAN,{ 10,55,6, 4, 0, "1d8/1d8/2d6", 0, 0 } },
-{ "umber hulk",  80,   ISMEAN, { 10, 150,   8,   2, 0, "2d4/2d4/2d5", 0, 0 } },
+{ "umber hulk",  80,   ISMEAN, { 10, 150,   8,   2, 0, "2d4/2d4/2d6", 0, 0 } },
 { "vampire",     65,   ISREGEN|ISMEAN,{ 10,380,8,1, 0, "1d10", 0, 0 } },
 { "wraith",      0,    0,      { 10,  55,   5,   4, 0, "1d8", 0, 0 } },
 { "xorn",        0,    ISMEAN, { 10, 140,   7,   0, 0, "1d3/1d3/1d3/2d6", 0, 0 } },
 { "yeti",        50,   0,      { 10,  50,   5,   6, 0, "1d8/1d8", 0, 0 } },
-{ "zombie",      0,    ISSLOW|ISMEAN, { 10, 7,4,10, 4, "3d4",-2, 2 } }
+{ "zombie",      0,    ISSLOW|ISMEAN, { 12, 7,4,10, 4, "3d4",-2, 2 } }
 /* Name          CARRY FLAG     str,  exp, lvl,amr,hpt,dmg,  h+,d+ */
 };
 /* *INDENT-ON* */

@@ -180,9 +180,9 @@ struct linked_list *wake_monster(int y, int x)
             if (off(*tp, ISFOUND) && !save(VS_MAGIC)) {
                 msg("The umber hulk's gaze has confused you.");
                 if (on(player, ISHUH))
-                    lengthen(unconfuse, roll(2, 4));
+                    lengthen(unconfuse, roll(2, 6));
                 else
-                    fuse(unconfuse, 0, roll(2, 4), AFTER);
+                    fuse(unconfuse, 0, roll(2, 6), AFTER);
                 player.t_flags |= ISHUH;
             }
             tp->t_flags |= ISFOUND;
