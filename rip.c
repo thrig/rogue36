@@ -119,8 +119,9 @@ void score(int type, int amount, char monst)
 
     for (scp = scores; scp < &scores[MAX_SCORES]; scp++) {
         scp->sc_score = 0;
-        for (i = 0; i < WHOAMI_LEN + 1; i++)
+        for (i = 0; i < WHOAMI_LEN; i++)
             scp->sc_name[i] = rnd(255);
+        scp->sc_name[WHOAMI_LEN] = '\0';
         scp->sc_type = RN;
         scp->sc_level = RN;
         scp->sc_monster = RN;

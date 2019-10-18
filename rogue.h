@@ -42,7 +42,7 @@
 /*
  * Game is (now) only 80x24 though can be played on a larger terminal.
  * Changing the game size will make the rooms larger or smaller and will
- * make the same random see do different things. main.c has the check
+ * make the same random seed do different things. main.c has the check
  * for the terminal size and associated error messages.
  */
 #define ROCOLS 80

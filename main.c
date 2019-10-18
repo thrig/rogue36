@@ -96,8 +96,8 @@ int main(int argc, char *argv[])
     }
 
     raw();
-    cbreak();
     noecho();
+    nonl();
     setup_sigs();
     cw = newwin(ROLINES, ROCOLS, 0, 0);
     mw = newwin(ROLINES, ROCOLS, 0, 0);

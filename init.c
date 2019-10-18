@@ -341,13 +341,13 @@ char *metal[] = {
 const int cNMETAL = NMETAL;
 
 struct magic_item things[NUMTHINGS] = {
-    {"", 32},                   /* potion */
-    {"", 32},                   /* scroll */
-    {"", 7},                    /* food */
+    {"", 34},                   /* potion */
+    {"", 34},                   /* scroll */
+    {"", 1},                    /* food */
     {"", 12},                   /* weapon */
     {"", 7},                    /* armor */
     {"", 5},                    /* ring */
-    {"", 5},                    /* stick */
+    {"", 7},                    /* stick */
 };
 
 struct magic_item s_magic[MAXSCROLLS] = {
