@@ -142,7 +142,7 @@ int stomach(void)
             addmsg("You feel too weak from lack of food.  ");
         msg("You faint");
         running = FALSE;
-        count = 0;
+        cmdcount = 0;
         hungry_state = HUNGRY_FAINT;
     } else {
         oldfood = food_left;

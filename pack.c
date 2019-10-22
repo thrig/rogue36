@@ -203,9 +203,9 @@ int inventory(struct linked_list *list, int type)
              * saved message and fall through to ...
              */
         case 1:
-            if (slow_invent)
+            if (slow_invent) {
                 msg(inv_temp);
-            else {
+            } else {
                 wclear(hw);
                 waddstr(hw, inv_temp);
                 waddch(hw, '\n');
@@ -213,6 +213,7 @@ int inventory(struct linked_list *list, int type)
             /*
              * Print the line for this object
              */
+            /* FALLTHRU */
         default:
             if (slow_invent)
                 msg("%c) %s", ch, inv_name(obj, FALSE));

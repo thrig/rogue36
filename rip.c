@@ -162,7 +162,7 @@ void score(int type, int amount, char monst)
             for (sc2 = &scores[MAX_SCORES - 1]; sc2 > scp; sc2--)
                 *sc2 = *(sc2 - 1);
             scp->sc_score = amount;
-            strncpy(scp->sc_name, whoami, WHOAMI_LEN);
+            strcpy(scp->sc_name, whoami);
             scp->sc_type = type;
             if (type == SCORE_WIN)
                 scp->sc_level = max_level;

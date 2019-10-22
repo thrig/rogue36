@@ -486,7 +486,7 @@ extern int a_class[MAXARMORS];  /* Armor class for various armors */
 extern int lastscore;           /* Score before this turn */
 extern int no_food;             /* Number of levels without food */
 extern int seed;                /* Random number seed */
-extern int count;               /* Number of times to repeat command */
+extern int cmdcount;            /* Number of times to repeat command */
 extern int search_repeat;       /* Increase odds to find doors on repeated searches */
 extern int dnum;                /* Dungeon number */
 extern int fung_hit;            /* Number of time fungi has hit */
@@ -544,7 +544,6 @@ extern coord oldpos;            /* Position before last look() call */
 extern coord delta;             /* Change indicated to get_dir() */
 
 extern coord ch_ret;
-extern char countch, direction, newcount;
 extern struct delayed_action d_list[20];
 extern int between;
 extern char lvl_mons[27], wand_mons[27];
@@ -702,7 +701,7 @@ void read_scroll(void);
 
 /* save.c */
 void auto_save(int p);
-int encread(void *starta, unsigned int size, int inf);
+size_t encread(void *starta, unsigned int size, int inf);
 unsigned int encwrite(void *starta, unsigned int size, FILE * outf);
 void reset_encstr(void);
 void restore(void);

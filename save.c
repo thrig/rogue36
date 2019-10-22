@@ -152,13 +152,13 @@ unsigned int encwrite(void *starta, unsigned int size, FILE * outf)
 /*
  * perform an encrypted read
  */
-int encread(void *starta, unsigned int size, int inf)
+size_t encread(void *starta, unsigned int size, int inf)
 {
-    int read_size;
+    ssize_t read_size;
     char *start = starta;
 
-    if ((read_size = read(inf, start, size)) == -1 || read_size == 0)
-        return read_size;
+    if ((read_size = read(inf, start, size)) < 1)
+        return 0;
 
     while (size--) {
         *start++ ^= *encsp++;

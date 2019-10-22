@@ -27,7 +27,7 @@ bool amulet = FALSE;
 struct linked_list *lvl_obj = NULL, *mlist = NULL;
 struct object *cur_weapon = NULL;
 int mpos = 0, no_move = 0, no_command = 0, level = 1, purse = 0, inpack = 0;
-int no_food = 0, count = 0, fung_hit = 0, quiet = 0, search_repeat = 0;
+int no_food = 0, cmdcount = 0, fung_hit = 0, quiet = 0, search_repeat = 0;
 int food_left = HUNGERTIME, group = 1, hungry_state = HUNGRY_OKAY;
 int lastscore = -1;
 
@@ -246,7 +246,7 @@ char *rainbow[] = {
     "tangerine"
 };
 
-#define NCOLORS (sizeof rainbow / sizeof (char *))
+#define NCOLORS (int)(sizeof rainbow / sizeof (char *))
 const int cNCOLORS = NCOLORS;
 
 char *sylls[] = {
@@ -292,7 +292,7 @@ char *stones[] = {
     "turquoise",
 };
 
-#define NSTONES (sizeof stones / sizeof (char *))
+#define NSTONES (int)(sizeof stones / sizeof (char *))
 const int cNSTONES = NSTONES;
 
 char *wood[] = {
@@ -320,7 +320,7 @@ char *wood[] = {
     "zebra wood",
 };
 
-#define NWOOD (sizeof wood / sizeof (char *))
+#define NWOOD (int)(sizeof wood / sizeof (char *))
 const int cNWOOD = NWOOD;
 
 char *metal[] = {
@@ -337,18 +337,21 @@ char *metal[] = {
     "zinc",
 };
 
-#define NMETAL (sizeof metal / sizeof (char *))
+#define NMETAL (int)(sizeof metal / sizeof (char *))
 const int cNMETAL = NMETAL;
 
+#define _ 0
 struct magic_item things[NUMTHINGS] = {
-    {"", 34},                   /* potion */
-    {"", 34},                   /* scroll */
-    {"", 1},                    /* food */
-    {"", 12},                   /* weapon */
-    {"", 7},                    /* armor */
-    {"", 5},                    /* ring */
-    {"", 7},                    /* stick */
+    {"", 34, _},                /* potion */
+    {"", 34, _},                /* scroll */
+    {"", 1, _},                 /* food */
+    {"", 12, _},                /* weapon */
+    {"", 7, _},                 /* armor */
+    {"", 5, _},                 /* ring */
+    {"", 7, _},                 /* stick */
 };
+
+#undef _
 
 struct magic_item s_magic[MAXSCROLLS] = {
     {"monster confusion", 7, 170},

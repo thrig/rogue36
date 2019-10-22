@@ -52,7 +52,7 @@ inline void command(void)
         status();
         lastscore = purse;
         wmove(cw, unc(hero));
-        if (!((running || count) && jump)) {
+        if (!((running || cmdcount) && jump)) {
             draw(cw);           /* Draw screen */
             nanosleep(&jumpdelay, NULL);
         }
@@ -64,7 +64,7 @@ inline void command(void)
         if (!no_command) {
             if (running) {
                 ch = runch;
-            } else if (count) {
+            } else if (cmdcount) {
                 ch = countch;
             } else {
                 ch = readchar(cw);
@@ -91,10 +91,10 @@ inline void command(void)
              * check for prefixes
              */
             if (isdigit(ch)) {
-                count = 0;
+                cmdcount = 0;
                 newcount = TRUE;
                 while (isdigit(ch)) {
-                    count = count * 10 + (ch - '0');
+                    cmdcount = cmdcount * 10 + (ch - '0');
                     ch = readchar(cw);
                 }
                 countch = ch;
@@ -130,7 +130,7 @@ inline void command(void)
                 case '.':
                     break;
                 default:
-                    count = 0;
+                    cmdcount = 0;
                 }
             }
             switch (ch) {
@@ -139,7 +139,7 @@ inline void command(void)
                     door_stop = TRUE;
                     firstmove = TRUE;
                 }
-                if (count && !newcount)
+                if (cmdcount && !newcount)
                     ch = direction;
                 else
                     ch = readchar(cw);
@@ -160,8 +160,8 @@ inline void command(void)
             /*
              * execute a command
              */
-            if (count && !running)
-                count--;
+            if (cmdcount && !running)
+                cmdcount--;
             switch (ch) {
             case 'h':
                 do_move(0, -1);
@@ -332,7 +332,7 @@ inline void command(void)
 #endif
             case ESCAPE:
                 door_stop = FALSE;
-                count = 0;
+                cmdcount = 0;
                 after = FALSE;
                 break;
             default:
@@ -345,7 +345,7 @@ inline void command(void)
 #endif
                 } else {
                     msg("Illegal command '%s'.", unctrl(ch));
-                    count = 0;
+                    cmdcount = 0;
                 }
             }
             /*
@@ -410,7 +410,7 @@ void quit(int p)
         status();
         draw(cw);
         mpos = 0;
-        count = 0;
+        cmdcount = 0;
     }
 }
 
@@ -437,7 +437,7 @@ void search(void)
             case SECRETDOOR:
                 if (rnd(100) < 30 + 6 * search_repeat++) {
                     mvaddch(y, x, DOOR);
-                    count = 0;
+                    cmdcount = 0;
                 }
                 break;
             case TRAP:
@@ -450,7 +450,7 @@ void search(void)
                         break;
                     tp = trap_at(y, x);
                     mvwaddch(cw, y, x, TRAP);
-                    count = 0;
+                    cmdcount = 0;
                     running = FALSE;
                     if ((tp->tr_flags & ISFOUND) != ISFOUND)
                         msg(tr_name(tp->tr_type));
@@ -788,7 +788,7 @@ inline void wiz_command(int ch)
         break;
     default:
         msg("Illegal command '%s'.", unctrl(ch));
-        count = 0;
+        cmdcount = 0;
     }
 }
 #endif

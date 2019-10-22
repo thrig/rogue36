@@ -141,7 +141,7 @@ void conn(int r1, int r2)
     int distance = 0, turn_spot, turn_distance;
     int rm;
     char direc;
-    coord delta, curr, turn_delta, spos, epos;
+    coord ldelta, curr, turn_delta, spos, epos;
 
     if (r1 < r2) {
         rm = r1;
@@ -164,8 +164,8 @@ void conn(int r1, int r2)
     if (direc == 'd') {
         rmt = rm + 3;           /* room # of dest */
         rpt = &rooms[(int) rmt];        /* room pointer of dest */
-        delta.x = 0;            /* direction of move */
-        delta.y = 1;
+        ldelta.x = 0;           /* direction of move */
+        ldelta.y = 1;
         spos.x = rpf->r_pos.x;  /* start of move */
         spos.y = rpf->r_pos.y;
         epos.x = rpt->r_pos.x;  /* end of move */
@@ -184,8 +184,8 @@ void conn(int r1, int r2)
     } else if (direc == 'r') {  /* setup for moving right */
         rmt = rm + 1;
         rpt = &rooms[(int) rmt];
-        delta.x = 1;
-        delta.y = 0;
+        ldelta.x = 1;
+        ldelta.y = 0;
         spos.x = rpf->r_pos.x;
         spos.y = rpf->r_pos.y;
         epos.x = rpt->r_pos.x;
@@ -229,8 +229,8 @@ void conn(int r1, int r2)
         /*
          * Move to new position
          */
-        curr.x += delta.x;
-        curr.y += delta.y;
+        curr.x += ldelta.x;
+        curr.y += ldelta.y;
         /*
          * Check if we are at the turn place, if so do the turn
          */
@@ -249,8 +249,8 @@ void conn(int r1, int r2)
         addch(PASSAGE);
         distance--;
     }
-    curr.x += delta.x;
-    curr.y += delta.y;
+    curr.x += ldelta.x;
+    curr.y += ldelta.y;
     if (!ce(curr, epos))
         msg("Warning, connectivity problem on this level.");
 }

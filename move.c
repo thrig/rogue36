@@ -101,28 +101,27 @@ void do_move(int dy, int dx)
     case STICK:
         running = FALSE;
         take = ch;
-    default:
-      MOVE_STUFF:
-        if (ch == PASSAGE && winat(hero.y, hero.x) == DOOR) {
-            light(&hero);
-        } else if (ch == DOOR) {
-            running = FALSE;
-            if (winat(hero.y, hero.x) == PASSAGE)
-                light(&nh);
-        } else if (ch == STAIRS) {
-            running = FALSE;
-        } else if (isupper(ch)) {
-            running = FALSE;
-            fight(&nh, ch, cur_weapon, FALSE);
-            return;
-        }
-        ch = (char) winat(hero.y, hero.x);
-        wmove(cw, unc(hero));
-        waddch(cw, ch);
-        hero = nh;
-        wmove(cw, unc(hero));
-        waddch(cw, PLAYER);
     }
+  MOVE_STUFF:
+    if (ch == PASSAGE && winat(hero.y, hero.x) == DOOR) {
+        light(&hero);
+    } else if (ch == DOOR) {
+        running = FALSE;
+        if (winat(hero.y, hero.x) == PASSAGE)
+            light(&nh);
+    } else if (ch == STAIRS) {
+        running = FALSE;
+    } else if (isupper(ch)) {
+        running = FALSE;
+        fight(&nh, ch, cur_weapon, FALSE);
+        return;
+    }
+    ch = (char) winat(hero.y, hero.x);
+    wmove(cw, unc(hero));
+    waddch(cw, ch);
+    hero = nh;
+    wmove(cw, unc(hero));
+    waddch(cw, PLAYER);
 }
 
 /*
@@ -228,7 +227,8 @@ char be_trapped(coord * tc)
     char ch;
 
     tp = trap_at(tc->y, tc->x);
-    count = running = FALSE;
+    cmdcount = 0;
+    running = FALSE;
     mvwaddch(cw, tp->tr_pos.y, tp->tr_pos.x, TRAP);
     tp->tr_flags |= ISFOUND;
     switch (ch = tp->tr_type) {

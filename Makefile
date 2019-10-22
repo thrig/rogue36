@@ -6,7 +6,9 @@
 
 ROGUE  ?= rogue
 ROLIBS ?= -lcurses
-CFLAGS += -std=c99 -Wall -pedantic -pipe
+CFLAGS += -std=c99 -Wall -Wextra -Wpointer-arith -Wshadow -Wfloat-conversion\
+	  -Wfloat-equal -Wno-unused-function -Wno-unused-parameter\
+	  -pedantic -pipe
 OBJS    = vers.o armor.o chase.o command.o daemon.o daemons.o fight.o init.o\
 	  io.o list.o main.o mdport.o misc.o monsters.o move.o newlevel.o\
 	  options.o pack.o passages.o potions.o rings.o rip.o rooms.o save.o\

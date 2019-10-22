@@ -106,7 +106,7 @@ int teleport(void)
         fung_hit = 0;
         strcpy(monsters['F' - 'A'].m_stats.s_dmg, "000d0");
     }
-    count = 0;
+    cmdcount = 0;
     running = FALSE;
     flushinp();
     return rm;

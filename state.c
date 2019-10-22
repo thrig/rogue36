@@ -1105,7 +1105,7 @@ int rs_read_sticks(int inf)
     return READSTAT;
 }
 
-int rs_write_daemons(FILE * savef, struct delayed_action *d_list, int count)
+int rs_write_daemons(FILE * savef, struct delayed_action *dl, int count)
 {
     int i = 0;
     int func = 0;
@@ -1117,39 +1117,39 @@ int rs_write_daemons(FILE * savef, struct delayed_action *d_list, int count)
     rs_write_int(savef, count);
 
     for (i = 0; i < count; i++) {
-        if (d_list[i].d_func == rollwand)
+        if (dl[i].d_func == rollwand)
             func = 1;
-        else if (d_list[i].d_func == doctor)
+        else if (dl[i].d_func == doctor)
             func = 2;
-        else if (d_list[i].d_func == stomach)
+        else if (dl[i].d_func == stomach)
             func = 3;
-        else if (d_list[i].d_func == runners)
+        else if (dl[i].d_func == runners)
             func = 4;
-        else if (d_list[i].d_func == swander)
+        else if (dl[i].d_func == swander)
             func = 5;
-        else if (d_list[i].d_func == nohaste)
+        else if (dl[i].d_func == nohaste)
             func = 6;
-        else if (d_list[i].d_func == unconfuse)
+        else if (dl[i].d_func == unconfuse)
             func = 7;
-        else if (d_list[i].d_func == unsee)
+        else if (dl[i].d_func == unsee)
             func = 8;
-        else if (d_list[i].d_func == sight)
+        else if (dl[i].d_func == sight)
             func = 9;
-        else if (d_list[i].d_func == NULL)
+        else if (dl[i].d_func == NULL)
             func = 0;
         else
             func = -1;
 
-        rs_write_int(savef, d_list[i].d_type);
+        rs_write_int(savef, dl[i].d_type);
         rs_write_int(savef, func);
-        rs_write_int(savef, d_list[i].d_arg);
-        rs_write_int(savef, d_list[i].d_time);
+        rs_write_int(savef, dl[i].d_arg);
+        rs_write_int(savef, dl[i].d_time);
     }
 
     return WRITESTAT;
 }
 
-int rs_read_daemons(int inf, struct delayed_action *d_list, int count)
+int rs_read_daemons(int inf, struct delayed_action *dl, int count)
 {
     int i = 0;
     int func = 0;
@@ -1166,49 +1166,49 @@ int rs_read_daemons(int inf, struct delayed_action *d_list, int count)
 
     for (i = 0; i < count; i++) {
         func = 0;
-        rs_read_int(inf, &d_list[i].d_type);
+        rs_read_int(inf, &dl[i].d_type);
         rs_read_int(inf, &func);
-        rs_read_int(inf, &d_list[i].d_arg);
-        rs_read_int(inf, &d_list[i].d_time);
+        rs_read_int(inf, &dl[i].d_arg);
+        rs_read_int(inf, &dl[i].d_time);
 
         switch (func) {
         case 1:
-            d_list[i].d_func = rollwand;
+            dl[i].d_func = rollwand;
             break;
         case 2:
-            d_list[i].d_func = doctor;
+            dl[i].d_func = doctor;
             break;
         case 3:
-            d_list[i].d_func = stomach;
+            dl[i].d_func = stomach;
             break;
         case 4:
-            d_list[i].d_func = runners;
+            dl[i].d_func = runners;
             break;
         case 5:
-            d_list[i].d_func = swander;
+            dl[i].d_func = swander;
             break;
         case 6:
-            d_list[i].d_func = nohaste;
+            dl[i].d_func = nohaste;
             break;
         case 7:
-            d_list[i].d_func = unconfuse;
+            dl[i].d_func = unconfuse;
             break;
         case 8:
-            d_list[i].d_func = unsee;
+            dl[i].d_func = unsee;
             break;
         case 9:
-            d_list[i].d_func = sight;
+            dl[i].d_func = sight;
             break;
         default:
-            d_list[i].d_func = NULL;
+            dl[i].d_func = NULL;
             break;
         }
     }
 
-    if (d_list[i].d_func == NULL) {
-        d_list[i].d_type = 0;
-        d_list[i].d_arg = 0;
-        d_list[i].d_time = 0;
+    if (dl[i].d_func == NULL) {
+        dl[i].d_type = 0;
+        dl[i].d_arg = 0;
+        dl[i].d_time = 0;
     }
 
     return READSTAT;
@@ -1787,9 +1787,9 @@ int rs_fix_magic_items(struct magic_item *mi, int count)
     return 0;
 }
 
-int rs_fix_monsters(struct monster monsters[26])
+int rs_fix_monsters(struct monster mon[26])
 {
-    sprintf(monsters['F' - 'A'].m_stats.s_dmg, "%dd1", fung_hit);
+    sprintf(mon['F' - 'A'].m_stats.s_dmg, "%dd1", fung_hit);
     return 0;
 }
 
@@ -1820,7 +1820,7 @@ int rs_save_file(FILE * savef)
     rs_write_int(savef, lastscore);
     rs_write_int(savef, no_food);
     rs_write_int(savef, seed);
-    rs_write_int(savef, count);
+    rs_write_int(savef, cmdcount);
     rs_write_int(savef, dnum);
     rs_write_int(savef, fung_hit);
     rs_write_int(savef, quiet);
@@ -1895,7 +1895,7 @@ int rs_restore_file(int inf)
     rs_read_int(inf, &lastscore);
     rs_read_int(inf, &no_food);
     rs_read_int(inf, &seed);
-    rs_read_int(inf, &count);
+    rs_read_int(inf, &cmdcount);
     rs_read_int(inf, &dnum);
     rs_read_int(inf, &fung_hit);
     rs_read_int(inf, &quiet);

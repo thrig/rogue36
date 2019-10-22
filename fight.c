@@ -88,7 +88,7 @@ bool fight(coord * mp, char mn, struct object *weap, bool thrown)
             miss(NULL, mname);
         }
     }
-    count = 0;
+    cmdcount = 0;
     return did_hit;
 }
 
@@ -233,9 +233,9 @@ int attack(struct thing *mp)
                             steal = list;
                     }
                     if (steal != NULL) {
-                        struct object *obj;
+                        struct object *sobj;
 
-                        obj = (struct object *) ldata(steal);
+                        sobj = (struct object *) ldata(steal);
                         remove_monster(&mp->t_pos,
                                        find_mons(mp->t_pos.y, mp->t_pos.x));
                         mp = NULL;
@@ -243,11 +243,11 @@ int attack(struct thing *mp)
                             int oc;
 
                             oc = obj->o_count;
-                            obj->o_count = 1;
-                            msg("The nymph stole %s!", inv_name(obj, TRUE));
-                            obj->o_count = oc - 1;
+                            sobj->o_count = 1;
+                            msg("The nymph stole %s!", inv_name(sobj, TRUE));
+                            sobj->o_count = oc - 1;
                         } else {
-                            msg("The nymph stole %s!", inv_name(obj, TRUE));
+                            msg("The nymph stole %s!", inv_name(sobj, TRUE));
                             detach(pack, steal);
                             discard(steal);
                         }
@@ -275,7 +275,7 @@ int attack(struct thing *mp)
         mp->t_stats.s_hpt++;
     if (fight_flush)
         flushinp();
-    count = 0;
+    cmdcount = 0;
     status();
 
     if (mp == NULL)
