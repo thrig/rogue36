@@ -207,10 +207,10 @@ inline int rnd(int range)
 
 int roll(int number, int sides)
 {
-    int dtotal = 0;
+    int dtotal = number;
 
     while (number--)
-        dtotal += rnd(sides) + 1;
+        dtotal += rnd(sides);
     return dtotal;
 }
 
