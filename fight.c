@@ -153,7 +153,7 @@ int attack(struct thing *mp)
                  * Ants have poisonous bites
                  */
                 if (!save(VS_POISON)) {
-                    if (!ISWEARING(R_SUSTSTR)) {
+                    if (!ISWEARING(R_SUSTSTR) && pstats.s_str > MINSTRENGTH) {
                         chg_str(-1);
                         if (!terse)
                             msg("You feel a sting in your arm and now feel weaker");
