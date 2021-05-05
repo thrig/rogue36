@@ -52,7 +52,7 @@ static struct init_weps {
   { "1d1", "1d6",  0,  0, BOW,      ISMANY | ISMISL},   /* Arrow */
   { "1d6", "1d6",  1, -1, NONE,     ISMISL},            /* Dagger */
   { "1d2", "1d4",  2,  0, SLING,    ISMANY | ISMISL},   /* Rock */
-  { "3d6", "1d1", -3,  4, NONE,     0},                 /* 2h sword */
+  { "3d6", "1d1", -3,  1, NONE,     0},                 /* 2h sword */
   { "0d0", "0d0",  0,  0, NONE,     0},                 /* Sling */
   { "1d1", "1d3",  3,  0, NONE,     ISMANY | ISMISL},   /* Dart */
   { "1d1", "1d1",  0,  0, NONE,     0},                 /* Crossbow */
@@ -100,11 +100,11 @@ void missile(int ydelta, int xdelta)
     }
     do_motion(obj, ydelta, xdelta);
     /*
-     * AHA! Here it has hit something.  If it is a wall or a door,
-     * or if it misses (combat) the mosnter, put it on the floor
+     * AHA! Here it has hit something.  Only mulch if ammo hits
+     * a monster.
      */
-    if (!isupper(mvwinch(mw, obj->o_pos.y, obj->o_pos.x))
-        || !hit_monster(unc(obj->o_pos), obj))
+    if (!(obj->o_type == WEAPON) || obj->o_group == 0
+            || !hit_monster(unc(obj->o_pos), obj))
         fall(item, TRUE);
     mvwaddch(cw, hero.y, hero.x, PLAYER);
 }
@@ -174,7 +174,7 @@ void fall(struct linked_list *item, bool pr)
         return;
     }
     if (pr) {
-        if (obj->o_type == WEAPON)      /* BUGFUX: Identification trick */
+        if (obj->o_type == WEAPON)      /* BUGFIX: Identification trick */
             msg("Your %s vanishes as it hits the ground.",
                 w_names[obj->o_which]);
         else

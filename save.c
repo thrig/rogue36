@@ -36,10 +36,11 @@ void reset_encstr(void)
 int save_game(void)
 {
     FILE *savef;
+    char ch;
 
     mvwaddstr(cw, 0, 0, "Save game?");
     draw(cw);
-    if (readchar(cw) != 'Y')
+    if ((ch = readchar(cw)) != 'Y' && ch != 'y')
         return FALSE;
 
     msg("Be seeing you...");
@@ -99,6 +100,7 @@ inline void restore(void)
         err(1, "open failed");
     }
 
+    memset(buf, 0, ROGUE_CHARBUF_MAX);
     len = strlen(version);
     read_size = read(inf, buf, len);
     if (read_size != len || strcmp(buf, version) != 0) {

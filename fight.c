@@ -43,7 +43,6 @@ bool fight(coord * mp, char mn, struct object *weap, bool thrown)
      * Find the monster we want to fight
      */
     if ((item = find_mons(mp->y, mp->x)) == NULL) {
-        debug("Fight what @ %d,%d", mp->y, mp->x);
         return 0;
     }
     tp = (struct thing *) ldata(item);
@@ -154,7 +153,7 @@ int attack(struct thing *mp)
                  */
                 if (!save(VS_POISON)) {
                     if (!ISWEARING(R_SUSTSTR) && pstats.s_str > MINSTRENGTH) {
-                        chg_str(-1);
+                        chg_str(-1, 0);
                         if (!terse)
                             msg("You feel a sting in your arm and now feel weaker");
                         else
@@ -209,7 +208,7 @@ int attack(struct thing *mp)
                         msg("The lampades strike about you with their torches!");
                         player.t_flags |= ISHUH;
                         fuse(unconfuse, 0, roll(3, 4), AFTER);
-                    } else if (rnd(100) > 75) {
+                    } else if (rnd(100) > 60) {
                         msg("The lampades shout wildly!");
                         aggravate();
                     }
@@ -395,8 +394,6 @@ roll_em(struct stats *att, struct stats *def, struct object *weap, bool hurl)
             int proll;
 
             proll = roll(ndice, nsides);
-            if (ndice + nsides > 0 && proll < 1)
-                debug("Damage for %dd%d came out %d.", ndice, nsides, proll);
             damage = dplus + proll + add_dam(att->s_str);
             def->s_hpt -= max(0, damage);
             did_hit = TRUE;

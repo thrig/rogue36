@@ -1,6 +1,7 @@
 /*
  * Special wizard commands (some of which are also non-wizard commands
- * under strange circumstances)
+ * under strange circumstances). -DWIZARD versions MUST NOT be exposed
+ * to untrusted users.
  *
  * @(#)wizard.c	3.8 (Berkeley) 6/3/81
  *
@@ -31,8 +32,22 @@ void create_obj(void)
 
     item = new_item(sizeof *obj);
     obj = (struct object *) ldata(item);
-    msg("Type of item: ");
+    msg("Type of item \"!?:)],=/\": ");
     obj->o_type = readchar(cw);
+    switch (obj->o_type) {
+        case POTION:
+        case SCROLL:
+        case FOOD:
+        case WEAPON:
+        case ARMOR:
+        case AMULET:
+        case RING:
+        case STICK:
+            break;
+        default:
+            msg("Unknown type %c", obj->o_type);
+            return;
+    }
     mpos = 0;
     msg("Which %c do you want? (0-f)", obj->o_type);
     obj->o_which = (isdigit((ch = readchar(cw))) ? ch - '0' : ch - 'a' + 10);

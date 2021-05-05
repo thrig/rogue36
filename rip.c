@@ -132,7 +132,7 @@ void score(int type, int amount, char monst)
     if (type != SCORE_VIEW && type != SCORE_QUIT) {
         mvaddstr(ROLINES - 1, 0, "--Press return to continue--");
         draw(stdscr);
-        wait_for(stdscr, '\n');
+        wait_for(stdscr, '\n', 0);
         endwin();
     }
 
@@ -240,7 +240,7 @@ void total_winner(void)
     addstr("a great profit and are admitted to the fighters guild.\n");
     mvaddstr(ROLINES - 1, 0, "--Press space to continue--");
     refresh();
-    wait_for(cw, ' ');
+    wait_for(cw, ' ', 0);
     clear();
     mvaddstr(0, 0, "   Worth  Item");
     oldpurse = purse;

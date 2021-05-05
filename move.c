@@ -237,6 +237,7 @@ char be_trapped(coord * tc)
         level++;
         new_level();
         msg("You fell into a trap!");
+        wait_for(cw, ' ', 1);
         break;
     case BEARTRAP:
         no_move += BEARTIME;
@@ -269,8 +270,9 @@ char be_trapped(coord * tc)
         }
         break;
     case TELTRAP:
-        msg("You teleport!");
         teleport();
+        msg("You teleport!");
+        wait_for(cw, ' ', 1);
         break;
     case DARTTRAP:
         if (swing(pstats.s_lvl + 1, pstats.s_arm, 1)) {
@@ -280,7 +282,7 @@ char be_trapped(coord * tc)
                 death('d');
             }
             if (!ISWEARING(R_SUSTSTR))
-                chg_str(-1);
+                chg_str(-1, 0);
         } else {
             msg("A small dart whizzes by your ear and vanishes.");
         }

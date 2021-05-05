@@ -1282,7 +1282,7 @@ int rs_write_room(FILE * savef, struct room *r)
     rs_write_coord(savef, r->r_pos);
     rs_write_coord(savef, r->r_max);
     rs_write_coord(savef, r->r_gold);
-    rs_write_int(savef, r->r_goldval);
+    rs_write_uint(savef, r->r_goldval);
     rs_write_int(savef, r->r_flags);
     rs_write_int(savef, r->r_nexits);
     rs_write_coord(savef, r->r_exit[0]);
@@ -1301,7 +1301,7 @@ int rs_read_room(int inf, struct room *r)
     rs_read_coord(inf, &r->r_pos);
     rs_read_coord(inf, &r->r_max);
     rs_read_coord(inf, &r->r_gold);
-    rs_read_int(inf, &r->r_goldval);
+    rs_read_uint(inf, &r->r_goldval);
     rs_read_int(inf, &r->r_flags);
     rs_read_int(inf, &r->r_nexits);
     rs_read_coord(inf, &r->r_exit[0]);

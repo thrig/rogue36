@@ -90,7 +90,7 @@ void option(void)
      */
     mvwaddstr(hw, ROLINES - 1, 0, "--Press space to continue--");
     draw(hw);
-    wait_for(hw, ' ');
+    wait_for(hw, ' ', 1);
     clearok(cw, TRUE);
     touchwin(cw);
     after = FALSE;

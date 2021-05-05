@@ -121,9 +121,6 @@ char *inv_name(struct object *obj, bool drop)
             sprintf(prbuf, "A%s %s ring", vowelstr(r_stones[obj->o_which]),
                     r_stones[obj->o_which]);
         break;
-    default:
-        debug("Picked up something funny");
-        sprintf(prbuf, "Something bizarre %s", unctrl(obj->o_type));
     }
     if (obj == cur_armor)
         strcat(prbuf, " (being worn)");
@@ -156,7 +153,7 @@ void money(void)
             if (notify) {
                 if (!terse)
                     addmsg("You found ");
-                msg("%d gold pieces.", rp->r_goldval);
+                msg("%u gold pieces.", rp->r_goldval);
             }
             purse += rp->r_goldval;
             rp->r_goldval = 0;
@@ -216,8 +213,6 @@ void drop(void)
  */
 int dropcheck(struct object *op)
 {
-    short save_max;
-
     if (op == NULL)
         return TRUE;
     if (op != cur_armor && op != cur_weapon
@@ -236,9 +231,7 @@ int dropcheck(struct object *op)
     } else if (op == cur_ring[LEFT] || op == cur_ring[RIGHT]) {
         switch (op->o_which) {
         case R_ADDSTR:
-            save_max = max_stats.s_str;
-            chg_str(-op->o_ac);
-            max_stats.s_str = save_max;
+            chg_str(-op->o_ac, 0);
             break;
         case R_SEEINVIS:
             player.t_flags &= ~CANSEE;
@@ -293,7 +286,10 @@ struct linked_list *new_thing(void)
         break;
     case 3:
         cur->o_type = WEAPON;
-        cur->o_which = rnd(MAXWEAPONS);
+        for (j = 0, k = rnd(100); j < MAXWEAPONS; j++) {
+            if (k < w_chances[j])
+                break;
+        }
         init_weapon(cur, cur->o_which);
         /*
          * Grouped weapons (ammo) cannot be enchanted so that they can
@@ -347,9 +343,6 @@ struct linked_list *new_thing(void)
         cur->o_which = pick_one(ws_magic, MAXSTICKS);
         fix_stick(cur);
         break;
-    default:
-        debug("Picked a bad kind of object");
-        wait_for(cw, ' ');
     }
     return item;
 }

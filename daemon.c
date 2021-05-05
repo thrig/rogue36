@@ -37,7 +37,6 @@ struct delayed_action *d_slot(void)
         if (dev->d_type == EMPTY)
             return dev;
     }
-    debug("Ran out of fuse slots");
     return NULL;
 }
 

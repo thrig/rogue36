@@ -116,7 +116,7 @@ int rnd_room(void)
 void put_things(void)
 {
     coord tp;
-    int objodds = 45, rm;
+    int objodds = 42, rm;
     struct linked_list *item;
     struct object *cur;
 

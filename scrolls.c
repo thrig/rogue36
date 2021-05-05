@@ -23,7 +23,6 @@ void read_scroll(void)
     struct room *rp;
     int i, j;
     char ch, nch;
-    struct linked_list *titem;
     char buf[ROGUE_CHARBUF_MAX];
 
     item = get_item("read", SCROLL);
@@ -118,34 +117,7 @@ void read_scroll(void)
         no_command += 4 + rnd(SLEEPTIME);
         break;
     case S_CREATE:
-        /*
-         * Create a monster
-         *  Place in random empty spot around player, otherwise give up
-         */
-        {
-            coord mp;
-            int appear = 0;
-
-            for (int y = hero.y - 1; y <= hero.y + 1; y++) {
-                for (int x = hero.x - 1; x <= hero.x + 1; x++) {
-                    if (y == hero.y && x == hero.x)
-                        continue;
-                    if (step_ok((char) winat(y, x))) {
-                        if (rnd(++appear) == 0) {
-                            mp.y = y;
-                            mp.x = x;
-                        }
-                    }
-                }
-            }
-            if (appear) {
-                titem = new_item(sizeof(struct thing));
-                msg("A monster appears!");
-                new_monster(titem, randmonster(FALSE), &mp);
-            } else {
-                msg("You hear a faint cry of anguish in the distance.");
-            }
-        }
+        create_monster(randmonster(FALSE));
         s_know[S_CREATE] = TRUE;
         break;
     case S_IDENT:
@@ -202,7 +174,7 @@ void read_scroll(void)
          * Potion of gold detection
          */
         {
-            int gtotal = 0;
+            unsigned int gtotal = 0;
 
             wclear(hw);
             for (i = 0; i < MAXROOMS; i++) {

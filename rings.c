@@ -22,7 +22,6 @@ void ring_on(void)
     struct object *obj;
     struct linked_list *item;
     int ring;
-    short save_max;
     char buf[ROGUE_CHARBUF_MAX];
 
     item = get_item("put on", RING);
@@ -67,9 +66,15 @@ void ring_on(void)
      */
     switch (obj->o_which) {
     case R_ADDSTR:
-        save_max = max_stats.s_str;
-        chg_str(obj->o_ac);
-        max_stats.s_str = save_max;
+        chg_str(obj->o_ac, 0);
+        // otherwise, would need to hide the status line change until
+        // the ring is identified
+        r_know[obj->o_which] = TRUE;
+        obj->o_flags |= ISKNOW;
+        if (r_guess[obj->o_which]) {
+            free(r_guess[obj->o_which]);
+            r_guess[obj->o_which] = NULL;
+        }
         break;
     case R_SEEINVIS:
         player.t_flags |= CANSEE;

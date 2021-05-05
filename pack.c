@@ -236,7 +236,7 @@ int inventory(struct linked_list *list, int type)
     if (!slow_invent) {
         mvwaddstr(hw, ROLINES - 1, 0, "--Press space to continue--");
         draw(hw);
-        wait_for(hw, ' ');
+        wait_for(hw, ' ', 1);
         clearok(cw, TRUE);
         touchwin(cw);
     }
@@ -264,8 +264,6 @@ void pick_up(char ch)
     case STICK:
         add_pack(NULL, FALSE);
         break;
-    default:
-        debug("Where did you pick that up???");
     }
 }
 

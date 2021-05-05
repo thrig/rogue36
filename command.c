@@ -238,7 +238,6 @@ inline void command(void)
             case 'r':
                 read_scroll();
                 break;
-                /* no I haven't been playing Angbands why do you ask */
             case 'E':
             case 'e':
                 eat();
@@ -344,7 +343,6 @@ inline void command(void)
                     ;
 #endif
                 } else {
-                    msg("Illegal command '%s'.", unctrl(ch));
                     cmdcount = 0;
                 }
             }
@@ -452,8 +450,10 @@ void search(void)
                     mvwaddch(cw, y, x, TRAP);
                     cmdcount = 0;
                     running = FALSE;
-                    if ((tp->tr_flags & ISFOUND) != ISFOUND)
+                    if ((tp->tr_flags & ISFOUND) != ISFOUND) {
                         msg(tr_name(tp->tr_type));
+                        wait_for(cw, ' ', 1);
+                    }
                     tp->tr_flags |= ISFOUND;
                 }
             }
@@ -507,7 +507,7 @@ void help(void)
     wmove(hw, ROLINES - 1, 0);
     wprintw(hw, "--Press space to continue--");
     draw(hw);
-    wait_for(hw, ' ');
+    wait_for(hw, ' ', 1);
     wclear(hw);
     draw(hw);
     wmove(cw, 0, 0);
@@ -714,6 +714,12 @@ inline void wiz_command(int ch)
     case 'C':
         create_obj();
         break;
+    case CTRL('Y'):
+        msg("Type of monster: ");
+        int m = readchar(cw);
+        mpos = 0;
+        if (isupper(m)) create_monster(m);
+        break;
     case CTRL('I'):
         inventory(lvl_obj, 0);
         break;
@@ -743,7 +749,7 @@ inline void wiz_command(int ch)
     case CTRL('A'):
         msg("%d things in your pack", inpack);
         break;
-    case CTRL('C'):
+    case 'X':
         add_pass();
         break;
     case CTRL('N'):
@@ -787,7 +793,6 @@ inline void wiz_command(int ch)
         }
         break;
     default:
-        msg("Illegal command '%s'.", unctrl(ch));
         cmdcount = 0;
     }
 }

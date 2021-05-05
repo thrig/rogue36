@@ -22,6 +22,37 @@ char lvl_mons[27] = "KJBSHEAOZGNCRQLYTWFIXUMVDP";
 char wand_mons[27] = "KJBSH AOZG CRQ Y WLIXU V  ";
 
 /*
+ * create_monster
+ *   Create a new monster
+ */
+void create_monster(char type)
+{
+    coord mp;
+    int appear = 0;
+    struct linked_list *titem;
+
+    for (int y = hero.y - 1; y <= hero.y + 1; y++) {
+        for (int x = hero.x - 1; x <= hero.x + 1; x++) {
+            if (y == hero.y && x == hero.x)
+                continue;
+            if (step_ok((char) winat(y, x))) {
+                if (rnd(++appear) == 0) {
+                    mp.y = y;
+                    mp.x = x;
+                }
+            }
+        }
+    }
+    if (appear) {
+        titem = new_item(sizeof(struct thing));
+        msg("A monster appears!");
+        new_monster(titem, type, &mp);
+    } else {
+        msg("You hear a faint cry of anguish in the distance.");
+    }
+}
+
+/*
  * randmonster:
  *	Pick a monster to show up.  The lower the level,
  *	the meaner the monster.
@@ -66,7 +97,8 @@ void new_monster(struct linked_list *item, char type, coord * cp)
     mp = &monsters[tp->t_type - 'A'];
     memcpy(&tp->t_stats, &mp->m_stats, sizeof(struct stats));
     monsthp = roll(mp->m_stats.s_lvl, 8) + mp->m_stats.s_hpt;
-    minhp = 3 + level / 2;
+    minhp = 1 + level / 2;
+    if (minhp > 14) minhp = 14;
     tp->t_stats.s_hpt = max(minhp, monsthp);
 
     tp->t_flags = mp->m_flags;
@@ -135,9 +167,8 @@ void wanderer(void)
             continue;
         rnd_pos(rp, &cp);
         if ((ch = mvwinch(stdscr, cp.y, cp.x)) == ERR) {
-            debug("Routine wanderer: mvwinch failed to %d,%d", cp.y, cp.x);
             if (wizard)
-                wait_for(cw, '\n');
+                wait_for(cw, '\n', 0);
             return;
         }
     } while (hr == rp || !step_ok(ch));
@@ -180,9 +211,9 @@ struct linked_list *wake_monster(int y, int x)
             if (off(*tp, ISFOUND) && !save(VS_MAGIC)) {
                 msg("The umber hulk's gaze has confused you.");
                 if (on(player, ISHUH))
-                    lengthen(unconfuse, roll(2, 6));
+                    lengthen(unconfuse, roll(3, 6));
                 else
-                    fuse(unconfuse, 0, roll(2, 6), AFTER);
+                    fuse(unconfuse, 0, roll(3, 6), AFTER);
                 player.t_flags |= ISHUH;
             }
             tp->t_flags |= ISFOUND;

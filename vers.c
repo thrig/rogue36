@@ -23,4 +23,4 @@ char encstr[] =
  * Increment this when the save or score file formats change, or when
  * the game itself has been changed.
  */
-int revision_num = 9;
+int revision_num = 10;

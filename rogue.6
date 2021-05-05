@@ -1,4 +1,4 @@
-.Dd August 26 2019
+.Dd May  5 2021
 .Dt ROGUE 6
 .nh
 .Os
@@ -221,14 +221,16 @@ Redraw the screen.
 .It Cm C-r
 Repeat the last message.
 .It Cm esc
-Cancel a command. This may take a second to apply due to
-.Xr curses 3
-waiting for some time to see if the 
-.Cm esc
-is part of a longer key sequence or not. When selecting an item
-from the pack,
+Cancel a command. When selecting an item from the pack,
 .Cm C-g
-may abort that selection.
+will also abort that selection. The
+.Dv ESCDELAY
+environment variable can be used to configure the delay curses waits for
+a character sequence, if
+.Cm esc
+is slow. See
+.Xr curses 3
+for details.
 .It Cm v
 Program version.
 .It Cm S
@@ -282,7 +284,7 @@ start to wander about the level.
 .It A
 Giant ant.
 .It B
-A bat, or possibly someone dressed up as a bat.
+A bat, or possibly a man dressed up as a bat.
 .It C
 Centaur.
 .It D
@@ -469,4 +471,8 @@ method would be to send a
 .Dv QUIT
 signal to try to force a coredump.
 .Sh SECURITY CONSIDERATIONS
-An abundance of C code from the 1980s.
+An abundance of C code from the 1980s. On OpenBSD
+.Xr pledge 2
+and
+.Xr unveil 2
+are used to prevent rogue system calls.

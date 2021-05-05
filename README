@@ -1,5 +1,5 @@
-rogue 3.6.3 + bugfixes + changes + more changes
-===============================================
+rogue 3.6.3 + bugfixes + changes + more changes + even more changes
+==============================================
                                                                   ------------
 this began from a rogue3.6.3-src.tar.gz that was found somewhere  |..........|
 on the Internet and is mostly for historical interest. this code  |.*.....T..|
@@ -38,6 +38,10 @@ device exists to set the seed randomly from (unless OpenBSD)
    arc4random(3) is used to set the initial seed instead of from
    DEV_RANDOM
 
+ * the RDRND define if defined tries to use the on-chip hardware to set
+   the initial game seed. NOTE that this has not been tested as I lack
+   CPU with such a feature
+
 keypad support is now disabled by default (it causes backspace to emit
 ^G when TERM is xterm* or screen on OpenBSD) though can be restored by
 compiling with WITHKEYPAD
@@ -63,7 +67,7 @@ via a shared account
   $ mkdir -p ~/share/rogue
   $ cat ~/usr/bin/rogue
   #!/bin/sh
-  ROGUEHOME=~/share/rogue ROGUEOPTS=flush,jump \
+  ROGUEHOME=~/share/rogue ROGUEOPTS=flush \
   exec ~/libexec/rogue -n Thrig "$@"
 
     though this makes debugging difficult as gdb(1) will find the
@@ -80,12 +84,16 @@ via a shared account
     users MUST NOT have write access to save game files as the XOR
     encryption is trivial to break (if you care about that)
 
+    Wizard mode MUST NOT be compiled into a multiuser version
+
  3. shared - a script will need to be written that converts logins to
     player names and runs rogue with a suitable -n argument for each
     user. handle timeouts and multiple sessions for the same user
     somehow. delays may need to be added to rogue so that bots cannot
     issue commands too quickly. the highscores data might instead be
     written to a database, ttyrec recordings made, etc
+
+    Wizard mode MUST NOT be compiled into a shared version
 
 
 the changes (of note)
@@ -129,13 +137,16 @@ the changes (of note)
 wizardly things
 ===============
 
-Wizard mode is not compiled in by default;
+Wizard mode is not compiled in by default (various commands are unsafe
+and MUST NOT be exposed to untrusted users) though
 
     make clean; CFLAGS=-DWIZARD make
 
 would build that. this enables the -W flag or '&' command in game to
 enter wizard mode (there used to be a password for this that used the
-now weak DES encryption scheme). actual debugging may require additional
-flags such as
+now somewhat weak DES encryption scheme). actual debugging may require
+additional flags such as
 
     make clean; CFLAGS='-g -DWIZARD' make
+
+then inspect command.c to see what Wizardly commands there are, etc

@@ -218,8 +218,6 @@ struct linked_list *find_obj(int y, int x)
         if (op->o_pos.y == y && op->o_pos.x == x)
             return obj;
     }
-    sprintf(prbuf, "Non-object %d,%d", y, x);
-    debug(prbuf);
     return NULL;
 }
 
@@ -269,7 +267,7 @@ void eat(void)
  * it keeps track of the highest it has been, just in case
  */
 
-void chg_str(short amt)
+void chg_str(short amt, int gain_max)
 {
     short new;
     if (amt == 0)
@@ -280,7 +278,7 @@ void chg_str(short amt)
     else if (new < MINSTRENGTH)
         new = MINSTRENGTH;
     pstats.s_str = new;
-    if (new > max_stats.s_str)
+    if (gain_max && new > max_stats.s_str)
         max_stats.s_str = new;
 }
 

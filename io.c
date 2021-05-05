@@ -146,8 +146,9 @@ void endmsg(void)
         wmove(cw, 0, mpos);
         waddstr(cw, "--More--");
         draw(cw);
-        wait_for(cw, ' ');
+        wait_for(cw, ' ', 1);
     }
+
     mvwaddstr(cw, 0, 0, msgbuf);
     wclrtoeol(cw);
     mpos = newpos;
@@ -269,10 +270,10 @@ void status(void)
 
 /*
  * wait_for
- *      Sit around until they type the right key
+ *      Sit around until they type the right key (or sometimes also Escape)
  */
 
-void wait_for(WINDOW * win, char ch)
+void wait_for(WINDOW * win, char ch, int escapes)
 {
     char c;
 
@@ -280,8 +281,13 @@ void wait_for(WINDOW * win, char ch)
         while ((c = readchar(win)) != '\n' && c != '\r')
             continue;
     } else {
-        while (readchar(win) != ch)
-            continue;
+        if (escapes) {
+            while ((c = readchar(win)) != ch && c != '\033')
+                continue;
+        } else {
+            while (readchar(win) != ch)
+                continue;
+        }
     }
 }
 
@@ -296,7 +302,7 @@ void show_win(WINDOW * scr, char *message)
     touchwin(scr);
     wmove(scr, unc(hero));
     draw(scr);
-    wait_for(scr, ' ');
+    wait_for(scr, ' ', 1);
     clearok(cw, TRUE);
     touchwin(cw);
 }

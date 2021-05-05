@@ -21,6 +21,10 @@
 #include <string.h>
 #include <unistd.h>
 
+#ifdef RDRND
+#include <immintrin.h>
+#endif
+
 #include "rogue.h"
 
 static int have_seed;
@@ -222,11 +226,7 @@ inline static void new_game(void)
     if (wizard)
         msg("Welcome to dungeon %d, Wizard", dnum);
     else
-        msg("Welcome to the Dungeons of Doom! --Press any key--");
-    draw(cw);
-    readchar(cw);
-    wmove(cw, 0, 0);
-    wclrtoeol(cw);
+        msg("Welcome to the Dungeons of Doom!");
     draw(cw);
 }
 
@@ -253,15 +253,18 @@ inline void playit(void)
     endit(-1);
 }
 
-inline static void seed_rng(void)
+static void seed_rng(void)
 {
     if (!have_seed) {
-#ifdef __OpenBSD__
+#ifdef RDRND
+        if (_rdrand32_step((unsigned int *)&dnum) != 1)
+            errx(1, "RDRAND failed");
+#elif defined(__OpenBSD__)
         dnum = (int) arc4random();
 #else
         int fd = open(DEV_RANDOM, O_RDONLY);
         if (fd == -1)
-            err(1, "open failed %s", DEV_RANDOM);
+            err(1, "open failed '%s'", DEV_RANDOM);
         if (read(fd, &dnum, sizeof(dnum)) != sizeof(dnum))
             err(1, "read failed %s", DEV_RANDOM);
         close(fd);

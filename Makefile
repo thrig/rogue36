@@ -4,7 +4,6 @@
 #
 # See the LICENSE file for full copyright and licensing information.
 
-ROGUE  ?= rogue
 ROLIBS ?= -lcurses
 CFLAGS += -std=c99 -Wall -Wextra -Wpointer-arith -Wshadow -Wfloat-conversion\
 	  -Wfloat-equal -Wno-unused-function -Wno-unused-parameter\
@@ -14,8 +13,8 @@ OBJS    = vers.o armor.o chase.o command.o daemon.o daemons.o fight.o init.o\
 	  options.o pack.o passages.o potions.o rings.o rip.o rooms.o save.o\
 	  scrolls.o state.o sticks.o things.o weapons.o wizard.o
 
-$(ROGUE): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(ROLIBS) -o $(ROGUE)
+rogue: $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(ROLIBS) -o rogue
 
 armor.o: armor.c rogue.h
 chase.o: chase.c rogue.h
@@ -49,7 +48,10 @@ weapons.o: weapons.c rogue.h
 wizard.o: wizard.c rogue.h
 
 clean:
-	@-rm -f *.core highscores $(OBJS) $(ROGUE) sav.*
+	@-rm -f *.core highscores $(OBJS) rogue sav.*
 	@-rm -rf *.dSYM
 
-.PHONY: clean
+realclean: clean
+	@-rm -f *.o
+
+.PHONY: clean realclean

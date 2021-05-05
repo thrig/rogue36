@@ -56,7 +56,7 @@ void quaff(void)
         break;
     case P_POISON:
         if (!ISWEARING(R_SUSTSTR)) {
-            chg_str(-(rnd(3) + 1));
+            chg_str(-(rnd(3) + 1), 0);
             msg("You feel very sick now.");
         } else {
             msg("You feel momentarily sick");
@@ -72,7 +72,7 @@ void quaff(void)
         break;
     case P_STRENGTH:
         msg("You feel stronger now, with bulging muscles!");
-        chg_str(1);
+        chg_str(1, 1);
         p_know[P_STRENGTH] = TRUE;
         break;
     case P_MFIND:
@@ -165,6 +165,10 @@ void quaff(void)
             pstats.s_str = max_stats.s_str;
         msg("Hey, this tastes great.  It make you feel warm all over.");
         p_know[P_RESTORE] = TRUE;
+        if (ISRING(LEFT, R_ADDSTR))
+            chg_str(cur_ring[LEFT]->o_ac, 0);
+        if (ISRING(RIGHT, R_ADDSTR))
+            chg_str(cur_ring[RIGHT]->o_ac, 0);
         break;
     case P_BLIND:
         if (off(player, ISBLIND)) {

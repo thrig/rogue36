@@ -89,10 +89,10 @@ struct monster monsters[26] = {
 { "invisible stalker",0,ISINVIS,{ 10, 120,  8,   3, 0, "4d4", 0, 0 } },
 { "jackal",      0,    ISHASTE|ISMEAN,{ 10,2,1,  8,-3, "1d2", 0, 0 } },
 { "kobold",      20,   ISMEAN, { 10,   2,   1,   7,-1, "1d4", 1,-1 } },
-{ "lampades",    50,   0,      { 10,  45,   4,   6, 0, "1d4", 0, 0 } },
+{ "lampades",    50,   0,      { 10,  45,   4,   5, 0, "1d4", 1, 0 } },
 { "mimic",       60,   0,      { 10, 140,   7,   7, 0, "4d4", 0, 0 } },
 { "nymph",       100,  0,      { 10,  40,   3,   8, 0, "1d1", 0, 0 } },
-{ "orc",         40,   ISMEAN, { 10,  10,   2,   7, 6, "1d8",-1,-1 } },
+{ "orc",         40,   ISMEAN, { 10,  10,   2,   7, 6, "1d8",-1, 1 } },
 { "purple worm", 70,   0,      { 10,7000,  15,   6, 0, "2d12/2d4", 0, 0 } },
 { "quasit",      60,   ISMEAN, { 10,  35,   3,   2, 0, "1d2/1d2/1d4", 0, 0 } },
 { "rust monster",0,    ISMEAN, { 10,  20,   5,   5, 0, "1d3/1d3", 0, -2 } },
@@ -103,12 +103,10 @@ struct monster monsters[26] = {
 { "wraith",      0,    0,      { 10,  55,   5,   4, 0, "1d8", 0, 0 } },
 { "xorn",        0,    ISMEAN, { 10, 140,   7,   0, 0, "1d3/1d3/1d3/2d6", 0, 0 } },
 { "yeti",        50,   0,      { 10,  50,   5,   6, 0, "1d8/1d8", 0, 0 } },
-{ "zombie",      0,    ISSLOW|ISMEAN, { 12, 7,4,10, 4, "3d4",-2, 2 } }
+{ "zombie",      0,    ISSLOW|ISMEAN, { 12, 7,4,10, 4, "3d4", 0, 2 } }
 /* Name          CARRY FLAG     str,  exp, lvl,amr,hpt,dmg,  h+,d+ */
 };
 /* *INDENT-ON* */
-
-void badcheck(char *name, struct magic_item *magic, int bound);
 
 /*
  * fatal:
@@ -342,10 +340,10 @@ const int cNMETAL = NMETAL;
 
 #define _ 0
 struct magic_item things[NUMTHINGS] = {
-    {"", 34, _},                /* potion */
-    {"", 34, _},                /* scroll */
-    {"", 1, _},                 /* food */
-    {"", 12, _},                /* weapon */
+    {"", 33, _},                /* potion */
+    {"", 32, _},                /* scroll */
+    {"", 7, _},                 /* food */
+    {"", 9, _},                 /* weapon */
     {"", 7, _},                 /* armor */
     {"", 5, _},                 /* ring */
     {"", 7, _},                 /* stick */
@@ -357,18 +355,18 @@ struct magic_item s_magic[MAXSCROLLS] = {
     {"monster confusion", 7, 170},
     {"magic mapping", 9, 180},
     {"light", 2, 100},
-    {"hold monster", 4, 200},
+    {"hold monster", 6, 200},
     {"sleep", 4, 50},
-    {"enchant armor", 8, 130},
-    {"identify", 22, 100},
-    {"scare monster", 4, 180},
+    {"enchant armor", 9, 130},
+    {"identify", 17, 100},
+    {"scare monster", 5, 180},
     {"gold detection", 1, 110},
     {"teleportation", 10, 175},
     {"enchant weapon", 12, 150},
     {"create monster", 4, 75},
     {"remove curse", 8, 105},
     {"aggravate monsters", 2, 60},
-    {"blank paper", 1, 50},
+    {"blank paper", 2, 50},
     {"genocide", 2, 200},
 };
 
@@ -376,9 +374,9 @@ struct magic_item p_magic[MAXPOTIONS] = {
     {"confusion", 2, 50},
     {"paralysis", 2, 50},
     {"poison", 4, 50},
-    {"gain strength", 16, 150},
+    {"gain strength", 15, 150},
     {"see invisible", 5, 170},
-    {"healing", 26, 130},
+    {"healing", 24, 130},
     {"monster detection", 4, 120},
     {"magic detection", 4, 105},
     {"raise level", 1, 220},
@@ -386,7 +384,7 @@ struct magic_item p_magic[MAXPOTIONS] = {
     {"haste self", 14, 200},
     {"restore strength", 14, 120},
     {"blindness", 2, 50},
-    {"thirst quenching", 1, 50},
+    {"thirst quenching", 4, 50},
 };
 
 struct magic_item r_magic[MAXRINGS] = {
@@ -395,14 +393,14 @@ struct magic_item r_magic[MAXRINGS] = {
     {"sustain strength", 5, 180},
     {"searching", 10, 200},
     {"see invisible", 10, 175},
-    {"adornment", 1, 100},
+    {"adornment", 2, 100},
     {"aggravate monster", 11, 100},
     {"dexterity", 8, 220},
     {"increase damage", 8, 220},
     {"regeneration", 4, 260},
     {"slow digestion", 9, 240},
     {"teleportation", 9, 100},
-    {"stealth", 7, 100},
+    {"stealth", 6, 100},
 };
 
 struct magic_item ws_magic[MAXSTICKS] = {
@@ -414,8 +412,8 @@ struct magic_item ws_magic[MAXSTICKS] = {
     {"polymorph", 15, 210},
     {"magic missile", 10, 170},
     {"haste monster", 2, 50},
-    {"slow monster", 11, 220},
-    {"drain life", 11, 210},
+    {"slow monster", 12, 220},
+    {"drain life", 10, 210},
     {"nothing", 1, 70},
     {"teleport away", 7, 140},
     {"teleport to", 5, 60},
@@ -451,8 +449,23 @@ int a_chances[MAXARMORS] = {
     63,
     75,
     85,
-    95,
+    96,
     100
+};
+
+int w_chances[MAXWEAPONS] = {
+    12, // mace (12)
+    24, // long sword (12)
+    32, // short bow (8)
+    41, // arrow (9)
+    45, // dagger (4)
+    54, // rock (9)
+    61, // two handed sword (7)
+    69, // sling (8)
+    72, // dart (3)
+    80, // crossbow (8)
+    89, // crossbow bolt (9)
+    100 // spear (11)
 };
 
 #define MAX3(a,b,c)     (a > b ? (a > c ? a : c) : (b > c ? b : c))
@@ -469,7 +482,6 @@ void init_things(void)
 
     for (mp = &things[1]; mp <= &things[NUMTHINGS - 1]; mp++)
         mp->mi_prob += (mp - 1)->mi_prob;
-    badcheck("things", things, NUMTHINGS);
 }
 
 /*
@@ -494,7 +506,6 @@ void init_colors(void)
         if (i > 0)
             p_magic[i].mi_prob += p_magic[i - 1].mi_prob;
     }
-    badcheck("potions", p_magic, MAXPOTIONS);
 }
 
 /*
@@ -532,7 +543,6 @@ void init_names(void)
         if (i > 0)
             s_magic[i].mi_prob += s_magic[i - 1].mi_prob;
     }
-    badcheck("scrolls", s_magic, MAXSCROLLS);
 }
 
 /*
@@ -557,7 +567,6 @@ void init_stones(void)
         if (i > 0)
             r_magic[i].mi_prob += r_magic[i - 1].mi_prob;
     }
-    badcheck("rings", r_magic, MAXRINGS);
 }
 
 /*
@@ -600,25 +609,6 @@ void init_materials(void)
         if (i > 0)
             ws_magic[i].mi_prob += ws_magic[i - 1].mi_prob;
     }
-    badcheck("sticks", ws_magic, MAXSTICKS);
-}
-
-/*
- * badcheck:
- *      Fail if someone changed the percentages to not add up to 100.
- */
-
-void badcheck(char *name, struct magic_item *magic, int bound)
-{
-    struct magic_item *end;
-
-    if (magic[bound - 1].mi_prob == 100)
-        return;
-    endwin();
-    printf("\nError! Bad percentages for %s:\n", name);
-    for (end = &magic[bound]; magic < end; magic++)
-        printf("%3d%% %s\n", magic->mi_prob, magic->mi_name);
-    exit(1);
 }
 
 struct h_list helpstr[] = {

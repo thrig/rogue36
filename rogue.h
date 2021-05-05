@@ -138,7 +138,6 @@ struct linked_list *new_item(size_t size);
     (cp)->x <= (rp)->r_pos.x + ((rp)->r_max.x - 1) && (rp)->r_pos.x <= (cp)->x \
  && (cp)->y <= (rp)->r_pos.y + ((rp)->r_max.y - 1) && (rp)->r_pos.y <= (cp)->y)
 #define winat(y, x) (mvwinch(mw,y,x)==' '?mvwinch(stdscr,y,x):winch(mw))
-#define debug if (wizard) msg
 #define RN (((seed = seed*11109+13849) & 0x7fff) >> 1)
 #ifndef DEV_RANDOM
 #define DEV_RANDOM "/dev/urandom"
@@ -400,7 +399,7 @@ struct room {
     coord r_pos;                /* Upper left corner */
     coord r_max;                /* Size of room */
     coord r_gold;               /* Where the gold is */
-    int r_goldval;              /* How much the gold is worth */
+    unsigned int r_goldval;     /* How much the gold is worth */
     int r_flags;                /* Info about the room */
     int r_nexits;               /* Number of exits */
     coord r_exit[4];            /* Where the exits are */
@@ -483,6 +482,7 @@ extern int inpack;              /* Number of things in pack */
 extern int max_hp;              /* Player's max hit points */
 extern int a_chances[MAXARMORS];        /* Probabilities for armor */
 extern int a_class[MAXARMORS];  /* Armor class for various armors */
+extern int w_chances[MAXWEAPONS];       /* Probabilities for weapons */
 extern int lastscore;           /* Score before this turn */
 extern int no_food;             /* Number of levels without food */
 extern int seed;                /* Random number seed */
@@ -621,7 +621,7 @@ int readchar(WINDOW * win);
 void show_win(WINDOW * scr, char *message);
 int step_ok(char ch);
 void status(void);
-void wait_for(WINDOW * win, char ch);
+void wait_for(WINDOW * win, char ch, int escapes);
 
 /* main.c */
 void playit(void);
@@ -633,7 +633,7 @@ int md_readchar(WINDOW * win);
 /* misc.c */
 void add_haste(bool potion);
 void aggravate(void);
-void chg_str(short amt);
+void chg_str(short amt, int gain_max);
 void eat(void);
 struct linked_list *find_obj(int y, int x);
 int get_dir(void);
@@ -643,6 +643,7 @@ char *tr_name(char ch);
 char *vowelstr(char *str);
 
 /* monsters.c */
+void create_monster(char type);
 void genocide(void);
 void new_monster(struct linked_list *item, char type, coord * cp);
 int randmonster(bool wander);
