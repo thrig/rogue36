@@ -237,7 +237,7 @@ char be_trapped(coord * tc)
         level++;
         new_level();
         msg("You fell into a trap!");
-        wait_for(cw, ' ', 1);
+        flushinp();
         break;
     case BEARTRAP:
         no_move += BEARTIME;
@@ -272,7 +272,7 @@ char be_trapped(coord * tc)
     case TELTRAP:
         teleport();
         msg("You teleport!");
-        wait_for(cw, ' ', 1);
+        flushinp();
         break;
     case DARTTRAP:
         if (swing(pstats.s_lvl + 1, pstats.s_arm, 1)) {
